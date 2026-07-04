@@ -1,0 +1,5 @@
+task3 complete.
+Scripts added: collect_probs.py, grid_blend.py.
+E2E run logged in task3_run.log.
+Best 2-way holdout blend: [0.25, 2.5], Macro-F1 0.739693.
+Main caveat: stacker artifact inference is leakage-prone.

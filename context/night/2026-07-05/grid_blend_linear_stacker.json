@@ -1,0 +1,175 @@
+{
+  "components": [
+    "linear",
+    "stacker"
+  ],
+  "paths": [
+    "context\\night\\2026-07-05\\holdout_linear.npz",
+    "context\\night\\2026-07-05\\holdout_stacker.npz"
+  ],
+  "rows": 10001,
+  "actions": [
+    "read_file",
+    "grep_search",
+    "list_directory",
+    "glob_pattern",
+    "edit_file",
+    "write_file",
+    "apply_patch",
+    "run_bash",
+    "run_tests",
+    "lint_or_typecheck",
+    "ask_user",
+    "plan_task",
+    "web_search",
+    "respond_only"
+  ],
+  "grid": {
+    "min": 0.0,
+    "max": 3.0,
+    "step": 0.25
+  },
+  "single": {
+    "linear": 0.6329257706721908,
+    "stacker": 0.7384895435474604
+  },
+  "baseline_equal_weights_macro_f1": 0.7327768472575863,
+  "top": [
+    {
+      "rank": 1,
+      "macro_f1": 0.7396932572265115,
+      "weights": [
+        0.25,
+        2.5
+      ]
+    },
+    {
+      "rank": 2,
+      "macro_f1": 0.739612631140216,
+      "weights": [
+        0.25,
+        3.0
+      ]
+    },
+    {
+      "rank": 3,
+      "macro_f1": 0.7395977526420502,
+      "weights": [
+        0.25,
+        2.75
+      ]
+    },
+    {
+      "rank": 4,
+      "macro_f1": 0.739595824625407,
+      "weights": [
+        0.25,
+        2.25
+      ]
+    },
+    {
+      "rank": 5,
+      "macro_f1": 0.7392948729133504,
+      "weights": [
+        0.25,
+        2.0
+      ]
+    },
+    {
+      "rank": 6,
+      "macro_f1": 0.7390528798575355,
+      "weights": [
+        0.25,
+        1.5
+      ]
+    },
+    {
+      "rank": 7,
+      "macro_f1": 0.7390528798575355,
+      "weights": [
+        0.5,
+        3.0
+      ]
+    },
+    {
+      "rank": 8,
+      "macro_f1": 0.738950185265118,
+      "weights": [
+        0.75,
+        2.75
+      ]
+    },
+    {
+      "rank": 9,
+      "macro_f1": 0.7389317883407476,
+      "weights": [
+        0.25,
+        1.75
+      ]
+    },
+    {
+      "rank": 10,
+      "macro_f1": 0.7388855776623288,
+      "weights": [
+        0.25,
+        1.0
+      ]
+    }
+  ],
+  "meta": {
+    "linear": {
+      "C": 1.0,
+      "alpha": 0.0001,
+      "clf": "svc",
+      "component": "linear",
+      "feature_set": "E_+seq",
+      "honest_holdout": true,
+      "macro_f1": 0.6329257706721908,
+      "name": "linear",
+      "note": "model was fit only on StratifiedGroupKFold train split",
+      "per_class_f1": {
+        "apply_patch": 0.8068424803991446,
+        "ask_user": 0.517555266579974,
+        "edit_file": 0.9126884422110553,
+        "glob_pattern": 0.5261780104712042,
+        "grep_search": 0.5246826516220028,
+        "lint_or_typecheck": 0.46794871794871795,
+        "list_directory": 0.3249797898140663,
+        "plan_task": 0.5630573248407643,
+        "read_file": 0.45264359071890453,
+        "respond_only": 0.9966193373901284,
+        "run_bash": 0.6984993178717599,
+        "run_tests": 0.6376360808709176,
+        "web_search": 0.44571428571428573,
+        "write_file": 0.9859154929577465
+      },
+      "source": "C:\\dev\\dacon-agent-action-api-boost\\linear_pipeline\\features.py"
+    },
+    "stacker": {
+      "component": "stacker",
+      "config": "C:\\dev\\dacon-agent-action-api-boost\\model\\aar_config.json",
+      "honest_holdout": false,
+      "macro_f1": 0.7384895435474604,
+      "name": "stacker_artifact",
+      "note": "existing artifact was used for holdout inference; source retrain code for 85% split was not available, so this score is leakage-prone and should not be treated as an unbiased holdout estimate",
+      "per_class_f1": {
+        "apply_patch": 0.8112745098039216,
+        "ask_user": 0.6767537826685007,
+        "edit_file": 0.8937902952154734,
+        "glob_pattern": 0.6211699164345403,
+        "grep_search": 0.5901374292643492,
+        "lint_or_typecheck": 0.6949602122015915,
+        "list_directory": 0.49056603773584906,
+        "plan_task": 0.6894736842105263,
+        "read_file": 0.5232974910394266,
+        "respond_only": 1.0,
+        "run_bash": 0.8071428571428572,
+        "run_tests": 0.7962085308056872,
+        "web_search": 0.7534246575342466,
+        "write_file": 0.9906542056074766
+      },
+      "source": "C:\\dev\\dacon-agent-action-api-boost\\model"
+    }
+  },
+  "warning": "Do not over-trust LB-derived encoder weights unless encoder probabilities were collected on the same grouped holdout IDs."
+}
