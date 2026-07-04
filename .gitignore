@@ -19,10 +19,11 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# 도구 (.claude는 로컬 설정만 제외, 프로젝트 스킬은 추적)
+# 도구 (.claude는 로컬 설정만 제외, 프로젝트 스킬·에이전트 정의는 추적)
 .codegraph/
 .claude/*
 !.claude/skills/
+!.claude/agents/
 
 # OS
 Thumbs.db
