@@ -6,7 +6,7 @@
 
 ## 결론 먼저 (TL;DR)
 
-**구조적 state→action 결정 규칙은 사실상 없다.** 순수 구조 피처(last_action, history 길이, turn_index, ci_status, args 스키마, budget 등) 조합으로는 purity≥0.99 규칙의 누적 coverage가 **0.03%(21/70,000행)**에 불과했고, min_rows≥10으로 최소 표본 요건을 걸면 그마저 **0%**로 사라진다(소표본 노이즈였다는 뜻). current_prompt 템플릿까지 포함해도 순정미 상한은 **7.4%**이고, 그중 66%는 이미 F1 1.0인 `respond_only` 몫이라 순증 여지는 **3.7%**뿐이며 그 3.7%도 템플릿당 평균 2~3행짜리 소집단이라 과적합 위험이 크다. **"결정적 규칙 발견 → 컷 갭(−0.055) 해소"라는 1라운드 가설은 기각한다.** 대신 (1) explore 4클래스 계층 분류 아이디어, (2) 첫 스텝(history 없음) 별도 정책 활용, (3) respond_only 종료 구조 확인의 세 가지가 다음 라운드로 넘길 만한 근거 있는 리드다.
+**구조적 state→action 결정 규칙은 사실상 없다.** 순수 구조 피처(last_action, history 길이, turn_index, ci_status, args 스키마, budget 등) 조합으로는 purity≥0.99 규칙의 누적 coverage가 **0.03%(21/70,000행, min_rows≥5)**에 불과했고, min_rows≥10으로 최소 표본 요건을 걸면 **0.0157%(11행)**로 줄어들며 min_rows≥12부터는 **0%**로 완전히 사라진다(생존자가 전부 5~11행짜리 소표본 노이즈였다는 뜻). current_prompt 템플릿까지 포함해도 순정미 상한은 **7.4%**이고, 그중 **49.7%**(2,575/5,181행)는 이미 F1 1.0인 `respond_only` 몫이라 순증 여지는 **3.7%**뿐이며 그 3.7%도 템플릿당 평균 2~3행짜리 소집단이라 과적합 위험이 크다. **"결정적 규칙 발견 → 컷 갭(−0.055) 해소"라는 1라운드 가설은 기각한다.** 대신 (1) explore 4클래스 계층 분류 아이디어, (2) 첫 스텝(history 없음) 별도 정책 활용, (3) respond_only 종료 구조 확인의 세 가지가 다음 라운드로 넘길 만한 근거 있는 리드다.
 
 ---
 
@@ -26,9 +26,10 @@ state 정의 20종(단일/조합) 전체에 대해 `groupby(state).action.value_
 | 기준 | 커버리지 | 비고 |
 |---|---:|---|
 | 순수 구조 state, min_rows≥5, 후보 7종 union upper bound | **0.03%** (21/70,000행) | "여러 규칙을 자유롭게 골라 쓸 수 있다면" 가정한 이론적 상한 |
-| 순수 구조 state, min_rows≥10 (표본 안정화) | **0%** | 위 21행이 전부 5~11행짜리 소표본 노이즈였음을 확인 |
+| 순수 구조 state, min_rows≥10 (표본 안정화) | **0.0157%** (11/70,000행) | 유일한 생존자는 `last_action+last_result_summary` 정의의 `(edit_file, "ok; applied 1 edit (1+/1-) to Dockerfile")` 버킷(11행/11세션, purity 1.0) |
+| 순수 구조 state, min_rows≥12 이상 | **0%** | 위 11행짜리 생존자도 사라짐 — min_rows≥5의 21행이 전부 세션 5~11개짜리 소표본 노이즈였음을 확인 |
 | 개별 state 정의 20종 각각 | **0.0000~0.0005** | 어떤 단일/조합 정의도 유의미한 coverage를 못 냄 (아래 표) |
-| current_prompt 정규화 템플릿, purity≥0.99 | **7.40%** (5,181행, 4,272세션) | `respond_only` 몫 66%(2,575행) 포함 |
+| current_prompt 정규화 템플릿, purity≥0.99 | **7.40%** (5,181행, 4,272세션) | `respond_only` 몫 **49.7%**(2,575행) 포함 |
 | 위에서 `respond_only` 제외한 순증 커버리지 | **3.72%** (2,606행) | 템플릿 300여 개, 평균 2~3행/템플릿 |
 
 `determinism_summary.csv`의 전체 표(threshold 0.95/0.99/1.00 × state_def 20종)는 예외 없이 **coverage 0.0000~0.0005** 구간이었다. 아래는 대표 예시:
@@ -37,7 +38,7 @@ state 정의 20종(단일/조합) 전체에 대해 `groupby(state).action.value_
 |---|---:|---:|
 | last_action 단독 | 0 | 0.0000 |
 | last_action+last2_action | 0 | 0.0000 |
-| last_action+last2+last3 | 6 (min_rows=5일 때만) | 0.0001 |
+| last_action+last2+last3 | 1 (min_rows=5일 때만, 5행) | 0.0001 |
 | last_action+last_args_sig | 0 | 0.0000 |
 | last_ci_status+last_action | 0 | 0.0000 |
 | history_len_bin(+last_action) | 0 | 0.0000 |
@@ -46,7 +47,7 @@ state 정의 20종(단일/조합) 전체에 대해 `groupby(state).action.value_
 | last_action+prompt_glob_char | 0 | 0.0000 |
 | last_action+last_result_summary(정확 문자열) | 2 buckets, 16행 | 0.0002 |
 
-min_rows를 10~20으로 올리면 이 "생존자"들도 전부 사라진다(재현: 5-way 콤보 `last1+last2+last3+turn_bin+ci`도 min_rows≥10에서 0버킷). **즉 살아남은 소수 버킷은 세션 몇 개짜리 우연의 일치이지 재현 가능한 규칙이 아니다.**
+min_rows를 10으로 올리면 `last_action+last2+last3`의 5행짜리 버킷과 `last_action+last_result_summary`의 16행 중 5행짜리 셀(run_tests/edit_file)은 이미 최소 표본 미달로 탈락하고, 같은 `last_action+last_result_summary` 정의의 11행짜리 `(edit_file, "ok; applied 1 edit (1+/1-) to Dockerfile") → run_bash` 버킷만 남는다(0.0157%). min_rows≥12부터는 이마저 사라져 **0%**가 된다(재현: 더 무거운 5-way 콤보 `last1+last2+last3+turn_bin+ci`는 min_rows≥10에서 이미 0버킷). **즉 살아남은 소수 버킷은 세션 10여 개 안쪽의 우연의 일치이지 재현 가능한 규칙이 아니다.**
 
 ---
 
@@ -106,7 +107,8 @@ explore-only 조건부로 보면 (last2, last1) 쌍이 **꽤 큰 표본에서 80
 | apply_patch | grep_search | 191(전체 402) | grep_search | 0.859 | 0.408 | 47.5% |
 | read_file | glob_pattern | 318(전체 522) | grep_search | 0.852 | 0.519 | 60.9% |
 | list_directory | grep_search | 480(전체 888) | read_file | 0.850 | 0.459 | 54.1% |
-| read_file | list_directory | 98(전체 120) | grep_search | 0.837 | 0.517 | 68.3% |
+| read_file | list_directory | 82(전체 120) | grep_search | 0.756 | 0.517 | 68.3% |
+| read_file | plan_task | 98(전체 212) | grep_search | 0.837 | 0.387 | 46.2% |
 | grep_search | edit_file | 472(전체 1,952) | glob_pattern | 0.828 | 0.213 | 24.2% |
 
 **해석에 주의**: 이 80~90%는 "이 행이 explore 클래스라는 걸 이미 안다"는 오라클 조건 하의 purity다. 조건 없이(14클래스 전체 기준) 같은 버킷을 보면 purity가 0.21~0.52로 뚝 떨어지고, 애초에 이 버킷이 explore로 판명되는 비율도 24~68%에 그친다. 즉 **평평한 14-way softmax에 이 신호를 피처로 더 넣는 것만으로는 큰 이득이 없을 가능성이 높다** — 이미 팀의 linear 피처셋(action n-gram)에 last1/last2가 들어가 있음. 진짜 기회는 **계층적(2단계) 분류 구조**다: 1단계가 대분류(explore/mutate_validate/coordinate/none)를 맞히면, 2단계에서 (last2,last1) 조건부 신호가 80~90% purity로 4개 explore 클래스를 갈라줄 여지가 크다. (e) 결론: 규칙표가 아니라 **아키텍처 제안**으로 다음 라운드에 넘긴다.
@@ -155,3 +157,12 @@ explore-only 조건부로 보면 (last2, last1) 쌍이 **꽤 큰 표본에서 80
 - 분석 스크립트: `scripts/analysis/common.py`, `determinism.py`, `template_forensics.py`, `transition_analysis.py`, `exploration_signals.py`, `session_meta_analysis.py`, `simulator_artifacts.py`
 - 중간 산출물(CSV/JSON): `scripts/analysis/_out/` — `determinism_summary.csv`, `top_pure_buckets.csv`, `last_action_buckets.csv`, `exact_dup_groups.csv`, `template_groups.csv`, `transition_matrix_last1.csv`, `last2_conditional_lift.csv`, `exploration_signal_report.csv`, `exploration_pairwise_signals.csv`, `meta_*.csv`, `session_termination_dist.csv`, `session_size_dist.csv`
 - 캐시: `data/_forensics_cache.pkl` (재실행 시 자동 생성, `force_rebuild=True`로 재생성 가능)
+
+---
+
+## 정정 이력 (2026-07-05, 독립 리뷰 반영)
+
+1. (b)절: "min_rows≥10 → 0%"는 오기. 실측은 min_rows≥10에서 0.0157%(11행, `last_action+last_result_summary` 정의의 `(edit_file, "ok; applied 1 edit (1+/1-) to Dockerfile")` 버킷)가 남고, min_rows≥12부터 0%가 된다. 표와 본문을 정정.
+2. TL;DR: "템플릿 purity≥0.99 중 respond_only 몫 66%"는 계산 오류. 정확한 값은 2,575/5,181 = **49.7%**(약 절반)이며 (d)절 원수치(2,575행, 548개 템플릿)는 애초에 정확했다.
+3. (e)절 조건부 purity 표에서 `(read_file, list_directory)` 행에 실제로는 `(read_file, plan_task)` 쌍의 수치(n=98, purity=0.837)가 잘못 들어가 있었다. `(read_file, list_directory)`의 정확한 explore-조건부 값(n=82, purity=0.756)으로 정정하고, 원래 있던 `(read_file, plan_task)`(n=98, purity=0.837, 전체 기준 purity=0.387, explore 비율 46.2%) 행을 별도로 추가해 데이터 유실 없이 표를 복원했다.
+4. (자체 발견, 리뷰 지적 외) (b)절 표에서 `last_action+last2+last3`의 purity≥0.99 버킷 수를 "6개"로 잘못 적었다. `determinism_summary.csv` 원본 확인 결과 **1개 버킷(5행)**이 정확하며, 이번 정정 과정에서 함께 바로잡았다.

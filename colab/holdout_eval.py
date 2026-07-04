@@ -132,6 +132,30 @@ def load_data(data_dir):
     return texts, y, ids, groups
 
 
+def check_drive_root(root):
+    """멀티 계정 병렬 Colab 대비 — 경로가 안 보이면 원인 진단을 담아 즉시 실패.
+
+    보조 계정 세션에서 drive.mount는 '그 계정'의 MyDrive만 노출한다. 메인 계정이
+    소유한 공유 폴더는 보조 계정에선 '공유 문서함(Shared with me)'에 있어 마운트
+    경로에 나타나지 않는다 — 2026-07-05 실제로 겪은 오류의 원인.
+    """
+    if os.path.isdir(root):
+        return
+    my = "/content/drive/MyDrive"
+    if not os.path.isdir(my):
+        raise FileNotFoundError(
+            "Google Drive가 마운트되지 않았습니다 — drive.mount 셀을 먼저 실행하세요.")
+    listing = ", ".join(sorted(os.listdir(my))[:20])
+    raise FileNotFoundError(
+        f"--data-dir 없음: {root}\n"
+        f"현재 마운트된 MyDrive 최상위: [{listing}]\n"
+        "→ 목록에 폴더가 없다면 십중팔구 '보조 계정' 세션입니다. 공유받은 폴더는\n"
+        "  공유 문서함에 있어 /MyDrive 마운트에 보이지 않습니다. 해결 (둘 중 하나):\n"
+        "  (A) 이 계정 Drive 웹에서 해당 폴더 우클릭 → 정리 → '바로가기 추가' → 내 드라이브\n"
+        "      (계정당 1회 설정, 이후 경로 그대로 동작)\n"
+        "  (B) drive.mount 인증 팝업에서 폴더를 '소유한' 계정을 선택해 마운트")
+
+
 def make_holdout_split(y, groups, seed, valid_frac):
     n_splits = max(2, int(round(1.0 / valid_frac)))
     skf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=seed)
@@ -200,6 +224,7 @@ def main():
     else:
         print(f"[GPU] {torch.cuda.get_device_name(0)}")
 
+    check_drive_root(args.data_dir)
     texts, y, ids, groups = load_data(args.data_dir)
     print(f"loaded {len(y)} rows, {len(set(groups))} sessions | model={model_name} seed={seed}")
     tr, va = make_holdout_split(y, groups, seed, args.valid_frac)

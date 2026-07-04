@@ -3,7 +3,7 @@
 ## 컨텍스트
 
 DACON 236694 (14클래스, Macro-F1). 오늘 포렌식 1라운드(`C:\dev\2026-AI-DACON\context\reports\forensics_r1.md` — 반드시 먼저 정독)가
-"결정적 state→action 규칙" 가설을 **기각**했다 (purity≥0.99 구조 규칙 coverage 0.03%, 최소표본 걸면 0%).
+"결정적 state→action 규칙" 가설을 **기각**했다 (purity≥0.99 구조 규칙 coverage 0.03%, 최소표본 min_rows≥20이면 0% — 독립 리뷰로 재검증된 수치).
 대신 두 리드가 남았다:
 - **R4 (이 작업의 본체)**: explore 4클래스(read_file/grep_search/list_directory/glob_pattern)는 Macro-F1 약점인데,
   "explore로 판명된" 조건부에서는 (last2_action, last_action) 쌍이 80~90% purity를 낸다 (무조건부론 0.21~0.52).

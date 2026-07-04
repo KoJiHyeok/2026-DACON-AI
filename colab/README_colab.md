@@ -49,6 +49,31 @@ head), train.jsonl **전량 7만 행** + train_labels.csv만 사용(홀드아웃
    `save_strategy="no"`라 재개 대상 자체가 없다 — 끊기면 처음부터 다시 돌린다(짧은 job이라
    감내 가능한 수준).
 
+## 1.5 멀티 계정 병렬 실행 (job을 동시에 여러 개 돌릴 때 — 필독)
+
+병렬 세션은 **계정마다 Colab GPU 할당이 따로**라서 보조 Google 계정 여러 개로 돌리는 게 정석이다.
+단, 함정이 하나 있다 (2026-07-05 실제로 겪은 오류):
+
+> **보조 계정 세션에서 `drive.mount`는 그 계정의 MyDrive만 마운트한다.**
+> 메인 계정이 소유한 `dacon2026/` 폴더는 보조 계정에선 '공유 문서함(Shared with me)'에
+> 있고, 공유 문서함은 `/content/drive/MyDrive/`에 **나타나지 않는다** →
+> `FileNotFoundError: /content/drive/MyDrive/dacon2026/train.jsonl`.
+
+해결 (보조 계정마다 둘 중 하나, A 권장):
+
+- **(A) 바로가기 추가 — 계정당 1회 설정**: 보조 계정으로 Drive 웹 접속 → 공유 문서함에서
+  `dacon2026` 우클릭 → `정리(Organize)` → `바로가기 추가(Add shortcut)` → `내 드라이브` 선택.
+  이후 Colab 마운트에서 `/content/drive/MyDrive/dacon2026/...` 경로가 그대로 동작한다
+  (바로가기는 FUSE 마운트에서 실제 폴더처럼 따라감). 산출물도 이 경로에 쓰면 실제로는
+  공유 폴더 원본에 저장되므로 메인 계정에서 전부 보인다.
+- **(B) 마운트 계정 선택**: `drive.mount('/content/drive')` 인증 팝업에서 런타임 계정이 아닌
+  **폴더 소유 계정을 선택**해 마운트. 설정이 필요 없지만 매 세션 인증 때 계정을 잘 골라야 한다.
+
+병렬 운영 팁: 세션(계정)마다 `ENC_SEED` 환경변수나 `--seed`를 다르게 주면 산출 폴더
+(`enc_v2_s42`, `enc_v2_s7`, ...)가 겹치지 않는다. 세 학습 스크립트 모두 시작 시
+`check_drive_root()`가 경로를 검사해서, 위 상황이면 현재 MyDrive 목록과 해결법을 에러
+메시지에 바로 띄워준다.
+
 ## 2. 업로드할 파일 (job1/2/3 공통)
 
 Google Drive에 `dacon2026/` 폴더를 만들고 아래 두 파일을 업로드한다(Drive 마운트 방식
