@@ -1,0 +1,27 @@
+# 대회 데이터 — 재배포 금지 + GitHub 용량 제한 (train.jsonl 103MB)
+data/
+open.zip
+*.jsonl
+
+# 모델 산출물 / 제출물
+model/
+submit/*.zip
+*.pkl
+*.pt
+*.bin
+*.safetensors
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# 도구
+.codegraph/
+.claude/
+
+# OS
+Thumbs.db
+.DS_Store
