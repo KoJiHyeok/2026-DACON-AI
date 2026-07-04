@@ -138,9 +138,21 @@ def check_drive_root(root):
     보조 계정 세션에서 drive.mount는 '그 계정'의 MyDrive만 노출한다. 메인 계정이
     소유한 공유 폴더는 보조 계정에선 '공유 문서함(Shared with me)'에 있어 마운트
     경로에 나타나지 않는다 — 2026-07-05 실제로 겪은 오류의 원인.
+
+    함정 2 (유령 폴더): 과거 실패 실행의 os.makedirs가 보조 계정 MyDrive에 같은 이름의
+    '빈' 폴더를 만들어 둘 수 있다 — 그러면 경로는 존재하는데 train.jsonl만 없다.
     """
     if os.path.isdir(root):
-        return
+        if os.path.exists(os.path.join(root, "train.jsonl")):
+            return
+        listing = ", ".join(sorted(os.listdir(root))[:20]) or "(비어 있음)"
+        raise FileNotFoundError(
+            f"{root} 는 존재하지만 train.jsonl이 없습니다. 내용: [{listing}]\n"
+            "→ 흔한 원인: 이전 실패 실행이 이 계정 MyDrive에 같은 이름의 '유령 폴더'를\n"
+            "  만들어 둔 경우입니다 (데이터가 든 진짜 폴더는 공유 문서함의 메인 계정 소유본).\n"
+            "  해결 순서: 1) 이 계정 Drive 웹에서 내 드라이브의 이 (빈) 폴더 삭제\n"
+            "  2) 공유 문서함의 원본 폴더 우클릭 → 정리 → 바로가기 추가 → 내 드라이브\n"
+            "  3) Colab에서 drive.flush_and_unmount() 후 drive.mount 재실행")
     my = "/content/drive/MyDrive"
     if not os.path.isdir(my):
         raise FileNotFoundError(
