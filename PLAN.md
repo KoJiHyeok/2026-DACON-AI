@@ -46,8 +46,8 @@
    5. history 길이(0~12)별 분포 — history 없는 샘플(첫 턴)은 별도 패턴일 가능성
 3. **Research → Context Building**
    1. 유사 문제 기법 리서치: 텍스트+정형 혼합 분류, class imbalance 대응(class weight, focal loss, threshold 튜닝), 경량 다국어 인코더(DeBERTa-v3-small, multilingual-e5-small 등)
-   2. 도구: NotebookLM(문서 정리), Claude Code(EDA·구현), **Codex + insane_search(메인 리서치)**
-   3. 리서치 결과는 `docs/research.md`에 축적 → 이후 콘텍스트 주입 재료로 사용
+   2. 도구: NotebookLM(문서 정리), Claude Code(EDA·구현), Codex + insane_search(어떻게 보면 메인 리서치)
+   3. 리서치 결과는 `context/research.md`에 축적 → 이후 콘텍스트 주입 재료로 사용
 4. **Opportunity Sizing → 점수 갭 분석으로 대체**
    * 베이스라인(TF-IDF+LogReg) 점수 vs 리더보드 상위권 점수의 갭을 보고, 어느 피처/모델 계층에 개선 여지가 큰지 추정. 리더보드를 "시장"으로 읽는다.
 
@@ -65,32 +65,28 @@
    1. **로컬 CV 체계 먼저 구축**: `id`의 세션 프리픽스(`sess_...`) 기준 **GroupKFold** — 같은 세션의 step이 train/valid에 갈라지면 누수
    2. 로컬 Macro-F1과 리더보드 점수의 상관을 초기에 확인 → 이후 로컬 CV로 의사결정, 제출은 검증용
    3. 제출 예산 관리: 일 10회. 초반엔 파이프라인 검증 1~2회, 이후 유의미한 개선만 제출. **Private Score 기준이므로 public 과적합 경계**
-   4. 실험 로그: `docs/experiments.md`에 (가설 → 변경점 → 로컬 CV → 리더보드) 기록
+   4. 실험 로그: `context/experiments.md`에 (가설 → 변경점 → 로컬 CV → 리더보드) 기록
 
 ### 4. [엔지니어링 / 모델 구현]
 
 1. **콘텍스트 주입** — `CLAUDE.md` 작성: 대회 룰·제약·데이터 명세·현재 최고 점수·실험 규칙을 담아 에이전트가 항상 대회 맥락 위에서 작업하게 한다.
 2. **Scaffolding**
-   1. File structure: ✅ 구축 완료 (2026.07.04)
+   1. File structure:
       ```
       2026-AI-DACON/
       ├── CLAUDE.md            # 대회 콘텍스트 (에이전트용)
       ├── PLAN.md              # 이 문서
-      ├── data/                # 대회 데이터 (git 제외)
+      ├── data/                # train.jsonl, train_labels.csv, test.jsonl, sample_submission.csv (git 제외)
       ├── notebooks/           # EDA
       ├── src/
       │   ├── features.py      # 피처 추출 (학습·추론 공용 — 단일 소스)
-      │   ├── train.py         # 학습 → submit/model/ 산출
+      │   ├── train.py         # 학습 → model/ 산출
       │   └── infer.py         # script.py의 원형
-      ├── submit/              # 제출 스테이징: script.py + requirements.txt + model/ (대회 규정 구조)
-      ├── tests/               # 단위 테스트 (피처 불변식)
-      ├── docs/                # research.md, experiments.md, validation.md
-      └── scripts/
-          ├── make_submit.py       # submit/ → submit.zip 패키징 + 검증 자동 실행
-          └── validate_submit.py   # 대회 기준 시뮬레이션 (구조·오프라인·시간·출력 형식)
+      ├── submit/              # script.py, requirements.txt, model/ → submit.zip
+      ├── docs/                # research.md, experiments.md
+      └── scripts/make_submit.py  # 패키징 + 로컬 스모크 테스트
       ```
-   2. README / CLAUDE.md 초안 작성 ✅
-   3. 서버 실행 규약 (baseline_submit.zip에서 확인): 서버가 `./data/test.jsonl` + `./data/sample_submission.csv` 제공 → script.py가 `./output/submission.csv` 생성
+   2. README / CLAUDE.md 초안은 scaffolding 시점에 에이전트가 작성
 3. **학습/추론 분리 원칙**: 피처 코드는 학습·추론이 같은 모듈을 import (불일치 = 조용한 점수 하락). script.py는 `model/`만 읽어 예측.
 4. **오프라인 제약 체크리스트** (제출 전 매번)
    - [ ] script.py에 네트워크 호출 없음 (HF `from_pretrained`는 로컬 경로 + `local_files_only=True`)
@@ -108,18 +104,10 @@
    1. EDA·피처 아이디어 탐색을 병렬 에이전트로 fan-out
    2. 코드 리뷰(/code-review)로 피처 누수·학습/추론 불일치 점검
    3. 반복 잡무(패키징, 스모크 테스트, 로그 정리)는 스크립트화 후 에이전트에 위임
-3. **제출 자동화**: `make_submit.py` = 패키징 + 오프라인 시뮬레이션(네트워크 차단 + 시간 측정 + 출력 형식 검증) → 통과해야 제출
+3. **제출 자동화**: `make_submit.py` = G1 tests → G2 git clean → G3 패키징 → G4 12개 검증(네트워크 차단·시간·출력 형식) → G5 제출 대장 기록. 하나라도 실패하면 zip이 남지 않는다.
+4. **기록 강제화 (context/)** ✅ 2026.07.04 구축
+   1. `context/INDEX.md` 진입점: decisions(ADR-lite) · experiments · research · submissions(자동 대장) · daily · reports
+   2. 게이트: 데일리(`new_day.py`) / 제출(`make_submit.py` G1~G5) / 실험(train.py 자동 로그 — 구현 예정) / 페이즈(지정 산출물 파일 존재 = 완료 조건)
+   3. 원칙: 기록이 없으면 일어나지 않은 것. 이 기록이 본선(08.11) 발표 자료의 원천.
 
 ---
-
-## 일정 (예선 마감 07.15 09:59 역산)
-
-| 날짜 | 목표 |
-|---|---|
-| 07.04(금)~07.05(토) | 데이터 다운로드, EDA, Tier 0 베이스라인 제출 (파이프라인 검증) |
-| 07.06(일)~07.09(목) | CV 체계 확립, Tier 1 피처엔지니어링 + GBDT, 매일 1~2회 제출 |
-| 07.09(목)~07.12(일) | Tier 2 경량 인코더 파인튜닝 (오프라인 패키징 포함) |
-| 07.12(일)~07.14(화) | Tier 3 앙상블 + threshold 튜닝, 최종 후보 2~3개 선정 |
-| 07.14(화)~07.15(수) 오전 | **최종 제출 확정 (마감 09:59 주의 — 전날 밤까지 완료 권장)** |
-| 07.20(월) | 본선 자료 제출 마감 (발표자료·코드 정리) |
-| 07.24(금) | 코드 검증 → 재현성 확보 상태 유지 |

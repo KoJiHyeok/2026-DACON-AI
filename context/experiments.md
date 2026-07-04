@@ -16,3 +16,17 @@
 | # | 날짜 | 가설 | 변경점 | 로컬 CV | LB | 결론 |
 |---|---|---|---|---|---|---|
 | 0 | | 베이스라인 재현으로 파이프라인 검증 | TF-IDF+LogReg | | | |
+
+## Agent Handoff Log
+
+Sub-agent 작업 결과는 필요할 때 아래 형식으로 남긴다.
+
+```text
+Role:
+Goal:
+Files changed:
+Validation:
+Experiment log entry:
+Open questions:
+Next recommended owner:
+```

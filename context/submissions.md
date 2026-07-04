@@ -1,0 +1,7 @@
+# Submissions Ledger — 제출 대장
+
+> `scripts/make_submit.py`가 게이트 통과 시 자동으로 행을 추가한다. LB 점수는 제출 후 수기로 채운다.
+> 제출 예산: **일 10회**. Private Score 기준 — public 점수에 과적합하지 말 것.
+
+| # | 일시 | 커밋 | zip 크기 | 검증 | 로컬 CV | LB (public) | 메모 |
+|---|---|---|---|---|---|---|---|

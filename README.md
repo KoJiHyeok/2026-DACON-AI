@@ -28,11 +28,16 @@ AI 코딩 에이전트 세션의 특정 시점 상태를 보고, 에이전트가
 
 ```
 ├── PLAN.md        # 워크플로우·전략·일정 (메인 문서)
+├── CLAUDE.md      # 에이전트 공통 콘텍스트
+├── context/       # 모든 과정 기록 (INDEX·decisions·experiments·research·submissions·daily·reports)
+├── agents/        # 역할별 sub-agent instruction
+├── configs/       # 실험 설정 placeholder
 ├── data/          # 대회 데이터 (git 제외 — DACON에서 직접 다운로드)
-├── docs/          # research.md, experiments.md
+├── docs/          # validation.md, agent_workflow.md (운영 방식 문서)
 ├── src/           # features / train / infer
-├── submit/        # 제출 패키징
-└── scripts/       # 자동화 스크립트
+├── submit/        # 제출 스테이징 (대회 규정 zip 구조)
+├── tests/         # 단위 테스트 (피처 불변식)
+└── scripts/       # new_day.py(데일리 게이트) · make_submit.py(제출 게이트) · validate_submit.py
 ```
 
 전체 전략과 실험 계획은 [PLAN.md](PLAN.md) 참고.

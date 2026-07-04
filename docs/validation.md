@@ -30,7 +30,7 @@
 - **GroupKFold (세션 프리픽스 기준)**: 같은 세션의 step들이 train/valid에 갈라지면 누수 → `src/features.py::session_id()` 를 그룹 키로 사용
 - 지표는 **Macro-F1** + 클래스별 F1 리포트 (희소 클래스 붕괴 감지)
 - 로컬 CV ↔ 리더보드 상관을 초기 2~3회 제출로 캘리브레이션 → 이후 로컬 CV로 의사결정
-- 모든 실험은 `docs/experiments.md` 에 기록
+- 모든 실험은 `context/experiments.md` 에 기록
 
 ## Layer 3 — 코드 검증 (조용한 버그 방지)
 
@@ -45,5 +45,5 @@
 
 1. [ ] `python -m pytest tests/` 통과
 2. [ ] `python scripts/make_submit.py` → 12개 검증 전부 PASS
-3. [ ] 로컬 CV가 직전 최고 기록 대비 개선 확인 (`docs/experiments.md`)
+3. [ ] 로컬 CV가 직전 최고 기록 대비 개선 확인 (`context/experiments.md`)
 4. [ ] 제출 예산 확인 (일 10회)
