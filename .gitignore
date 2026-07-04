@@ -3,10 +3,11 @@ data/
 open.zip
 *.jsonl
 
-# 모델 산출물 / 제출물
-model/
+# 모델 산출물 / 제출물 (submit/model/ 폴더 구조는 추적, 무거운 파일만 제외)
 submit/*.zip
+output/
 *.pkl
+*.joblib
 *.pt
 *.bin
 *.safetensors

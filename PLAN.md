@@ -71,22 +71,26 @@
 
 1. **콘텍스트 주입** — `CLAUDE.md` 작성: 대회 룰·제약·데이터 명세·현재 최고 점수·실험 규칙을 담아 에이전트가 항상 대회 맥락 위에서 작업하게 한다.
 2. **Scaffolding**
-   1. File structure:
+   1. File structure: ✅ 구축 완료 (2026.07.04)
       ```
       2026-AI-DACON/
       ├── CLAUDE.md            # 대회 콘텍스트 (에이전트용)
       ├── PLAN.md              # 이 문서
-      ├── data/                # train.jsonl, train_labels.csv, test.jsonl, sample_submission.csv (git 제외)
+      ├── data/                # 대회 데이터 (git 제외)
       ├── notebooks/           # EDA
       ├── src/
       │   ├── features.py      # 피처 추출 (학습·추론 공용 — 단일 소스)
-      │   ├── train.py         # 학습 → model/ 산출
+      │   ├── train.py         # 학습 → submit/model/ 산출
       │   └── infer.py         # script.py의 원형
-      ├── submit/              # script.py, requirements.txt, model/ → submit.zip
-      ├── docs/                # research.md, experiments.md
-      └── scripts/make_submit.py  # 패키징 + 로컬 스모크 테스트
+      ├── submit/              # 제출 스테이징: script.py + requirements.txt + model/ (대회 규정 구조)
+      ├── tests/               # 단위 테스트 (피처 불변식)
+      ├── docs/                # research.md, experiments.md, validation.md
+      └── scripts/
+          ├── make_submit.py       # submit/ → submit.zip 패키징 + 검증 자동 실행
+          └── validate_submit.py   # 대회 기준 시뮬레이션 (구조·오프라인·시간·출력 형식)
       ```
-   2. README / CLAUDE.md 초안은 scaffolding 시점에 에이전트가 작성
+   2. README / CLAUDE.md 초안 작성 ✅
+   3. 서버 실행 규약 (baseline_submit.zip에서 확인): 서버가 `./data/test.jsonl` + `./data/sample_submission.csv` 제공 → script.py가 `./output/submission.csv` 생성
 3. **학습/추론 분리 원칙**: 피처 코드는 학습·추론이 같은 모듈을 import (불일치 = 조용한 점수 하락). script.py는 `model/`만 읽어 예측.
 4. **오프라인 제약 체크리스트** (제출 전 매번)
    - [ ] script.py에 네트워크 호출 없음 (HF `from_pretrained`는 로컬 경로 + `local_files_only=True`)
