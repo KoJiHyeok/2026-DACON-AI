@@ -1,0 +1,15 @@
+action,last_step,earlier_steps
+apply_patch,0.0498,0.0719
+ask_user,0.0538,0.0362
+edit_file,0.0673,0.1739
+glob_pattern,0.0376,0.0814
+grep_search,0.0581,0.1546
+lint_or_typecheck,0.0304,0.033
+list_directory,0.011,0.0698
+plan_task,0.0103,0.0426
+read_file,0.046,0.1457
+respond_only,0.5492,0.0
+run_bash,0.0301,0.079
+run_tests,0.0414,0.0689
+web_search,0.0109,0.0193
+write_file,0.0039,0.0238

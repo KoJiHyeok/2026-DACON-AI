@@ -1,0 +1,7 @@
+class_a,class_b,best_signal,n_rows_on,P(a|signal),gap_from_50_50
+read_file,grep_search,mentions_all_of_type,50,0.36,0.14
+read_file,list_directory,last_args_had_scope,2004,0.908,0.408
+read_file,glob_pattern,mentions_open_show,4021,0.668,0.168
+grep_search,list_directory,last_args_had_scope,1911,0.903,0.403
+grep_search,glob_pattern,n_open_files_gt0,10095,0.679,0.179
+list_directory,glob_pattern,last_args_had_scope,1366,0.135,0.365

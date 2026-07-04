@@ -1,0 +1,15 @@
+state,n_rows,n_sessions,top_action,purity
+"('edit_file',)",10620,6123,run_tests,0.23013182674199623
+"('grep_search',)",9412,5635,edit_file,0.2194007649808755
+"('none',)",9000,9000,list_directory,0.202
+"('read_file',)",8887,6008,edit_file,0.2899741195003938
+"('glob_pattern',)",4967,3314,grep_search,0.22186430440910007
+"('run_bash',)",4797,3125,run_bash,0.2038774233896185
+"('apply_patch',)",4417,2804,lint_or_typecheck,0.1713832918270319
+"('run_tests',)",4251,2848,edit_file,0.24464831804281345
+"('list_directory',)",4223,3512,read_file,0.2507695950745915
+"('plan_task',)",2584,2115,apply_patch,0.1803405572755418
+"('ask_user',)",2192,2041,grep_search,0.20027372262773724
+"('lint_or_typecheck',)",2016,1507,apply_patch,0.2490079365079365
+"('write_file',)",1446,1443,edit_file,0.40387275242047027
+"('web_search',)",1188,946,edit_file,0.19023569023569023

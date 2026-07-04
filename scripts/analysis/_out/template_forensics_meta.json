@@ -1,0 +1,6 @@
+{
+  "total_rows": 70000,
+  "n_unique_prompts": 63257,
+  "n_exact_dup_groups": 3755,
+  "n_templates": 62421
+}

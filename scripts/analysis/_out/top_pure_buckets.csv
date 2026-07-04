@@ -1,0 +1,4 @@
+state_def,state,n_rows,n_sessions,top_action,purity
+last_action+last2+last3,"('read_file', 'edit_file', 'plan_task')",5,5,edit_file,1.0
+last_action+last_result_prefix,"('edit_file', 'ok; applied 1 edit (1+/1-) to Dockerfile')",11,11,run_bash,1.0
+last_action+last_result_prefix,"('run_tests', 'FAIL: 248 tests failing')",5,5,edit_file,1.0

@@ -1,0 +1,15 @@
+{
+  "total_rows": 70000,
+  "n_sessions": 9429,
+  "union_upper_bound_rows": 21,
+  "union_upper_bound_coverage": 0.0003,
+  "candidate_defs": [
+    "last_action+last2+last3",
+    "last_action+last2",
+    "last_action+last_args_sig",
+    "history_len_bin+last_action",
+    "last_action+last_result_prefix",
+    "step+last_action",
+    "last_action_family4"
+  ]
+}
