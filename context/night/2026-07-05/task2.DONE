@@ -1,0 +1,5 @@
+task2 complete
+R4 hierarchy 5-fold CV done
+R3 first-step bias 5-fold CV done
+report and experiment log written
+git commit blocked: git common dir is outside writable sandbox
