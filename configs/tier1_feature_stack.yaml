@@ -1,0 +1,30 @@
+# Tier 1: prompt/history/meta feature stack.
+#
+# Placeholder for the first serious local-CV loop after Tier 0 works.
+
+experiment_name: tier1_feature_stack
+seed: 42
+cv:
+  type: group_kfold
+  n_splits: 5
+  group: session_id
+metric: macro_f1
+features:
+  text_fields:
+    - current_prompt
+    - recent_user_turns
+    - recent_action_names
+    - recent_action_summaries
+  meta: true
+  transition:
+    last_action: true
+    last_action_bigrams: true
+  lexical_flags: true
+model:
+  candidates:
+    - logistic_regression
+    - linear_svm_calibrated
+    - lightgbm
+artifacts:
+  save_oof: true
+  save_fold_models: true

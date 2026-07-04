@@ -1,0 +1,29 @@
+# Tier 0: official-style baseline reproduction.
+#
+# This is a placeholder config. The Modeling Agent should wire src/train.py
+# to consume configs before real experiment loops start.
+
+experiment_name: tier0_tfidf_logreg
+seed: 42
+cv:
+  type: group_kfold
+  n_splits: 5
+  group: session_id
+metric: macro_f1
+features:
+  text_fields:
+    - current_prompt
+  meta: false
+model:
+  type: logistic_regression
+  tfidf:
+    analyzer: word
+    ngram_range: [1, 2]
+    min_df: 2
+    max_features: 80000
+    sublinear_tf: true
+    lowercase: true
+  classifier:
+    class_weight: balanced
+    C: 2.0
+    max_iter: 500
