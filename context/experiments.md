@@ -68,3 +68,10 @@ Experiment log entry:
 Open questions:
 Next recommended owner:
 ```
+
+## 2026-07-05 task2 — R4/R3 local CV probes
+
+| # | 날짜 | 가설/행동 | 변경점 | 로컬 CV | LB | 결론 |
+|---|---|---|---|---|---|---|
+| 8 | 07.05 | R4 explore 계층 분류가 flat 14-way보다 탐색 4클래스 약점을 줄일 수 있다 | `scripts/hierarchy/proto_hier.py`: E_+seq-like sparse features + `LinearSVC(C=0.1, balanced)`, 1차 family gate, 2차 explore branch | flat 0.66378 → explore override 0.68124 → strict family route 0.68834. explore 4-class Macro-F1 0.51042 → 0.53538 | - | 로컬 강한 양성. LB 게이트용 후보로 승격 |
+| 9 | 07.05 | R3 첫 스텝 class-wise prior bias가 history 없음 구간을 보정한다 | `scripts/hierarchy/first_step_bias.py`: train-fold first-step log prior shift를 `n_history==0` valid row에만 lambda 적용 | best lambda 0.125: 0.66378 → 0.66460(+0.00082). first-step subset Macro-F1은 0.42136 → 0.40053로 하락 | - | 약한/위험한 보정. `calib_v1` 실패 전례 때문에 단독 채택 금지, LB 게이트 필수 |

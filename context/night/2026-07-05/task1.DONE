@@ -1,0 +1,5 @@
+2-way linear+stacker candidate assembled at submit_candidates/two_way/.
+Candidate contains script.py, requirements.txt, and model/ only.
+Smoke test passed with 5-row submission using the DACON venv.
+Validation passed 12/12; log saved at context/night/2026-07-05/task1_validate.log.
+Report saved; git commit is blocked here because external worktree gitdir is read-only to the sandbox.

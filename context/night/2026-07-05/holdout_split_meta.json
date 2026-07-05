@@ -1,0 +1,13 @@
+{
+  "seed": 42,
+  "valid_frac_requested": 0.15,
+  "n_splits": 7,
+  "n_rows": 70000,
+  "n_train": 59999,
+  "n_holdout": 10001,
+  "actual_holdout_frac": 0.14287142857142857,
+  "n_groups": 9429,
+  "n_train_groups": 8079,
+  "n_holdout_groups": 1350,
+  "group_overlap": 0
+}

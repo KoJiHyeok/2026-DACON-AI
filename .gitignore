@@ -14,6 +14,10 @@ colab_out/
 
 # 밤샘 러너 로그 (프롬프트·리포트·DONE은 추적, 실행 로그만 제외)
 context/night/**/_runner/
+scripts/hierarchy/_smoke*/
+scripts/hierarchy/_out/fold*/
+scripts/hierarchy/_out/*_partial.csv
+scripts/hierarchy/_out/*oof_predictions.csv
 *.pkl
 *.joblib
 *.pt
