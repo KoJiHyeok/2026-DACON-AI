@@ -21,6 +21,7 @@
   · model/bucket_weights.json 또는 ENS_BUCKET_WEIGHTS: 버킷별 3슬롯 가중(기본 off).
   · model/calib.json: encoder block에 softmax(log(p)/T + bias) 적용.
   · model/encoder_2...: encoder block 내부 uniform 평균.
+  · model/au_linear/model.pkl 또는 ENS_AU_ROUTE=0: sess_au 행 예측을 AU 전용 모델로 교체 (exp #23).
 
 경로(패키징 기본 = ./model/{linear,stacker,encoder[,encoder_2…]}). 인코더가 2개 이상이면
 확률을 uniform 평균(seed·이종 인코더 앙상블). 스모크는 아래 env로 실아티팩트 지정(복사 회피):
@@ -49,6 +50,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import features as F     # linear (= submit/features.py 벤더 — 챔피언과 짝)
 import aar_infer as AAR  # stacker (= work2/script.py verbatim 벤더)
+import au_route as AU    # AU 전용 라우팅 (exp #23 — serialize 단일 소스)
 
 DATA = os.environ.get("ENS_DATA", "./data")
 MODEL = "./model"
@@ -402,6 +404,37 @@ def bucket_weighted_blend(samples, lin, stk, enc, cfg):
     return out
 
 
+def au_route_override(samples, preds):
+    """AU 전용 linear 라우팅 (exp #23) — sess_au 행의 blend 예측을 AU 전용 모델로 교체.
+
+    근거: AU 서브셋에서 전 성분 공통 약세(macro 0.49~0.54), AU 전용 학습이 리그 +0.0094
+    (오염 격리 재검증 +0.0114). model/au_linear/model.pkl 없거나 ENS_AU_ROUTE=0이면 no-op,
+    test에 sess_au 행이 없어도 no-op — 폴백 안전.
+    """
+    if os.environ.get("ENS_AU_ROUTE", "1").strip().lower() in ("0", "false", "no"):
+        print("[AU-ROUTE] off (ENS_AU_ROUTE=0)")
+        return preds
+    pkl = os.path.join(MODEL, "au_linear", "model.pkl")
+    if not os.path.exists(pkl):
+        print("[AU-ROUTE] model/au_linear 없음 — skip")
+        return preds
+    au_idx = [i for i, s in enumerate(samples) if AU.is_au(s.get("id", ""))]
+    if not au_idx:
+        print("[AU-ROUTE] sess_au 행 0건 — no-op")
+        return preds
+    artifact = joblib.load(pkl)
+    au_preds = AU.predict(artifact, [samples[i] for i in au_idx])
+    action_set = set(ACTIONS)
+    n_diff = 0
+    for i, p in zip(au_idx, au_preds):
+        if p in action_set:                    # 방어: 14클래스 밖이면 blend 예측 유지
+            if preds[i] != p:
+                n_diff += 1
+            preds[i] = p
+    print(f"[AU-ROUTE] override {len(au_idx)}/{len(samples)}행 (blend와 다른 값 {n_diff})")
+    return preds
+
+
 def load_test():
     samples = []
     with open(os.path.join(DATA, "test.jsonl"), encoding="utf-8-sig") as f:
@@ -474,6 +507,7 @@ def main():
         print(f"[BLEND] weighted lin={wl:g} stk={wstk:g} enc={we:g} "
               f"(정규화합={wl + wstk + we:g})")
     preds = [str(p) for p in np.array(ACTIONS)[blend.argmax(1)]]
+    preds = au_route_override(samples, preds)
     preds = sibling_label_recovery(samples, preds)
     id2pred = {s["id"]: p for s, p in zip(samples, preds)}
 
