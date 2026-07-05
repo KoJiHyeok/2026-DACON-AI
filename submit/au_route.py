@@ -54,11 +54,25 @@ def serialize(sample):
     return "\n".join(parts)
 
 
-def predict(artifact, samples):
-    """artifact = {"union": FeatureUnion, "clf": LinearSVC} → 예측 라벨 리스트."""
+def predict_proba(artifact, samples):
+    """artifact = {"union": vectorizer, "clf": LinearSVC} → (probs, classes).
+
+    probs = softmax(decision_function) — 밤샘 task4 그리드(scripts/au2/task4_grid.py)의
+    확률 변환과 동일 (soft 결합 계약)."""
     import numpy as np
     texts = [serialize(s) for s in samples]
     x = artifact["union"].transform(texts)
-    scores = np.asarray(artifact["clf"].decision_function(x))
+    z = np.asarray(artifact["clf"].decision_function(x), dtype=np.float64)
+    if z.ndim == 1:
+        z = np.vstack([-z, z]).T
+    z -= z.max(axis=1, keepdims=True)
+    e = np.exp(z)
+    probs = e / e.sum(axis=1, keepdims=True)
     classes = [str(c) for c in artifact["clf"].classes_]
-    return [classes[i] for i in scores.argmax(axis=1)]
+    return probs, classes
+
+
+def predict(artifact, samples):
+    """예측 라벨 리스트 (하드 라우팅용 — soft는 predict_proba 사용)."""
+    probs, classes = predict_proba(artifact, samples)
+    return [classes[i] for i in probs.argmax(axis=1)]

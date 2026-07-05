@@ -21,7 +21,8 @@
   · model/bucket_weights.json 또는 ENS_BUCKET_WEIGHTS: 버킷별 3슬롯 가중(기본 off).
   · model/calib.json: encoder block에 softmax(log(p)/T + bias) 적용.
   · model/encoder_2...: encoder block 내부 uniform 평균.
-  · model/au_linear/model.pkl 또는 ENS_AU_ROUTE=0: sess_au 행 예측을 AU 전용 모델로 교체 (exp #23).
+  · model/au_linear/model.pkl: sess_au 행 확률을 α·P_au+(1-α)·P_blend 로 soft 라우팅
+    (exp #23 하드 LB 0.7331 → #24 soft. α=ENS_AU_ALPHA 기본 0.9, ENS_AU_ROUTE=0 끔).
 
 경로(패키징 기본 = ./model/{linear,stacker,encoder[,encoder_2…]}). 인코더가 2개 이상이면
 확률을 uniform 평균(seed·이종 인코더 앙상블). 스모크는 아래 env로 실아티팩트 지정(복사 회피):
@@ -404,35 +405,40 @@ def bucket_weighted_blend(samples, lin, stk, enc, cfg):
     return out
 
 
-def au_route_override(samples, preds):
-    """AU 전용 linear 라우팅 (exp #23) — sess_au 행의 blend 예측을 AU 전용 모델로 교체.
+def au_route_blend(samples, blend):
+    """AU 전용 linear soft 라우팅 (exp #23 하드 = LB 0.7331 → #24 soft 개선).
 
-    근거: AU 서브셋에서 전 성분 공통 약세(macro 0.49~0.54), AU 전용 학습이 리그 +0.0094
-    (오염 격리 재검증 +0.0114). model/au_linear/model.pkl 없거나 ENS_AU_ROUTE=0이면 no-op,
-    test에 sess_au 행이 없어도 no-op — 폴백 안전.
+    sess_au 행의 확률을 α·P_au + (1-α)·P_blend 로 교체 (α 기본 0.9, ENS_AU_ALPHA).
+    α=1.0이면 #23 하드 라우팅과 동일. 근거: AU 서브셋 전 성분 공통 약세, AU 전용 학습이
+    LB +0.0142 실증, soft α=0.9가 리그에서 하드 대비 +0.0065 (밤샘 task4).
+    model/au_linear 없거나 ENS_AU_ROUTE=0이면 no-op, sess_au 0건이어도 no-op — 폴백 안전.
     """
     if os.environ.get("ENS_AU_ROUTE", "1").strip().lower() in ("0", "false", "no"):
         print("[AU-ROUTE] off (ENS_AU_ROUTE=0)")
-        return preds
+        return blend
     pkl = os.path.join(MODEL, "au_linear", "model.pkl")
     if not os.path.exists(pkl):
         print("[AU-ROUTE] model/au_linear 없음 — skip")
-        return preds
+        return blend
     au_idx = [i for i, s in enumerate(samples) if AU.is_au(s.get("id", ""))]
     if not au_idx:
         print("[AU-ROUTE] sess_au 행 0건 — no-op")
-        return preds
+        return blend
+    alpha = float(os.environ.get("ENS_AU_ALPHA", "0.9"))
+    if not (0.0 <= alpha <= 1.0):
+        raise ValueError(f"ENS_AU_ALPHA는 0~1 이어야 함: {alpha}")
     artifact = joblib.load(pkl)
-    au_preds = AU.predict(artifact, [samples[i] for i in au_idx])
-    action_set = set(ACTIONS)
+    probs, classes = AU.predict_proba(artifact, [samples[i] for i in au_idx])
+    probs = align_cols(probs, classes)                 # ACTIONS 순 정렬 (blend와 동일 축)
     n_diff = 0
-    for i, p in zip(au_idx, au_preds):
-        if p in action_set:                    # 방어: 14클래스 밖이면 blend 예측 유지
-            if preds[i] != p:
-                n_diff += 1
-            preds[i] = p
-    print(f"[AU-ROUTE] override {len(au_idx)}/{len(samples)}행 (blend와 다른 값 {n_diff})")
-    return preds
+    for k, i in enumerate(au_idx):
+        mixed = alpha * probs[k] + (1.0 - alpha) * blend[i]
+        if mixed.argmax() != blend[i].argmax():
+            n_diff += 1
+        blend[i] = mixed
+    print(f"[AU-ROUTE] soft α={alpha:g} — {len(au_idx)}/{len(samples)}행 결합 "
+          f"(argmax 변경 {n_diff})")
+    return blend
 
 
 def load_test():
@@ -506,8 +512,8 @@ def main():
         blend = (wl * lin + wstk * stk + we * enc) / (wl + wstk + we)
         print(f"[BLEND] weighted lin={wl:g} stk={wstk:g} enc={we:g} "
               f"(정규화합={wl + wstk + we:g})")
+    blend = au_route_blend(samples, blend)
     preds = [str(p) for p in np.array(ACTIONS)[blend.argmax(1)]]
-    preds = au_route_override(samples, preds)
     preds = sibling_label_recovery(samples, preds)
     id2pred = {s["id"]: p for s, p in zip(samples, preds)}
 
