@@ -29,12 +29,20 @@
 | 10 | 07.05 | w112 재조립: 원본 인코더(fp16)로 3-way 복원 | ai-2026 draft(linear+stacker+weights[1,1,2]) + artifacts/enc_v2_s42 fp16 → submit/ 스테이징 (커밋 e4cd2b4) | - (재현 제출) | **0.71884** | 기준선 복구 (팀 w112 0.7208 대비 −0.002 — fp16 재변환 or 체크포인트 미세 차이 추정, 추적 비용 대비 무가치). 제출 대장 #1 |
 | 12 | 07.05 | **세션 형제 행 라벨 복원**: step k 라벨 == step k+1 history 마지막 assistant_action.name | train 검증 스크립트 (스크래치) | **train 58,326/58,326 쌍 100.00% 성립** (sim·au 계열 모두, gap1~6 231,664쌍 무예외) | **0.71884 (델타 0)** | **이득 0 확정** — test는 세션당 1스텝 샘플링(형제 행 없음). 상위권 0.79도 순수 모델링이라는 뜻. 폴백 안전하므로 보험 코드는 script.py에 잔류 (D-008). 점수 기대는 인코더 v3·R4로 이동 |
 | 11 | 07.05 | blend 그리드 도구 (밤샘 task3) | scripts/blend/{collect_probs,grid_blend}.py — 성분별 holdout 확률 npz + 가중 그리드 | ⚠️ 수치 판정 불가 — stacker가 full-train 아티팩트라 holdout 누수 (0.7385는 오염값) | 미제출 | 도구만 채택. 사용하려면 성분 전부를 85% split로 재학습한 npz 필요 |
+| 13 | 07.05 | **로컬 LB 시뮬레이션 리그 완성** | 평가행 = job3 holdout_base.npz의 9,969행, linear·stacker는 정직 OOF(artifacts/oof) id 조인 | 3-way [1,1,2] = **0.71726** vs 실제 LB 0.71884 (**오차 0.0016**) | - | 채택 — 후보 스크리닝은 LB 소모 없이 리그에서. 단 #15의 축별 한계 참고 |
+| 14 | 07.05 | R4 확률 레벨 통합 (r4-integrate) | V1 override(gate행만 explore 질량 재배분) / V2 soft route(전 family 재조정) — 3-way 리그 베이스 | V1 **−0.0073**, V2 **−0.0158** (explore 4클래스 전부 하락) | 미제출 | **폐기** — linear 단독의 +0.0246은 강한 베이스에서 역전. 인코더+stacker가 explore를 specialist보다 잘 풂. 재시도 금지행 |
+| 15 | 07.05 | serialize v3 (args+hist12+lang+elapsed) 프록시 A/B | scripts/encoding/serialize_ab.py — TF-IDF+LinearSVC 3-fold, 70k | v2 0.5017 / v3 **−0.031** / v3_no_args −0.026 / v3_hist6(v2+args) **−0.0036**, explore4 개선 없음(grep −0.007) | 미제출 (GPU 미투입) | **폐기** — hist 확장은 명백한 해, args는 explore를 못 올림(TF-IDF가 유리한 리터럴 신호인데도) → GPU 정당화 실패. 부산물: 실제 토크나이저 실측(v3는 384에서 29.3% 잘림 — chars/4 근사는 1.64배 과소) |
+| 16 | 07.05 | blend 가중 재튜닝 (리그 그리드) | [2,2,1.75](enc 지분 0.30)가 로컬 +0.0093 | 로컬 0.72654 | 미제출 | **기각** — 핸드오프 §5 편향 재확인: 리그는 enc 지분 축에서 기울기가 LB와 반대 (LB 실측: 지분 0.33→0.50 단조 상승). 리그는 성분 추가/제거 판정용으로만, enc 지분 축은 LB만 신뢰 |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
 | 레버 | LB/결과 | 왜 |
 |---|---|---|
 | seed soup (soup2/3: s42+s7 가중치 평균) | 0.697 | seed별 head 초기화가 다른 basin → 파괴적 간섭 |
+| R4 계층 분류 (explore gate+specialist) | 리그 −0.007~−0.016 | linear 단독에서만 +0.0246, 3-way 베이스에서 역전 — blend가 이미 explore를 더 잘 풂 (#14) |
+| serialize 확장 (hist12 / args 추가) | 프록시 −0.031 / −0.004 | 길이 희석 실해 + args가 explore F1을 못 올림. hist12는 384 토큰에서 83% 잘림 문제도 (#15) |
+| 세션 형제 행 라벨 복원 | LB 델타 0 | test가 세션당 1스텝 샘플링 — 복원 대상 없음 (#12, 보험 코드는 잔류) |
+| 로컬 그리드로 enc 지분 낮추기 | 로컬 +0.009 신기루 | 리그 기울기가 enc 지분 축에서 LB와 반대 — 두 번 확인됨 (핸드오프 §5 + #16) |
 | calib_v1 (enc T=1.34 + class bias) | 0.7169 | holdout +0.005가 LB −0.002로 비전이 — train 분포 피팅 bias는 분포 이동에 취약 |
 | flat 피처 추가 F~W | 이득 없음 | |
 | stacker 변형 4종 | 이득 없음 | |
