@@ -19,7 +19,7 @@
   - `C:\dev\2026-AI-DACON\data`
   - `C:\dev\2026-AI-DACON\artifacts\oof\oof_rebuild_2026_07_04`
   - `context/night/2026-07-05/holdout_base.npz`
-- Added `scripts/au/analyze.py` and `scripts/au/probe_au_linear.py`.
+- Added `scripts/au/common.py`, `scripts/au/analyze.py`, and `scripts/au/probe_au_linear.py`.
 - Syntax check passed: `python -m py_compile scripts\au\*.py`.
 
 ## Next resume point
