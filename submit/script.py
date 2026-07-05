@@ -30,6 +30,7 @@ import csv
 import json
 import math
 import os
+import re
 import sys
 import time
 from collections import Counter
@@ -399,6 +400,45 @@ def load_test():
     return samples
 
 
+_SIB_STEP_RE = re.compile(r"-step_(\d+)$")
+
+
+def sibling_label_recovery(samples, preds):
+    """세션 형제 행 라벨 복원 (D-008) — step k의 정답은 같은 세션 step k+g 행
+    history의 뒤에서 g번째 assistant_action.name (train 실측 gap1~6 231,664쌍 100.00%).
+
+    test가 세션당 1행이면 형제가 없어 아무것도 하지 않는다(모델 예측 유지) — 하방 위험 0.
+    history가 잘려 g번째가 없거나 name이 14클래스 밖이어도 폴백. ENS_RECOVER=0으로 끌 수 있다.
+    """
+    if os.environ.get("ENS_RECOVER", "1").strip().lower() in ("0", "false", "no"):
+        print("[RECOVER] off (ENS_RECOVER=0)")
+        return preds
+    by_sess = {}
+    for i, s in enumerate(samples):
+        sid = str(s.get("id", ""))
+        m = _SIB_STEP_RE.search(sid)
+        if m:
+            by_sess.setdefault(sid[:m.start()], []).append((int(m.group(1)), i))
+    n_over = n_diff = 0
+    action_set = set(ACTIONS)
+    for rows in by_sess.values():
+        rows.sort()
+        for a in range(len(rows)):
+            sa, ia = rows[a]
+            for b in range(a + 1, len(rows)):      # 가까운 형제부터 (gap↑ = history 잘림 위험↑)
+                g = rows[b][0] - sa
+                acts = [t.get("name") for t in (samples[rows[b][1]].get("history") or [])
+                        if isinstance(t, dict) and t.get("role") == "assistant_action"]
+                if g <= len(acts) and acts[-g] in action_set:
+                    if preds[ia] != acts[-g]:
+                        n_diff += 1
+                    preds[ia] = acts[-g]
+                    n_over += 1
+                    break
+    print(f"[RECOVER] sibling overrides: {n_over}/{len(samples)} (model 예측과 다른 값 {n_diff})")
+    return preds
+
+
 def main():
     t0 = time.time()
     samples = load_test()
@@ -421,8 +461,9 @@ def main():
         blend = (wl * lin + wstk * stk + we * enc) / (wl + wstk + we)
         print(f"[BLEND] weighted lin={wl:g} stk={wstk:g} enc={we:g} "
               f"(정규화합={wl + wstk + we:g})")
-    preds = np.array(ACTIONS)[blend.argmax(1)]
-    id2pred = {s["id"]: str(p) for s, p in zip(samples, preds)}
+    preds = [str(p) for p in np.array(ACTIONS)[blend.argmax(1)]]
+    preds = sibling_label_recovery(samples, preds)
+    id2pred = {s["id"]: p for s, p in zip(samples, preds)}
 
     print("[5/5] submission.csv (sample_submission id 순서 유지)…")
     os.makedirs(OUT, exist_ok=True)
