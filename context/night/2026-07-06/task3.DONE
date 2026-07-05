@@ -1,0 +1,10 @@
+# task3 DONE
+
+판정: PASS — AU 전용 linear 라우팅은 LB 게이트 후보.
+
+- 3-way 조인 assert 통과: `0.7172592175` (expected `0.71726`).
+- 현 blend: SIM `0.729707`, AU `0.513806`; AU에서 stacker/encoder가 특히 약함.
+- AU-only 3-fold OOF: `0.680006`; holdout AU 라우팅 프록시: AU `0.513806 -> 0.690347`, 전체 `0.717259 -> 0.726613` (`+0.009354`).
+- 독립 reviewer PASS: group split, 3-way assert, 리포트/아티팩트 일치, 금지된 blend/prior 튜닝 없음.
+- 독립 tester PASS: py_compile + `analyze.py` + `probe_au_linear.py` 재실행, baseline `0.7172592175`와 delta `+0.0093538302` 재현.
+- 주의: 제출 승격 아님. 다음 작업은 id-prefix AU specialist를 단순 구현해 LB 1회 게이트. blend weight/encoder share/class prior 튜닝 금지.

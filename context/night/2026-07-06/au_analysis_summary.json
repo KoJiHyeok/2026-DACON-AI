@@ -1,0 +1,123 @@
+{
+  "train_rows": 70000,
+  "train_bucket_counts": {
+    "sim": 64975,
+    "au": 5025
+  },
+  "holdout_rows": 9969,
+  "holdout_bucket_counts": {
+    "au": 682,
+    "sim": 9287
+  },
+  "join_assert_blend_macro_f1": 0.7172592174830689,
+  "component_macro_f1": [
+    {
+      "component": "linear",
+      "bucket": "all",
+      "rows": 9969,
+      "macro_f1": 0.6676495541547487
+    },
+    {
+      "component": "linear",
+      "bucket": "sim",
+      "rows": 9287,
+      "macro_f1": 0.6728573513699703
+    },
+    {
+      "component": "linear",
+      "bucket": "au",
+      "rows": 682,
+      "macro_f1": 0.5437194780232661
+    },
+    {
+      "component": "stacker",
+      "bucket": "all",
+      "rows": 9969,
+      "macro_f1": 0.7056611366010784
+    },
+    {
+      "component": "stacker",
+      "bucket": "sim",
+      "rows": 9287,
+      "macro_f1": 0.7169940179744462
+    },
+    {
+      "component": "stacker",
+      "bucket": "au",
+      "rows": 682,
+      "macro_f1": 0.49198778939962345
+    },
+    {
+      "component": "encoder",
+      "bucket": "all",
+      "rows": 9969,
+      "macro_f1": 0.7050885469078851
+    },
+    {
+      "component": "encoder",
+      "bucket": "sim",
+      "rows": 9287,
+      "macro_f1": 0.7169022797711165
+    },
+    {
+      "component": "encoder",
+      "bucket": "au",
+      "rows": 682,
+      "macro_f1": 0.5086999163924154
+    },
+    {
+      "component": "blend",
+      "bucket": "all",
+      "rows": 9969,
+      "macro_f1": 0.7172592174830689
+    },
+    {
+      "component": "blend",
+      "bucket": "sim",
+      "rows": 9287,
+      "macro_f1": 0.729706584336556
+    },
+    {
+      "component": "blend",
+      "bucket": "au",
+      "rows": 682,
+      "macro_f1": 0.5138063966844043
+    }
+  ],
+  "top_au_confusions": [
+    {
+      "true": "read_file",
+      "pred": "list_directory",
+      "count": 75
+    },
+    {
+      "true": "edit_file",
+      "pred": "apply_patch",
+      "count": 40
+    },
+    {
+      "true": "grep_search",
+      "pred": "list_directory",
+      "count": 33
+    },
+    {
+      "true": "read_file",
+      "pred": "grep_search",
+      "count": 30
+    },
+    {
+      "true": "run_bash",
+      "pred": "lint_or_typecheck",
+      "count": 27
+    }
+  ],
+  "output_files": [
+    "au_train_label_distribution.csv",
+    "au_field_numeric_summary.csv",
+    "au_field_categorical_summary.csv",
+    "au_component_macro_f1.csv",
+    "au_component_per_class_f1.csv",
+    "au_blend_confusion_top.csv",
+    "au_error_samples.md"
+  ]
+}

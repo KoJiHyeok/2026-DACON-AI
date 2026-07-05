@@ -1,0 +1,357 @@
+{
+  "inputs": {
+    "data_dir": "C:\\dev\\2026-AI-DACON\\data",
+    "oof_dir": "C:\\dev\\2026-AI-DACON\\artifacts\\oof\\oof_rebuild_2026_07_04",
+    "holdout_base": "context\\night\\2026-07-05\\holdout_base.npz",
+    "n_splits": 3,
+    "seed": 42,
+    "c": 0.5,
+    "model": "FeatureUnion(word 1-2 + char_wb 3-5) + LinearSVC(class_weight=balanced)"
+  },
+  "au_oof": {
+    "rows": 5025,
+    "sessions": 1099,
+    "folds": [
+      {
+        "fold": 1,
+        "rows": 1675,
+        "groups": 363,
+        "macro_f1": 0.6938269580983724,
+        "classes_in_train": [
+          "apply_patch",
+          "ask_user",
+          "edit_file",
+          "glob_pattern",
+          "grep_search",
+          "lint_or_typecheck",
+          "list_directory",
+          "plan_task",
+          "read_file",
+          "respond_only",
+          "run_bash",
+          "run_tests",
+          "web_search",
+          "write_file"
+        ]
+      },
+      {
+        "fold": 2,
+        "rows": 1675,
+        "groups": 368,
+        "macro_f1": 0.6735274823996077,
+        "classes_in_train": [
+          "apply_patch",
+          "ask_user",
+          "edit_file",
+          "glob_pattern",
+          "grep_search",
+          "lint_or_typecheck",
+          "list_directory",
+          "plan_task",
+          "read_file",
+          "respond_only",
+          "run_bash",
+          "run_tests",
+          "web_search",
+          "write_file"
+        ]
+      },
+      {
+        "fold": 3,
+        "rows": 1675,
+        "groups": 368,
+        "macro_f1": 0.6718545157373611,
+        "classes_in_train": [
+          "apply_patch",
+          "ask_user",
+          "edit_file",
+          "glob_pattern",
+          "grep_search",
+          "lint_or_typecheck",
+          "list_directory",
+          "plan_task",
+          "read_file",
+          "respond_only",
+          "run_bash",
+          "run_tests",
+          "web_search",
+          "write_file"
+        ]
+      }
+    ],
+    "macro_f1": 0.6800058522959371,
+    "per_class": [
+      {
+        "class": "read_file",
+        "f1": 0.7705112960760999,
+        "support": 1291,
+        "pred_count": 1232
+      },
+      {
+        "class": "grep_search",
+        "f1": 0.6920289855072463,
+        "support": 550,
+        "pred_count": 554
+      },
+      {
+        "class": "list_directory",
+        "f1": 0.6974358974358974,
+        "support": 109,
+        "pred_count": 86
+      },
+      {
+        "class": "glob_pattern",
+        "f1": 0.6580645161290323,
+        "support": 89,
+        "pred_count": 66
+      },
+      {
+        "class": "edit_file",
+        "f1": 0.6662721893491125,
+        "support": 882,
+        "pred_count": 808
+      },
+      {
+        "class": "write_file",
+        "f1": 0.6222222222222222,
+        "support": 78,
+        "pred_count": 57
+      },
+      {
+        "class": "apply_patch",
+        "f1": 0.6,
+        "support": 191,
+        "pred_count": 199
+      },
+      {
+        "class": "run_bash",
+        "f1": 0.6131528046421664,
+        "support": 496,
+        "pred_count": 538
+      },
+      {
+        "class": "run_tests",
+        "f1": 0.6684350132625995,
+        "support": 331,
+        "pred_count": 423
+      },
+      {
+        "class": "lint_or_typecheck",
+        "f1": 0.6417657045840407,
+        "support": 281,
+        "pred_count": 308
+      },
+      {
+        "class": "ask_user",
+        "f1": 0.4383561643835616,
+        "support": 94,
+        "pred_count": 52
+      },
+      {
+        "class": "plan_task",
+        "f1": 0.8598130841121495,
+        "support": 169,
+        "pred_count": 152
+      },
+      {
+        "class": "web_search",
+        "f1": 0.7605633802816901,
+        "support": 118,
+        "pred_count": 95
+      },
+      {
+        "class": "respond_only",
+        "f1": 0.8314606741573034,
+        "support": 346,
+        "pred_count": 455
+      }
+    ]
+  },
+  "routing_eval": {
+    "holdout_rows": 9969,
+    "holdout_au_rows": 682,
+    "holdout_au_share": 0.0684120774400642,
+    "blend_all_macro_f1": 0.7172592174830689,
+    "hybrid_all_macro_f1": 0.7266130476347238,
+    "hybrid_delta": 0.009353830151654918,
+    "blend_au_macro_f1": 0.5138063966844043,
+    "probe_au_macro_f1_on_holdout_au_oof": 0.6903470618586711,
+    "probe_minus_blend_au": 0.1765406651742668,
+    "blend_au_per_class": [
+      {
+        "class": "apply_patch",
+        "f1": 0.2564102564102564,
+        "support": 28,
+        "pred_count": 50
+      },
+      {
+        "class": "ask_user",
+        "f1": 0.4166666666666667,
+        "support": 14,
+        "pred_count": 10
+      },
+      {
+        "class": "edit_file",
+        "f1": 0.7391304347826086,
+        "support": 126,
+        "pred_count": 104
+      },
+      {
+        "class": "glob_pattern",
+        "f1": 0.08333333333333333,
+        "support": 8,
+        "pred_count": 16
+      },
+      {
+        "class": "grep_search",
+        "f1": 0.4411764705882353,
+        "support": 75,
+        "pred_count": 61
+      },
+      {
+        "class": "lint_or_typecheck",
+        "f1": 0.5263157894736842,
+        "support": 36,
+        "pred_count": 59
+      },
+      {
+        "class": "list_directory",
+        "f1": 0.10526315789473684,
+        "support": 11,
+        "pred_count": 122
+      },
+      {
+        "class": "plan_task",
+        "f1": 0.5531914893617021,
+        "support": 26,
+        "pred_count": 21
+      },
+      {
+        "class": "read_file",
+        "f1": 0.490272373540856,
+        "support": 180,
+        "pred_count": 77
+      },
+      {
+        "class": "respond_only",
+        "f1": 1.0,
+        "support": 42,
+        "pred_count": 42
+      },
+      {
+        "class": "run_bash",
+        "f1": 0.45454545454545453,
+        "support": 72,
+        "pred_count": 38
+      },
+      {
+        "class": "run_tests",
+        "f1": 0.5714285714285714,
+        "support": 45,
+        "pred_count": 53
+      },
+      {
+        "class": "web_search",
+        "f1": 0.5555555555555556,
+        "support": 13,
+        "pred_count": 23
+      },
+      {
+        "class": "write_file",
+        "f1": 1.0,
+        "support": 6,
+        "pred_count": 6
+      }
+    ],
+    "probe_au_per_class": [
+      {
+        "class": "apply_patch",
+        "f1": 0.6037735849056604,
+        "support": 28,
+        "pred_count": 25
+      },
+      {
+        "class": "ask_user",
+        "f1": 0.43478260869565216,
+        "support": 14,
+        "pred_count": 9
+      },
+      {
+        "class": "edit_file",
+        "f1": 0.6781115879828327,
+        "support": 126,
+        "pred_count": 107
+      },
+      {
+        "class": "glob_pattern",
+        "f1": 0.8,
+        "support": 8,
+        "pred_count": 7
+      },
+      {
+        "class": "grep_search",
+        "f1": 0.6802721088435374,
+        "support": 75,
+        "pred_count": 72
+      },
+      {
+        "class": "lint_or_typecheck",
+        "f1": 0.5641025641025641,
+        "support": 36,
+        "pred_count": 42
+      },
+      {
+        "class": "list_directory",
+        "f1": 0.7272727272727273,
+        "support": 11,
+        "pred_count": 11
+      },
+      {
+        "class": "plan_task",
+        "f1": 0.875,
+        "support": 26,
+        "pred_count": 22
+      },
+      {
+        "class": "read_file",
+        "f1": 0.7542857142857143,
+        "support": 180,
+        "pred_count": 170
+      },
+      {
+        "class": "respond_only",
+        "f1": 0.7207207207207207,
+        "support": 42,
+        "pred_count": 69
+      },
+      {
+        "class": "run_bash",
+        "f1": 0.569620253164557,
+        "support": 72,
+        "pred_count": 86
+      },
+      {
+        "class": "run_tests",
+        "f1": 0.6521739130434783,
+        "support": 45,
+        "pred_count": 47
+      },
+      {
+        "class": "web_search",
+        "f1": 0.6956521739130435,
+        "support": 13,
+        "pred_count": 10
+      },
+      {
+        "class": "write_file",
+        "f1": 0.9090909090909091,
+        "support": 6,
+        "pred_count": 5
+      }
+    ]
+  },
+  "decision_rule": {
+    "pass_threshold_hybrid_delta": 0.002,
+    "passes": true
+  }
+}
