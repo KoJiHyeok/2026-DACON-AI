@@ -6,7 +6,7 @@
 - [x] Add AU/SIM analysis script.
 - [x] Run AU/SIM distributions and component diagnostics.
 - [x] Add AU-only linear probe script.
-- [ ] Run AU-only linear probe.
+- [x] Run AU-only linear probe.
 - [ ] Write `task3_report.md`.
 - [ ] Create `task3.DONE`.
 - [ ] Independent review/test evidence.
@@ -24,7 +24,9 @@
 - `scripts/au/analyze.py` completed. Join assert: 3-way blend Macro-F1 `0.7172592175`.
 - Holdout rows: 9,969 total, AU 682 (6.84%), SIM 9,287.
 - Component AU macro-F1: linear 0.5437, stacker 0.4920, encoder 0.5087, blend 0.5138.
+- `scripts/au/probe_au_linear.py` completed. AU-only 3-fold OOF Macro-F1 `0.680006`.
+- Routing probe on league holdout: blend all `0.717259` -> AU-specialist hybrid `0.726613`, delta `+0.009354`.
 
 ## Next resume point
 
-Run `scripts/au/probe_au_linear.py`, then inspect routing delta and write report.
+Write `task3_report.md`, then create DONE and run independent review/test.
