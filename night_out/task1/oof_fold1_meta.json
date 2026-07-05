@@ -1,0 +1,69 @@
+{
+  "fold": 1,
+  "n_train": 46667,
+  "n_valid": 23333,
+  "n_train_groups": 6288,
+  "n_valid_groups": 3141,
+  "n_features": 248042,
+  "nnz_train": 64596405,
+  "macro_f1": 0.5927999646863604,
+  "explore4_macro_f1": 0.4154865814499646,
+  "per_class_f1": {
+    "read_file": 0.37849720223820943,
+    "grep_search": 0.4048507462686567,
+    "list_directory": 0.4437656206609275,
+    "glob_pattern": 0.4348327566320646,
+    "edit_file": 0.8292874950793859,
+    "write_file": 0.8787061994609164,
+    "apply_patch": 0.6350877192982456,
+    "run_bash": 0.7036504742742167,
+    "run_tests": 0.6683908045977012,
+    "lint_or_typecheck": 0.47478070175438597,
+    "ask_user": 0.4927536231884058,
+    "plan_task": 0.54198866563627,
+    "web_search": 0.4163636363636364,
+    "respond_only": 0.9962438601560243
+  },
+  "elapsed_sec": 261.01888608932495,
+  "classes_seen": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "config": {
+    "created_at": "2026-07-05T19:26:44",
+    "vectorizer": {
+      "analyzer": "char_wb",
+      "ngram_range": [
+        2,
+        5
+      ],
+      "max_features": 300000,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "dtype": "float32"
+    },
+    "classifier": {
+      "type": "LinearSVC",
+      "C": 0.1,
+      "class_weight": "balanced",
+      "max_iter": 5000,
+      "tol": 0.0001,
+      "dual": true,
+      "seed": 42
+    },
+    "n_folds": 3,
+    "data_dir": "C:\\dev\\2026-AI-DACON\\data"
+  }
+}

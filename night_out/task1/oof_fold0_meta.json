@@ -24,7 +24,7 @@
     "web_search": 0.4495575221238938,
     "respond_only": 0.9962481962481963
   },
-  "elapsed_sec": 337.09243750572205,
+  "elapsed_sec": 401.5453164577484,
   "classes_seen": [
     "apply_patch",
     "ask_user",
@@ -42,7 +42,7 @@
     "write_file"
   ],
   "config": {
-    "created_at": "2026-07-05T19:21:31",
+    "created_at": "2026-07-05T19:23:49",
     "vectorizer": {
       "analyzer": "char_wb",
       "ngram_range": [
