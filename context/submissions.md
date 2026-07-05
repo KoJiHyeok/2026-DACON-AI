@@ -7,3 +7,4 @@
 |---|---|---|---|---|---|---|---|
 | 1 | 07-05 09:37 | `f305fc9` | 546.0MB | PASS | - | **0.71884** | 3way w112 rebuild (original encoder fp16) — 팀 w112 0.7208 대비 −0.002 (fp16 재변환분 추정), 기준선 복구 |
 | 2 | 07-05 10:17 | `963396e` | 546.0MB | PASS | - | **0.71884** | 3way + sibling label recovery (D-008 probe) — #1과 델타 0 → test에 복원 가능한 형제 행 없음 (세션당 1스텝 샘플링 확정적). 보험 코드는 잔류 |
+| 3 | 07-05 14:35 | `06175c2` | 757.0MB | PASS | - | (제출 후 기입) | 4way: +e5-small as encoder_2 (uniform enc block) |

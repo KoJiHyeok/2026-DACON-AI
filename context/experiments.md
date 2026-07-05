@@ -33,6 +33,8 @@
 | 14 | 07.05 | R4 확률 레벨 통합 (r4-integrate) | V1 override(gate행만 explore 질량 재배분) / V2 soft route(전 family 재조정) — 3-way 리그 베이스 | V1 **−0.0073**, V2 **−0.0158** (explore 4클래스 전부 하락) | 미제출 | **폐기** — linear 단독의 +0.0246은 강한 베이스에서 역전. 인코더+stacker가 explore를 specialist보다 잘 풂. 재시도 금지행 |
 | 15 | 07.05 | serialize v3 (args+hist12+lang+elapsed) 프록시 A/B | scripts/encoding/serialize_ab.py — TF-IDF+LinearSVC 3-fold, 70k | v2 0.5017 / v3 **−0.031** / v3_no_args −0.026 / v3_hist6(v2+args) **−0.0036**, explore4 개선 없음(grep −0.007) | 미제출 (GPU 미투입) | **폐기** — hist 확장은 명백한 해, args는 explore를 못 올림(TF-IDF가 유리한 리터럴 신호인데도) → GPU 정당화 실패. 부산물: 실제 토크나이저 실측(v3는 384에서 29.3% 잘림 — chars/4 근사는 1.64배 과소) |
 | 16 | 07.05 | blend 가중 재튜닝 (리그 그리드) | [2,2,1.75](enc 지분 0.30)가 로컬 +0.0093 | 로컬 0.72654 | 미제출 | **기각** — 핸드오프 §5 편향 재확인: 리그는 enc 지분 축에서 기울기가 LB와 반대 (LB 실측: 지분 0.33→0.50 단조 상승). 리그는 성분 추가/제거 판정용으로만, enc 지분 축은 LB만 신뢰 |
+| 17 | 07.05 | meta-selector (코덱스 1순위 아이디어) | scripts/meta/meta_selector.py — 27피처(마진·불일치·rank) LogReg, 확신 임계 override, 9,969행 중첩 그룹 5-fold | **전 임계·전 설정 마이너스** (θ=0.9에서도 −0.003, fixed:broken = 1:8~17). oracle 상한 0.80163은 실재 확인 | 미제출 | **폐기** — 파생 피처에는 oracle 갭을 열 정보가 없음. R4와 동일 교훈: 약한 메타로 블렌드 못 이김. (후속 후보로 '성분 신뢰 3-way 분류'가 제안됐으나 저순위 보류) |
+| 18 | 07.05 | 4-way: e5-small을 encoder_2로 추가 | submit/model/encoder_2 (fp16 235MB), 인코더 블록 uniform 평균, weights [1,1,2], zip 757MB | - (리그 검증은 holdout_small.npz 도착 후 가능) | (제출 대기) | 게이트 12/12 PASS — 제출 대장 #3. 핸드오프가 지목했던 후보 |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
