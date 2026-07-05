@@ -168,3 +168,11 @@ Guardrails for the candidate:
 - Do not add class-prior or bias calibration.
 - Keep GroupKFold/OOF validation by session prefix.
 - Include a fallback path if test has no `sess_au*` rows or if AU model loading fails.
+
+---
+
+## 부록: 아침 회수 독립 검증 (2026-07-06, 메인 세션 reviewer·tester)
+
+1. **OOF holdout 혼입 (reviewer 발견)**: 본문 3-fold OOF는 AU 5,025행 전체를 사용 — fold train의 ~13%가 리그 holdout 지정 행이었다 (본문 미고지 결함). reviewer가 완전 격리 재검증(비holdout 4,343행만 학습 → 진짜 holdout 682행 평가) 수행: AU 0.7377, 전체 delta **+0.01143** — 오염 제거 시 오히려 커짐. 결과는 견고하나 방법론 결함으로 기록.
+2. **enc 지분 신기루(#16/#19/#20)와의 구조 유사성 (본문 누락)**: 리그 델타 +0.0094는 #20(+0.0095→LB −0.0061)과 크기 동일, AU 라우팅도 AU 행에서 enc 기여를 0으로 만드는 스킴. 단 반박 근거: AU 약세는 전 성분 공통(lin 0.544 / stk 0.492 / enc-proxy 0.509 vs SIM 0.67~0.72)이고 specialist 마진이 +0.15 이상이라, 프록시 enc 과소평가만으로 부호가 뒤집히기 어려움. **LB 게이트 결과는 회의적으로 해석할 것.**
+3. **test 전이 가정**: 로컬 test.jsonl 스텁(5행)에 sess_au 0건. 실제 test에 AU가 없으면 라우팅은 no-op → 델타 정확히 0 (하방 안전). 제출 script에는 AU 행 0건일 때 폴백이 자동 성립(교체 대상 없음).
