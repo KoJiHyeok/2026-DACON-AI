@@ -24,9 +24,9 @@
 | 5 | ~07.04 | 인코더 업그레이드 | v1 → v2 s42 (full 70k) | - | 0.7190 | +0.0060 |
 | 6 | ~07.04 | 인코더 지분↑ | weights [1,1,1.5] (enc 0.43) | - | 0.7200 | +0.0010 |
 | 7 | 07.04 | 인코더 지분↑↑ | **weights [1,1,2] (enc 0.50) = w112** 🏆 | - | **0.7208** | +0.0008, 체감 중. [1,1,2.5]는 로컬 하락 시작점 → 후순위 |
-| 8 | 07.05 | R4: explore 4클래스는 계층 분류가 낫다 (밤샘 task2, 프로토타입 = linear 단독) | 1단계 family gate(F1 0.984) → 2단계 explore 전용 분류기. flat 0.6638 → override 0.6812 → strict route **0.6883** | 5-fold SGKF **+0.0246** (explore 4클래스 각 +0.020~0.028) | 미제출 | **생존** — 3-way 위에 얹는 통합 설계 후 override/strict 두 변형 LB 게이트. 리포트: night/2026-07-05/task2_report.md |
+| 8 | 07.05 | R4: explore 4클래스는 계층 분류가 낫다 (밤샘 task2, 프로토타입 = linear 단독) | 1단계 family gate(F1 0.984) → 2단계 explore 전용 분류기. flat 0.6638 → override 0.6812 → strict route **0.6883** | 5-fold SGKF **+0.0246** (explore 4클래스 각 +0.020~0.028) | 미제출 | **생존** (독립 리뷰 통과: 누수 없음·수치 재현 확인). 단 **조건부** — hard-label 스왑이라 확률 blend와 비호환 → 확률 레벨(family 확률 마스킹) 재설계 + override/strict 각각 LB 게이트 후 승격. 리포트: night/2026-07-05/task2_report.md |
 | 9 | 07.05 | R3: 첫 스텝(history=0) prior 보정 (밤샘 task2) | first-step log-prior bias, λ 그리드 | 최적 λ=0.125에서 **+0.0008** (첫스텝 자체 F1은 하락) | 미제출 | **보류** — calib_v1과 같은 유형(분포 피팅 bias)이라 LB 비전이 위험 대비 이득 없음 |
-| 10 | 07.05 | w112 재조립: 원본 인코더(fp16)로 3-way 복원 | ai-2026 draft(linear+stacker+weights[1,1,2]) + artifacts/enc_v2_s42 fp16 → submit/ 스테이징 (커밋 e4cd2b4) | - (재현 제출) | (게이트 검증 중) | 0.7208 재현 확인용 기준 제출 |
+| 10 | 07.05 | w112 재조립: 원본 인코더(fp16)로 3-way 복원 | ai-2026 draft(linear+stacker+weights[1,1,2]) + artifacts/enc_v2_s42 fp16 → submit/ 스테이징 (커밋 e4cd2b4) | - (재현 제출) | (업로드 대기) | 게이트 12/12 PASS, zip 546MB, 추론 172s/5행 — 제출 대장 #1. LB로 0.7208 재현 확인 |
 | 11 | 07.05 | blend 그리드 도구 (밤샘 task3) | scripts/blend/{collect_probs,grid_blend}.py — 성분별 holdout 확률 npz + 가중 그리드 | ⚠️ 수치 판정 불가 — stacker가 full-train 아티팩트라 holdout 누수 (0.7385는 오염값) | 미제출 | 도구만 채택. 사용하려면 성분 전부를 85% split로 재학습한 npz 필요 |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
@@ -69,9 +69,4 @@ Open questions:
 Next recommended owner:
 ```
 
-## 2026-07-05 task2 — R4/R3 local CV probes
-
-| # | 날짜 | 가설/행동 | 변경점 | 로컬 CV | LB | 결론 |
-|---|---|---|---|---|---|---|
-| 8 | 07.05 | R4 explore 계층 분류가 flat 14-way보다 탐색 4클래스 약점을 줄일 수 있다 | `scripts/hierarchy/proto_hier.py`: E_+seq-like sparse features + `LinearSVC(C=0.1, balanced)`, 1차 family gate, 2차 explore branch | flat 0.66378 → explore override 0.68124 → strict family route 0.68834. explore 4-class Macro-F1 0.51042 → 0.53538 | - | 로컬 강한 양성. LB 게이트용 후보로 승격 |
-| 9 | 07.05 | R3 첫 스텝 class-wise prior bias가 history 없음 구간을 보정한다 | `scripts/hierarchy/first_step_bias.py`: train-fold first-step log prior shift를 `n_history==0` valid row에만 lambda 적용 | best lambda 0.125: 0.66378 → 0.66460(+0.00082). first-step subset Macro-F1은 0.42136 → 0.40053로 하락 | - | 약한/위험한 보정. `calib_v1` 실패 전례 때문에 단독 채택 금지, LB 게이트 필수 |
+<!-- (task2 브랜치의 중복 기록 섹션은 본 테이블 #8·#9로 통합됨 — 상세는 context/night/2026-07-05/task2_report.md) -->
