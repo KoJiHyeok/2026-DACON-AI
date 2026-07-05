@@ -34,7 +34,8 @@
 | 15 | 07.05 | serialize v3 (args+hist12+lang+elapsed) 프록시 A/B | scripts/encoding/serialize_ab.py — TF-IDF+LinearSVC 3-fold, 70k | v2 0.5017 / v3 **−0.031** / v3_no_args −0.026 / v3_hist6(v2+args) **−0.0036**, explore4 개선 없음(grep −0.007) | 미제출 (GPU 미투입) | **폐기** — hist 확장은 명백한 해, args는 explore를 못 올림(TF-IDF가 유리한 리터럴 신호인데도) → GPU 정당화 실패. 부산물: 실제 토크나이저 실측(v3는 384에서 29.3% 잘림 — chars/4 근사는 1.64배 과소) |
 | 16 | 07.05 | blend 가중 재튜닝 (리그 그리드) | [2,2,1.75](enc 지분 0.30)가 로컬 +0.0093 | 로컬 0.72654 | 미제출 | **기각** — 핸드오프 §5 편향 재확인: 리그는 enc 지분 축에서 기울기가 LB와 반대 (LB 실측: 지분 0.33→0.50 단조 상승). 리그는 성분 추가/제거 판정용으로만, enc 지분 축은 LB만 신뢰 |
 | 17 | 07.05 | meta-selector (코덱스 1순위 아이디어) | scripts/meta/meta_selector.py — 27피처(마진·불일치·rank) LogReg, 확신 임계 override, 9,969행 중첩 그룹 5-fold | **전 임계·전 설정 마이너스** (θ=0.9에서도 −0.003, fixed:broken = 1:8~17). oracle 상한 0.80163은 실재 확인 | 미제출 | **폐기** — 파생 피처에는 oracle 갭을 열 정보가 없음. R4와 동일 교훈: 약한 메타로 블렌드 못 이김. (후속 후보로 '성분 신뢰 3-way 분류'가 제안됐으나 저순위 보류) |
-| 18 | 07.05 | 4-way: e5-small을 encoder_2로 추가 | submit/model/encoder_2 (fp16 235MB), 인코더 블록 uniform 평균, weights [1,1,2], zip 757MB | - (리그 검증은 holdout_small.npz 도착 후 가능) | (제출 대기) | 게이트 12/12 PASS — 제출 대장 #3. 핸드오프가 지목했던 후보 |
+| 18 | 07.05 | 4-way: e5-small을 encoder_2로 추가 | submit/model/encoder_2 (fp16 235MB), 인코더 블록 uniform 평균, weights [1,1,2], zip 757MB | - | **0.71280 (−0.006)** | **폐기 (uniform 블록)** — small(솔로 할인 −0.019 가족)이 base와 5:5 평균되며 최강 성분을 희석. 제출 대장 #3. 가중 블록(base≫small)은 holdout_small.npz 도착 후 리그에서만 재검토 |
+| 19 | 07.05 | history 유무 버킷별 blend 가중 (동료 0.7242 스킴 추정 — 리포 notes/bucket-blend-2026-07-04.md) | 리그에서 hist/nohist 버킷 분리 그리드 (nohist 1,293/9,969행) | 로컬 최대 +0.0039, 단 이득 전부가 hist 버킷(87%)의 enc 지분 하향에서 발생 — **#16과 동일한 신기루 축**. hist=[1,1,2] 고정 시 nohist 조정만으론 +0.001 미만 | 미제출 | **리그로는 구조 판정 불가** — 동료의 +0.0036은 LB 실측(0.7242)으로 검증된 값이므로 동료의 버킷 JSON을 그대로 intake하는 게 유일한 안전 경로. 리그 자체 튜닝값 사용 금지 |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
@@ -44,6 +45,7 @@
 | R4 계층 분류 (explore gate+specialist) | 리그 −0.007~−0.016 | linear 단독에서만 +0.0246, 3-way 베이스에서 역전 — blend가 이미 explore를 더 잘 풂 (#14) |
 | serialize 확장 (hist12 / args 추가) | 프록시 −0.031 / −0.004 | 길이 희석 실해 + args가 explore F1을 못 올림. hist12는 384 토큰에서 83% 잘림 문제도 (#15) |
 | 세션 형제 행 라벨 복원 | LB 델타 0 | test가 세션당 1스텝 샘플링 — 복원 대상 없음 (#12, 보험 코드는 잔류) |
+| e5-small을 uniform 인코더 블록에 추가 | LB −0.006 | 약한 성분과 5:5 평균은 최강 성분 희석 (#18). 가중 블록만 재검토 여지 |
 | 로컬 그리드로 enc 지분 낮추기 | 로컬 +0.009 신기루 | 리그 기울기가 enc 지분 축에서 LB와 반대 — 두 번 확인됨 (핸드오프 §5 + #16) |
 | calib_v1 (enc T=1.34 + class bias) | 0.7169 | holdout +0.005가 LB −0.002로 비전이 — train 분포 피팅 bias는 분포 이동에 취약 |
 | flat 피처 추가 F~W | 이득 없음 | |
