@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "source": "context/experiments.md #20 (league 3-bucket, teammate history_presence 0.7242 계승)",
+  "scheme": "history_len3",
+  "default_weights": [1, 1, 2],
+  "buckets": {
+    "hist_0": [0.75, 0.5, 2],
+    "hist_1_4": [0.75, 1, 1],
+    "hist_5_plus": [0.75, 1.5, 0.75]
+  }
+}

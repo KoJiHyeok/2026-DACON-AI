@@ -324,6 +324,16 @@ def _bucket_turn_index_bin(sample):
     return "turn_07_plus"
 
 
+def _bucket_history_len3(sample):
+    hist = sample.get("history") or []
+    n = len(hist) if isinstance(hist, list) else 0
+    if n == 0:
+        return "hist_0"
+    if n <= 4:
+        return "hist_1_4"
+    return "hist_5_plus"
+
+
 def bucket_key(sample, scheme):
     if scheme == "history_presence":
         return _bucket_history(sample)
@@ -331,6 +341,8 @@ def bucket_key(sample, scheme):
         return _bucket_last_action_family4(sample)
     if scheme == "turn_index_bin":
         return _bucket_turn_index_bin(sample)
+    if scheme == "history_len3":
+        return _bucket_history_len3(sample)
     if scheme == "history_x_last_family4":
         return _bucket_history(sample) + "|" + _bucket_last_action_family4(sample)
     raise ValueError(f"bucket_weights.json unknown scheme: {scheme!r}")
