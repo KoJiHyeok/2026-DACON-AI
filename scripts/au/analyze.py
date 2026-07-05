@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
 import pandas as pd
@@ -60,6 +63,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--holdout-base", type=Path, default=DEFAULT_HOLDOUT_BASE)
     parser.add_argument("--oof-dir", type=Path, default=DEFAULT_OOF_DIR)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument("--write-flat", action="store_true", help="write row-level derived feature CSV")
     return parser.parse_args()
 
 
@@ -248,7 +252,8 @@ def main() -> None:
 
     records = load_train_records(args.train_jsonl, args.labels_csv)
     df = pd.DataFrame([flatten_record(row) for row in records])
-    df.to_csv(args.out_dir / "au_train_flat_features.csv", index=False)
+    if args.write_flat:
+        df.to_csv(args.out_dir / "au_train_flat_features.csv", index=False)
 
     label_df = write_label_distribution(df, args.out_dir)
     numeric_df = write_numeric_summary(df, args.out_dir)
@@ -260,6 +265,18 @@ def main() -> None:
 
     train_counts = df["bucket"].value_counts().to_dict()
     holdout_buckets = Counter(bucket_from_id(sample_id) for sample_id in league["ids"])
+    output_files = [
+        "au_train_label_distribution.csv",
+        "au_field_numeric_summary.csv",
+        "au_field_categorical_summary.csv",
+        "au_component_macro_f1.csv",
+        "au_component_per_class_f1.csv",
+        "au_blend_confusion_top.csv",
+        "au_error_samples.md",
+    ]
+    if args.write_flat:
+        output_files.insert(0, "au_train_flat_features.csv")
+
     summary = {
         "train_rows": int(df.shape[0]),
         "train_bucket_counts": {str(k): int(v) for k, v in train_counts.items()},
@@ -268,16 +285,7 @@ def main() -> None:
         "join_assert_blend_macro_f1": float(league["blend_f1"]),
         "component_macro_f1": macro_df.to_dict(orient="records"),
         "top_au_confusions": conf_df.head(5).to_dict(orient="records"),
-        "output_files": [
-            "au_train_flat_features.csv",
-            "au_train_label_distribution.csv",
-            "au_field_numeric_summary.csv",
-            "au_field_categorical_summary.csv",
-            "au_component_macro_f1.csv",
-            "au_component_per_class_f1.csv",
-            "au_blend_confusion_top.csv",
-            "au_error_samples.md",
-        ],
+        "output_files": output_files,
     }
     (args.out_dir / "au_analysis_summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"

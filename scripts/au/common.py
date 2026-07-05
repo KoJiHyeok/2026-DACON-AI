@@ -113,6 +113,7 @@ def flatten_record(obj: dict[str, Any]) -> dict[str, Any]:
     user_turns = [h for h in history if isinstance(h, dict) and h.get("role") == "user"]
     prompt = str(obj.get("current_prompt") or "")
     prompt_chars = len(prompt)
+    prompt_words = len(prompt.split())
     hangul_chars = len(HANGUL_RE.findall(prompt))
     non_ascii_chars = sum(1 for ch in prompt if ord(ch) > 127)
     open_files = workspace.get("open_files") or []
@@ -130,7 +131,7 @@ def flatten_record(obj: dict[str, Any]) -> dict[str, Any]:
         "n_user_turns": len(user_turns),
         "last_action": str(action_turns[-1].get("name")) if action_turns else "none",
         "current_prompt_len": prompt_chars,
-        "current_prompt_words": len(prompt.split()),
+        "current_prompt_words": prompt_words,
         "current_prompt_hangul_frac": hangul_chars / max(prompt_chars, 1),
         "current_prompt_non_ascii_frac": non_ascii_chars / max(prompt_chars, 1),
         "prompt_lang_guess": prompt_lang_guess(prompt),
