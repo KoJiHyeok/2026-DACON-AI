@@ -1,0 +1,302 @@
+{
+  "inputs": {
+    "train_jsonl": "C:\\dev\\2026-AI-DACON\\data\\train.jsonl",
+    "labels_csv": "C:\\dev\\2026-AI-DACON\\data\\train_labels.csv",
+    "holdout_base": "C:\\dev\\2026-AI-DACON\\context\\night\\2026-07-05\\holdout_base.npz",
+    "oof_dir": "C:\\dev\\2026-AI-DACON\\artifacts\\oof\\oof_rebuild_2026_07_04",
+    "n_splits": 3,
+    "seed": 42,
+    "c": 0.5,
+    "alphas": [
+      0.5,
+      0.7,
+      1.0
+    ],
+    "model": "submit.au_route.serialize + FeatureUnion(word 1-2 80k + char_wb 3-5 120k) + LinearSVC(C, balanced)",
+    "holdout_prediction": "mean probability ensemble of the 3 fold models; all fold training excludes league holdout rows"
+  },
+  "join_assert_blend_macro_f1": 0.7172592174830689,
+  "data": {
+    "train_rows": 70000,
+    "train_hist0_rows": 9000,
+    "nonholdout_hist0_train_rows": 7707,
+    "nonholdout_hist0_train_sessions": 7707,
+    "holdout_rows": 9969,
+    "holdout_hist0_rows": 1293,
+    "holdout_hist0_share": 0.12970207643695456
+  },
+  "cv": {
+    "folds": [
+      {
+        "fold": 1,
+        "train_rows": 5138,
+        "valid_rows": 2569,
+        "valid_sessions": 2569,
+        "macro_f1": 0.4281370103936583,
+        "classes_in_train": [
+          "apply_patch",
+          "ask_user",
+          "edit_file",
+          "glob_pattern",
+          "grep_search",
+          "lint_or_typecheck",
+          "list_directory",
+          "plan_task",
+          "read_file",
+          "respond_only",
+          "run_bash",
+          "run_tests",
+          "web_search",
+          "write_file"
+        ]
+      },
+      {
+        "fold": 2,
+        "train_rows": 5138,
+        "valid_rows": 2569,
+        "valid_sessions": 2569,
+        "macro_f1": 0.42113244805072936,
+        "classes_in_train": [
+          "apply_patch",
+          "ask_user",
+          "edit_file",
+          "glob_pattern",
+          "grep_search",
+          "lint_or_typecheck",
+          "list_directory",
+          "plan_task",
+          "read_file",
+          "respond_only",
+          "run_bash",
+          "run_tests",
+          "web_search",
+          "write_file"
+        ]
+      },
+      {
+        "fold": 3,
+        "train_rows": 5138,
+        "valid_rows": 2569,
+        "valid_sessions": 2569,
+        "macro_f1": 0.42818599331943147,
+        "classes_in_train": [
+          "apply_patch",
+          "ask_user",
+          "edit_file",
+          "glob_pattern",
+          "grep_search",
+          "lint_or_typecheck",
+          "list_directory",
+          "plan_task",
+          "read_file",
+          "respond_only",
+          "run_bash",
+          "run_tests",
+          "web_search",
+          "write_file"
+        ]
+      }
+    ],
+    "nonholdout_hist0_oof_macro_f1": 0.4260233794034603,
+    "nonholdout_hist0_oof_per_class": [
+      {
+        "action": "read_file",
+        "support": 1279,
+        "pred_count": 1251,
+        "precision": 0.3908872901678657,
+        "recall": 0.382329945269742,
+        "f1": 0.3865612648221344,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "grep_search",
+        "support": 898,
+        "pred_count": 749,
+        "precision": 0.2363150867823765,
+        "recall": 0.19710467706013363,
+        "f1": 0.21493624772313297,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "list_directory",
+        "support": 1552,
+        "pred_count": 1655,
+        "precision": 0.4054380664652568,
+        "recall": 0.4323453608247423,
+        "f1": 0.418459619582164,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "glob_pattern",
+        "support": 475,
+        "pred_count": 345,
+        "precision": 0.19130434782608696,
+        "recall": 0.13894736842105262,
+        "f1": 0.16097560975609757,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "edit_file",
+        "support": 194,
+        "pred_count": 151,
+        "precision": 0.8145695364238411,
+        "recall": 0.634020618556701,
+        "f1": 0.7130434782608696,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "write_file",
+        "support": 611,
+        "pred_count": 671,
+        "precision": 0.8926974664679582,
+        "recall": 0.9803600654664485,
+        "f1": 0.9344773790951638,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "apply_patch",
+        "support": 6,
+        "pred_count": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "scarce_support_le_14": true
+      },
+      {
+        "action": "run_bash",
+        "support": 869,
+        "pred_count": 1186,
+        "precision": 0.6795952782462057,
+        "recall": 0.9275028768699655,
+        "f1": 0.7844282238442822,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "run_tests",
+        "support": 105,
+        "pred_count": 43,
+        "precision": 0.18604651162790697,
+        "recall": 0.0761904761904762,
+        "f1": 0.10810810810810811,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "lint_or_typecheck",
+        "support": 58,
+        "pred_count": 11,
+        "precision": 0.36363636363636365,
+        "recall": 0.06896551724137931,
+        "f1": 0.11594202898550725,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "ask_user",
+        "support": 529,
+        "pred_count": 454,
+        "precision": 0.43832599118942733,
+        "recall": 0.3761814744801512,
+        "f1": 0.40488301119023395,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "plan_task",
+        "support": 964,
+        "pred_count": 1055,
+        "precision": 0.6170616113744076,
+        "recall": 0.6753112033195021,
+        "f1": 0.6448736998514116,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "web_search",
+        "support": 102,
+        "pred_count": 70,
+        "precision": 0.11428571428571428,
+        "recall": 0.0784313725490196,
+        "f1": 0.09302325581395349,
+        "scarce_support_le_14": false
+      },
+      {
+        "action": "respond_only",
+        "support": 65,
+        "pred_count": 65,
+        "precision": 0.9846153846153847,
+        "recall": 0.9846153846153847,
+        "f1": 0.9846153846153847,
+        "scarce_support_le_14": false
+      }
+    ]
+  },
+  "holdout_hist0_macro_f1": [
+    {
+      "variant": "blend_hist0",
+      "rows": 1293,
+      "macro_f1": 0.4020778149347726
+    },
+    {
+      "variant": "specialist_hist0",
+      "rows": 1293,
+      "macro_f1": 0.4226658519579538
+    },
+    {
+      "variant": "soft_alpha_0.5_hist0",
+      "rows": 1293,
+      "macro_f1": 0.4104363678629763
+    },
+    {
+      "variant": "soft_alpha_0.7_hist0",
+      "rows": 1293,
+      "macro_f1": 0.4233444644208701
+    },
+    {
+      "variant": "soft_alpha_1_hist0",
+      "rows": 1293,
+      "macro_f1": 0.4226658519579538
+    }
+  ],
+  "routing_eval": [
+    {
+      "variant": "soft_alpha_0.5",
+      "alpha": 0.5,
+      "blend_all_macro_f1": 0.7172592174830689,
+      "hybrid_all_macro_f1": 0.7176058302811054,
+      "hybrid_delta": 0.00034661279803649414,
+      "hist0_macro_f1": 0.4104363678629763
+    },
+    {
+      "variant": "soft_alpha_0.7",
+      "alpha": 0.7,
+      "blend_all_macro_f1": 0.7172592174830689,
+      "hybrid_all_macro_f1": 0.7183964819510987,
+      "hybrid_delta": 0.0011372644680298638,
+      "hist0_macro_f1": 0.4233444644208701
+    },
+    {
+      "variant": "soft_alpha_1",
+      "alpha": 1.0,
+      "blend_all_macro_f1": 0.7172592174830689,
+      "hybrid_all_macro_f1": 0.703533662242885,
+      "hybrid_delta": -0.013725555240183818,
+      "hist0_macro_f1": 0.4226658519579538
+    }
+  ],
+  "best_variant": {
+    "variant": "soft_alpha_0.7",
+    "alpha": 0.7,
+    "blend_all_macro_f1": 0.7172592174830689,
+    "hybrid_all_macro_f1": 0.7183964819510987,
+    "hybrid_delta": 0.0011372644680298638,
+    "hist0_macro_f1": 0.4233444644208701
+  },
+  "decision_rule": {
+    "pass_threshold_hybrid_delta": 0.005,
+    "passes": false
+  },
+  "output_files": [
+    "firststep_probe_fold_metrics.csv",
+    "firststep_probe_hist0_macro_f1.csv",
+    "firststep_probe_routing_eval.csv",
+    "firststep_probe_per_class_f1.csv",
+    "firststep_probe_results.json"
+  ]
+}

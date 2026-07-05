@@ -1,0 +1,4 @@
+fold,train_rows,valid_rows,valid_sessions,macro_f1,classes_in_train
+1,5138,2569,2569,0.4281370103936583,"['apply_patch', 'ask_user', 'edit_file', 'glob_pattern', 'grep_search', 'lint_or_typecheck', 'list_directory', 'plan_task', 'read_file', 'respond_only', 'run_bash', 'run_tests', 'web_search', 'write_file']"
+2,5138,2569,2569,0.42113244805072936,"['apply_patch', 'ask_user', 'edit_file', 'glob_pattern', 'grep_search', 'lint_or_typecheck', 'list_directory', 'plan_task', 'read_file', 'respond_only', 'run_bash', 'run_tests', 'web_search', 'write_file']"
+3,5138,2569,2569,0.42818599331943147,"['apply_patch', 'ask_user', 'edit_file', 'glob_pattern', 'grep_search', 'lint_or_typecheck', 'list_directory', 'plan_task', 'read_file', 'respond_only', 'run_bash', 'run_tests', 'web_search', 'write_file']"

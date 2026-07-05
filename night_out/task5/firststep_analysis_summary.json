@@ -1,0 +1,138 @@
+{
+  "inputs": {
+    "train_jsonl": "C:\\dev\\2026-AI-DACON\\data\\train.jsonl",
+    "labels_csv": "C:\\dev\\2026-AI-DACON\\data\\train_labels.csv",
+    "holdout_base": "C:\\dev\\2026-AI-DACON\\context\\night\\2026-07-05\\holdout_base.npz",
+    "oof_dir": "C:\\dev\\2026-AI-DACON\\artifacts\\oof\\oof_rebuild_2026_07_04"
+  },
+  "join_assert_blend_macro_f1": 0.7172592174830689,
+  "train_rows": 70000,
+  "train_hist0_rows": 9000,
+  "train_hist0_sessions": 9000,
+  "nonholdout_hist0_rows": 7707,
+  "nonholdout_hist0_sessions": 7707,
+  "holdout_rows": 9969,
+  "holdout_hist0_rows": 1293,
+  "holdout_hist0_share": 0.12970207643695456,
+  "holdout_hist0_label_counts": {
+    "list_directory": 266,
+    "read_file": 209,
+    "plan_task": 157,
+    "grep_search": 148,
+    "run_bash": 142,
+    "ask_user": 100,
+    "write_file": 97,
+    "glob_pattern": 92,
+    "edit_file": 34,
+    "run_tests": 15,
+    "lint_or_typecheck": 14,
+    "respond_only": 12,
+    "web_search": 7
+  },
+  "component_macro_f1": [
+    {
+      "component": "linear",
+      "segment": "all",
+      "rows": 9969,
+      "macro_f1": 0.6676495541547487
+    },
+    {
+      "component": "linear",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.41364205456385206
+    },
+    {
+      "component": "linear",
+      "segment": "non_hist0",
+      "rows": 8676,
+      "macro_f1": 0.6712614417665131
+    },
+    {
+      "component": "stacker",
+      "segment": "all",
+      "rows": 9969,
+      "macro_f1": 0.7056611366010784
+    },
+    {
+      "component": "stacker",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.40224732508963024
+    },
+    {
+      "component": "stacker",
+      "segment": "non_hist0",
+      "rows": 8676,
+      "macro_f1": 0.7052700497614915
+    },
+    {
+      "component": "encoder_proxy",
+      "segment": "all",
+      "rows": 9969,
+      "macro_f1": 0.7050885469078851
+    },
+    {
+      "component": "encoder_proxy",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.3997263111635858
+    },
+    {
+      "component": "encoder_proxy",
+      "segment": "non_hist0",
+      "rows": 8676,
+      "macro_f1": 0.7072383417182565
+    },
+    {
+      "component": "blend",
+      "segment": "all",
+      "rows": 9969,
+      "macro_f1": 0.7172592174830689
+    },
+    {
+      "component": "blend",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.4020778149347726
+    },
+    {
+      "component": "blend",
+      "segment": "non_hist0",
+      "rows": 8676,
+      "macro_f1": 0.7188719681057395
+    }
+  ],
+  "hist0_component_ranking": [
+    {
+      "component": "linear",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.41364205456385206
+    },
+    {
+      "component": "stacker",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.40224732508963024
+    },
+    {
+      "component": "blend",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.4020778149347726
+    },
+    {
+      "component": "encoder_proxy",
+      "segment": "hist0",
+      "rows": 1293,
+      "macro_f1": 0.3997263111635858
+    }
+  ],
+  "output_files": [
+    "firststep_label_distribution.csv",
+    "firststep_component_macro_f1.csv",
+    "firststep_component_per_class_f1.csv",
+    "firststep_analysis_summary.json"
+  ]
+}
