@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """AU(sess_au) 전용 linear 라우팅 (exp #23) — 학습·추론 공용 단일 소스.
 
-serialize()는 밤샘 task3 scripts/au/probe_au_linear.py verbatim (train·추론 계약 — 변경 금지).
+serialize()는 밤샘 task3 scripts/au/probe_au_linear.py와 동일 로직 (타입힌트만 제거,
+AST 수준 동일 — 독립 리뷰로 확인. train·추론 계약이므로 변경 금지).
 - 학습: scripts/au/train_full_au.py 가 이 모듈을 import → model/au_linear/model.pkl
 - 추론: script.py 가 pkl 존재 + ENS_AU_ROUTE!=0 이면 sess_au 행의 최종 예측을 교체
   (test에 sess_au 행이 없으면 no-op — 하방 위험 0)
