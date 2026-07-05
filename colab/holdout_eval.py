@@ -23,10 +23,13 @@ serialize() 계약: encoder_v2_s42_repro.py / encoder_small_repro.py / ensemble/
 --epochs/--batch/--lr로 자유롭게 바꿔 빠른 probe를 돌려도 무방하다. 결과 npz를 제출에
 쓰지 말 것(85%로만 학습됐고 label_smoothing도 없음 — 스펙이 다르다).
 
-사용 (Colab, T4):
-    python holdout_eval.py --model base  --out /content/drive/MyDrive/dacon2026/holdout_base.npz
-    python holdout_eval.py --model small --out /content/drive/MyDrive/dacon2026/holdout_small.npz
-    python holdout_eval.py --model intfloat/multilingual-e5-large --out holdout_large.npz  # 커스텀도 가능
+사용 (Colab, T4) — **셀에 통짜 붙여넣기가 기본 실행 방식** (다른 colab/*.py와 동일):
+    그냥 붙여넣고 실행 → base 모델, Drive에 holdout_base.npz 저장 (기본값).
+    다른 모델/경로가 필요하면 셀 맨 위에 env로 지정:
+        import os
+        os.environ["HOLDOUT_MODEL"] = "small"   # 'base'(기본)/'small'/HF id
+        os.environ["HOLDOUT_OUT"] = "/content/drive/MyDrive/dacon2026/holdout_small.npz"
+    CLI로도 동작: python holdout_eval.py --model base --out .../holdout_base.npz
 
 산출(npz, 다운로드해서 로컬 CPU에서 사용):
     ids     : (n_holdout,) str  — sample id
@@ -210,21 +213,34 @@ def compute_metrics(pred):
 
 
 def main():
+    # ⚠️ Colab 규약: 이 리포의 colab/*.py는 전부 "노트북 셀에 통짜 붙여넣기"로 실행된다.
+    # 그 경우 sys.argv는 colab_kernel_launcher.py의 커널 인자(-f ...)라서
+    # required 인자·parse_args()는 즉사한다 → 필수 인자 금지(env/기본값 폴백) +
+    # parse_known_args()로 커널 인자 무시. (2026-07-05 job3 실패에서 학습)
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", required=True,
-                    help="'base', 'small', 또는 임의의 HF 모델 id/로컬 경로")
-    ap.add_argument("--data-dir", default="/content/drive/MyDrive/dacon2026",
+    ap.add_argument("--model", default=os.environ.get("HOLDOUT_MODEL", "base"),
+                    help="'base', 'small', 또는 임의의 HF 모델 id/로컬 경로 "
+                         "(env HOLDOUT_MODEL, 기본 base)")
+    ap.add_argument("--data-dir",
+                    default=os.environ.get("HOLDOUT_DATA_DIR",
+                                           "/content/drive/MyDrive/dacon2026"),
                     help="train.jsonl / train_labels.csv 위치 (기본: Colab Drive 경로)")
-    ap.add_argument("--out", required=True, help="출력 npz 경로")
+    ap.add_argument("--out", default=os.environ.get("HOLDOUT_OUT", ""),
+                    help="출력 npz 경로 (env HOLDOUT_OUT, 기본: Drive에 holdout_<model>.npz)")
     ap.add_argument("--valid-frac", type=float, default=0.15)
-    ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--epochs", type=int, default=3)
+    ap.add_argument("--seed", type=int, default=int(os.environ.get("HOLDOUT_SEED", "42")))
+    ap.add_argument("--epochs", type=int, default=int(os.environ.get("HOLDOUT_EPOCHS", "3")))
     ap.add_argument("--batch", type=int, default=None,
                     help="기본: base=16, small=32 (모델 별칭 기준, 커스텀 모델은 16)")
     ap.add_argument("--eval-batch", type=int, default=64)
     ap.add_argument("--lr", type=float, default=2e-5)
-    args = ap.parse_args()
+    args, _unknown = ap.parse_known_args()  # 노트북 커널 인자(-f xxx.json) 무시
+    if not args.out:
+        safe = args.model if args.model in MODEL_ALIASES else \
+            re.sub(r"[^A-Za-z0-9._-]", "_", args.model)
+        args.out = f"/content/drive/MyDrive/dacon2026/holdout_{safe}.npz"
+        print(f"[config] --out 미지정 → {args.out}")
 
     model_name = MODEL_ALIASES.get(args.model, args.model)
     batch = args.batch if args.batch is not None else DEFAULT_BATCH.get(args.model, 16)

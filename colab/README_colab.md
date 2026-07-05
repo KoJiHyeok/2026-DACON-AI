@@ -217,15 +217,23 @@ holdout 확률을 npz로 뽑는다. LB를 소모하지 않고 로컬 CPU에서 l
 blend weight 그리드 탐색을 하기 위한 용도다 — **이 npz의 모델은 제출용이 아니다**(85%만
 학습, label_smoothing 없음).
 
-```python
-# base 인코더 holdout 확률
-!python /content/drive/MyDrive/dacon2026/holdout_eval.py \
-    --model base --out /content/drive/MyDrive/dacon2026/holdout_base.npz
+**실행 = 셀에 통짜 붙여넣기** (job1/2와 동일). 붙여넣고 그냥 실행하면 기본값(base 모델,
+`dacon2026/holdout_base.npz`)으로 돈다. 모델/경로를 바꾸려면 **스크립트 셀보다 먼저** env를
+지정한다:
 
-# small 인코더 holdout 확률 (job2를 하지 않았어도 독립적으로 실행 가능 — 사전학습 체크포인트에서 새로 파인튜닝함)
-!python /content/drive/MyDrive/dacon2026/holdout_eval.py \
-    --model small --out /content/drive/MyDrive/dacon2026/holdout_small.npz
+```python
+# small 인코더 holdout 확률 (job2를 하지 않았어도 독립 실행 가능 — 사전학습 체크포인트에서 새로 파인튜닝)
+import os
+os.environ["HOLDOUT_MODEL"] = "small"
+os.environ["HOLDOUT_OUT"] = "/content/drive/MyDrive/dacon2026/holdout_small.npz"
+# ↑ 이 셀 실행 후, holdout_eval.py 전체를 다음 셀에 붙여넣고 실행
 ```
+
+(파일을 Drive에 올렸다면 `!python .../holdout_eval.py --model base --out ...` CLI도 동작한다.)
+
+> ⚠️ 2026-07-05 교훈: colab/*.py에 `required=True` argparse를 쓰면 붙여넣기 실행에서
+> 즉사한다 (노트북의 `sys.argv`는 커널 런처 인자). colab 스크립트는 **필수 인자 금지,
+> env/기본값 폴백 + `parse_known_args()`**가 규약이다.
 
 - split: `StratifiedGroupKFold(n_splits=7, shuffle=True, random_state=42)`의 첫 fold를
   holdout으로 사용(1/7 ≈ 14.3%, 목표 15%에 근접), group=세션 프리픽스(정규식
