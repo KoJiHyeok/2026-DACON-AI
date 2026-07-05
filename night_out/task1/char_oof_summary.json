@@ -1,0 +1,232 @@
+{
+  "n_rows": 70000,
+  "n_groups": 9429,
+  "n_folds": 3,
+  "oof_macro_f1": 0.5936879656408414,
+  "oof_explore4_macro_f1": 0.41444847634633336,
+  "per_class_f1": {
+    "read_file": 0.3746747614917606,
+    "grep_search": 0.4054766989071725,
+    "list_directory": 0.4373382624768946,
+    "glob_pattern": 0.4403041825095057,
+    "edit_file": 0.8277524544179523,
+    "write_file": 0.8787788087398982,
+    "apply_patch": 0.6352781283370547,
+    "run_bash": 0.7022740301930059,
+    "run_tests": 0.6633578314402978,
+    "lint_or_typecheck": 0.46918997988663375,
+    "ask_user": 0.5066716085989622,
+    "plan_task": 0.5444116113332175,
+    "web_search": 0.4300688828990716,
+    "respond_only": 0.9960542777403523
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "n_train": 46666,
+      "n_valid": 23334,
+      "n_train_groups": 6281,
+      "n_valid_groups": 3148,
+      "n_features": 248213,
+      "nnz_train": 64712064,
+      "macro_f1": 0.5950704668812055,
+      "explore4_macro_f1": 0.4118139855567348,
+      "per_class_f1": {
+        "read_file": 0.37965162311955664,
+        "grep_search": 0.40417853751187083,
+        "list_directory": 0.42796967144060655,
+        "glob_pattern": 0.4354561101549053,
+        "edit_file": 0.8321263989466754,
+        "write_file": 0.8760035682426405,
+        "apply_patch": 0.6426267956610965,
+        "run_bash": 0.694634703196347,
+        "run_tests": 0.6553191489361702,
+        "lint_or_typecheck": 0.4730831973898858,
+        "ask_user": 0.51131971286582,
+        "plan_task": 0.5528113504992118,
+        "web_search": 0.4495575221238938,
+        "respond_only": 0.9962481962481963
+      },
+      "elapsed_sec": 401.5453164577484,
+      "classes_seen": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "config": {
+        "created_at": "2026-07-05T19:23:49",
+        "vectorizer": {
+          "analyzer": "char_wb",
+          "ngram_range": [
+            2,
+            5
+          ],
+          "max_features": 300000,
+          "sublinear_tf": true,
+          "lowercase": true,
+          "dtype": "float32"
+        },
+        "classifier": {
+          "type": "LinearSVC",
+          "C": 0.1,
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "tol": 0.0001,
+          "dual": true,
+          "seed": 42
+        },
+        "n_folds": 3,
+        "data_dir": "C:\\dev\\2026-AI-DACON\\data"
+      }
+    },
+    {
+      "fold": 1,
+      "n_train": 46667,
+      "n_valid": 23333,
+      "n_train_groups": 6288,
+      "n_valid_groups": 3141,
+      "n_features": 248042,
+      "nnz_train": 64596405,
+      "macro_f1": 0.5927999646863604,
+      "explore4_macro_f1": 0.4154865814499646,
+      "per_class_f1": {
+        "read_file": 0.37849720223820943,
+        "grep_search": 0.4048507462686567,
+        "list_directory": 0.4437656206609275,
+        "glob_pattern": 0.4348327566320646,
+        "edit_file": 0.8292874950793859,
+        "write_file": 0.8787061994609164,
+        "apply_patch": 0.6350877192982456,
+        "run_bash": 0.7036504742742167,
+        "run_tests": 0.6683908045977012,
+        "lint_or_typecheck": 0.47478070175438597,
+        "ask_user": 0.4927536231884058,
+        "plan_task": 0.54198866563627,
+        "web_search": 0.4163636363636364,
+        "respond_only": 0.9962438601560243
+      },
+      "elapsed_sec": 261.01888608932495,
+      "classes_seen": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "config": {
+        "created_at": "2026-07-05T19:26:44",
+        "vectorizer": {
+          "analyzer": "char_wb",
+          "ngram_range": [
+            2,
+            5
+          ],
+          "max_features": 300000,
+          "sublinear_tf": true,
+          "lowercase": true,
+          "dtype": "float32"
+        },
+        "classifier": {
+          "type": "LinearSVC",
+          "C": 0.1,
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "tol": 0.0001,
+          "dual": true,
+          "seed": 42
+        },
+        "n_folds": 3,
+        "data_dir": "C:\\dev\\2026-AI-DACON\\data"
+      }
+    },
+    {
+      "fold": 2,
+      "n_train": 46667,
+      "n_valid": 23333,
+      "n_train_groups": 6289,
+      "n_valid_groups": 3140,
+      "n_features": 248074,
+      "nnz_train": 64658951,
+      "macro_f1": 0.5931337320920242,
+      "explore4_macro_f1": 0.4158991434645866,
+      "per_class_f1": {
+        "read_file": 0.36570038516115955,
+        "grep_search": 0.4074004153294318,
+        "list_directory": 0.4401312192454893,
+        "glob_pattern": 0.45036455412226584,
+        "edit_file": 0.8218421052631579,
+        "write_file": 0.8816621499548328,
+        "apply_patch": 0.6282420749279539,
+        "run_bash": 0.7085845535457939,
+        "run_tests": 0.6664746543778802,
+        "lint_or_typecheck": 0.45957918050941304,
+        "ask_user": 0.5159128978224455,
+        "plan_task": 0.5385018334206391,
+        "web_search": 0.4238052299368801,
+        "respond_only": 0.9956709956709957
+      },
+      "elapsed_sec": 363.55858278274536,
+      "classes_seen": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "config": {
+        "created_at": "2026-07-05T19:36:10",
+        "vectorizer": {
+          "analyzer": "char_wb",
+          "ngram_range": [
+            2,
+            5
+          ],
+          "max_features": 300000,
+          "sublinear_tf": true,
+          "lowercase": true,
+          "dtype": "float32"
+        },
+        "classifier": {
+          "type": "LinearSVC",
+          "C": 0.1,
+          "class_weight": "balanced",
+          "max_iter": 5000,
+          "tol": 0.0001,
+          "dual": true,
+          "seed": 42
+        },
+        "n_folds": 3,
+        "data_dir": "C:\\dev\\2026-AI-DACON\\data"
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "path": "C:\\dev\\night\\2026-07-06\\task1\\night_out\\task1\\char_svm_full.pkl",
+  "n_rows": 70000,
+  "n_features": 272167,
+  "nnz": 96983710,
+  "classes_seen": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "elapsed_sec": 246.78643345832825,
+  "config": {
+    "created_at": "2026-07-05T19:40:18",
+    "vectorizer": {
+      "analyzer": "char_wb",
+      "ngram_range": [
+        2,
+        5
+      ],
+      "max_features": 300000,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "dtype": "float32"
+    },
+    "classifier": {
+      "type": "LinearSVC",
+      "C": 0.1,
+      "class_weight": "balanced",
+      "max_iter": 5000,
+      "tol": 0.0001,
+      "dual": true,
+      "seed": 42
+    },
+    "n_folds": 3,
+    "data_dir": "C:\\dev\\2026-AI-DACON\\data",
+    "fit_rows": 70000,
+    "n_features": 272167
+  }
+}

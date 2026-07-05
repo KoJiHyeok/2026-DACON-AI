@@ -1,0 +1,3 @@
+FAIL: char_svm OOF Macro-F1 0.593688; best league add-test is w4=1.0 at +0.000903, below +0.002 gate.
+Artifacts saved under night_out/task1, including char_svm_full.pkl for completeness; do not promote without separate LB decision.
+Report: context/night/2026-07-06/task1_report.md; summary: night_out/task1/summary.json.
