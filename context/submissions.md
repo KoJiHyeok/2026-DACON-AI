@@ -6,3 +6,4 @@
 | # | 일시 | 커밋 | zip 크기 | 검증 | 로컬 CV | LB (public) | 메모 |
 |---|---|---|---|---|---|---|---|
 | 1 | 07-05 09:37 | `f305fc9` | 546.0MB | PASS | - | **0.71884** | 3way w112 rebuild (original encoder fp16) — 팀 w112 0.7208 대비 −0.002 (fp16 재변환분 추정), 기준선 복구 |
+| 2 | 07-05 10:17 | `963396e` | 546.0MB | PASS | - | (제출 후 기입) | 3way + sibling label recovery (D-008 probe) |
