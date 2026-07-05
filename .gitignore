@@ -5,8 +5,12 @@ open.zip
 
 # 모델 산출물 / 제출물 (submit/model/ 폴더 구조는 추적, 무거운 파일만 제외)
 submit/*.zip
+submit/model/*
+!submit/model/.gitkeep
 submit_candidates/**/*.zip
 output/
+artifacts/
+colab_out/
 
 # 밤샘 러너 로그 (프롬프트·리포트·DONE은 추적, 실행 로그만 제외)
 context/night/**/_runner/

@@ -164,14 +164,19 @@ function Start-CodexAttempt($t) {
         Write-Log ("{0}: 시도 #{1} — 새 세션" -f $t.Id, $t.Attempt)
     }
 
-    # npm 설치 시 codex가 .cmd 셔틀일 수 있음 — 리다이렉트를 쓰려면 cmd.exe 경유 필요
+    # npm 설치 시 codex가 .cmd/.ps1 셔틀일 수 있음 — 리다이렉트를 쓰려면 각 셸 경유 필요
     $exe = $CodexPath
     $pre = @()
     if ($CodexPath -match '\.(cmd|bat)$') { $exe = "cmd.exe"; $pre = @("/c", $CodexPath) }
+    elseif ($CodexPath -match '\.ps1$') { $exe = "powershell"; $pre = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $CodexPath) }
 
+    $t.UsedResume = [bool](($t.Attempt -gt 1) -and $t.SessionId)
+    $t.LastStart = Get-Date
     $t.Proc = Start-Process -FilePath $exe -ArgumentList ($pre + $argList) -WorkingDirectory $t.Worktree `
         -RedirectStandardInput $stdinFile -RedirectStandardOutput $outLog -RedirectStandardError $errLog `
         -PassThru -WindowStyle Hidden
+    # PS 5.1: -PassThru 프로세스의 ExitCode를 나중에 읽으려면 Handle을 먼저 캐시해야 함
+    if ($t.Proc) { $null = $t.Proc.Handle }
     $t.State = "running"
 }
 
@@ -181,6 +186,7 @@ foreach ($tf in $taskFiles) {
     $tasks += [pscustomobject]@{
         Id = $tf.BaseName; PromptFile = $tf.FullName; Worktree = $null; Proc = $null
         Attempt = 0; State = "init"; NextRetry = (Get-Date); SessionId = $null
+        UsedResume = $false; LastStart = (Get-Date); ResumeBroken = $false
     }
 }
 
@@ -223,7 +229,16 @@ try {
                 $t.State = "waiting"
                 $exitCode = "?"
                 if ($t.Proc) { $exitCode = $t.Proc.ExitCode }
-                if (-not $t.SessionId) { $t.SessionId = Find-SessionId $t }
+                # 세션 resume 시도가 즉시(60초 내) 죽으면 resume 문법/세션 미존재 문제로 보고
+                # PROGRESS 기반 새 세션 폴백으로 전환 (SessionId 폐기)
+                $ranSec = ((Get-Date) - $t.LastStart).TotalSeconds
+                if ($t.UsedResume -and ($ranSec -lt 60)) {
+                    # resume이 즉시 죽음 = resume 문법/세션 미존재 문제 → 이후 이 작업은 세션 재개 경로 봉인
+                    $t.SessionId = $null
+                    $t.ResumeBroken = $true
+                    Write-Log ("{0}: 세션 재개가 {1:n0}초만에 실패 — 이후 PROGRESS 폴백만 사용" -f $t.Id, $ranSec)
+                }
+                if ((-not $t.SessionId) -and (-not $t.ResumeBroken)) { $t.SessionId = Find-SessionId $t }
                 Write-Log ("{0}: DONE 없이 종료(exit={1}) — {2}분 후 재개 예정" -f $t.Id, $exitCode, $delayMin)
                 $active++; continue
             }

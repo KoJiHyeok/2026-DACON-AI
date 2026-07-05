@@ -72,6 +72,10 @@ def gate_package():
     with zipfile.ZipFile(ZIP_PATH, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in ("script.py", "requirements.txt"):
             zf.write(os.path.join(SUBMIT_DIR, f), f)
+        # script.py가 import하는 벤더 모듈도 zip 루트에 포함 (예: features.py, aar_infer.py)
+        for extra in sorted(glob.glob(os.path.join(SUBMIT_DIR, "*.py"))):
+            if os.path.basename(extra) != "script.py":
+                zf.write(extra, os.path.basename(extra))
         for dirpath, _, filenames in os.walk(os.path.join(SUBMIT_DIR, "model")):
             for fname in filenames:
                 if fname == ".gitkeep":

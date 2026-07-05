@@ -1,2 +1,11 @@
-scikit-learn==1.8.0
-joblib==1.5.3
+# 앙상블 제출용 추가 의존성.
+# ⚠️ 기본 설치 패키지 재핀 금지 (상위 CLAUDE.md 4-2절): 대회 서버에 이미 깔림 —
+#   torch==2.7.1+cu128, pandas==2.0.3, numpy==1.26.4, scipy==1.15.3,
+#   scikit-learn==1.8.0, joblib==1.5.3. 이들을 여기 다시 적으면 충돌/파손 위험.
+# 설치 단계는 인터넷 O(pip). 추론 중엔 인터넷 X → 가중치/토크나이저는 model/encoder/ 동봉.
+# v2/base와 e8/small 모두 save_pretrained 산출물(config/safetensors/tokenizer.json)을 동봉한다.
+# 검증된 최소선은 transformers>=4.51. torch/sklearn/pandas/numpy/joblib는 서버 기본값 사용.
+transformers>=4.51
+# 토크나이저: save_pretrained 가 tokenizer.json(fast)을 동봉하면 sentencepiece 불필요.
+# 만약 동봉 디렉토리에 tokenizer.json 이 없고 spiece.model 만 있으면 아래 주석 해제.
+# sentencepiece>=0.1.99
