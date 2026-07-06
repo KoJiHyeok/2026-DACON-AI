@@ -9,23 +9,24 @@
      · features.py = submit/features.py (그 모델과 짝. src/features.py 아님 — 짝 틀리면 조용한 오답)
   2) stacker = work2 AAR(model/stacker/aar_config.json + aar_models.joblib): predict_aar 확률 경로
      · aar_infer.py = work2/script.py **verbatim 벤더**(자기완결, base 패키지만 import). 아티팩트는 읽기만.
-  3) encoder block = model/encoder[, encoder_2...] 확률 uniform 평균. serialize() 학습 계약 verbatim.
+  3) encoder block = model/encoder[, encoder_2...] 확률 가중 평균(기본 uniform). serialize() 학습 계약 verbatim.
 
 제약(상위 CLAUDE.md 4절): 오프라인(원격 0, HF_OFFLINE) · 상대경로 · UTF-8 · ≤1GB · 30k 추론 ≤10분.
-  크기(현재 v2): linear 8MiB + stacker 92MiB + base fp16 encoder 547MiB ≈ 647MiB.
-  4-way(base fp16 + small fp16) 추정 ≈ 888MiB로 1GiB 아래.
-  시간: encoder 배치추론(T4 fp16) 수십초 + stacker/linear TF-IDF ~수분 → 여유.
+  크기(현재): linear 8MiB + stacker 92MiB + e5-base fp16 547MiB + mBERT fp16 339MiB → zip 실측 ≈ 868MiB.
+  시간: mBERT는 e5-base와 동일 깊이/폭(12L·768h — 임베딩 테이블만 작음)이라 인코더 2회분 비용.
+  T4 fp16 배치추론 기준 인코더당 수십초~수분 예상 — G4 샌드박스 실측으로 확인할 것.
 
 선택 제어:
   · model/weights.json 또는 ENS_WEIGHTS: 3슬롯(lin,stk,encoder-block) 가중.
   · model/bucket_weights.json 또는 ENS_BUCKET_WEIGHTS: 버킷별 3슬롯 가중(기본 off).
   · model/calib.json: encoder block에 softmax(log(p)/T + bias) 적용.
-  · model/encoder_2...: encoder block 내부 uniform 평균.
+  · model/encoder_2...: encoder block 성분 추가 (기본 uniform 평균).
+  · model/enc_block_weights.json 또는 ENS_ENC_BLOCK_WEIGHTS: 블록 내부 가중(encoder_dirs 이름순 짝).
   · model/au_linear/model.pkl: sess_au 행 확률을 α·P_au+(1-α)·P_blend 로 soft 라우팅
     (exp #23 하드 LB 0.7331 → #24 soft. α=ENS_AU_ALPHA 기본 0.9, ENS_AU_ROUTE=0 끔).
 
 경로(패키징 기본 = ./model/{linear,stacker,encoder[,encoder_2…]}). 인코더가 2개 이상이면
-확률을 uniform 평균(seed·이종 인코더 앙상블). 스모크는 아래 env로 실아티팩트 지정(복사 회피):
+확률을 가중 평균(기본 uniform — seed·이종 인코더 앙상블). 스모크는 아래 env로 실아티팩트 지정(복사 회피):
   ENS_LINEAR_PKL · ENS_STACKER_DIR · ENS_ENCODER_DIR(콤마 구분 복수 가능) · ENS_DATA · ENS_OUT
 """
 import csv
@@ -233,15 +234,47 @@ def load_calib():
     return t, bias
 
 
+def enc_block_weights(n_dirs):
+    """인코더 블록 내부 가중 (encoder_dirs()와 같은 순서). 우선순위:
+    ENS_ENC_BLOCK_WEIGHTS env(콤마 구분) > model/enc_block_weights.json > None(uniform).
+    가중 평균이므로 블록 확률은 행합 1 유지 — 없으면 기존 uniform과 동일 동작."""
+    raw = os.environ.get("ENS_ENC_BLOCK_WEIGHTS", "").strip()
+    path = os.path.join(MODEL, "enc_block_weights.json")
+    if raw:
+        parts, source = raw.split(","), "ENS_ENC_BLOCK_WEIGHTS"
+    elif os.path.exists(path):
+        data = json.load(open(path, encoding="utf-8-sig"))
+        if isinstance(data, dict):
+            data = data.get("weights")
+        if not isinstance(data, list):
+            raise ValueError(f"enc_block_weights.json 형식은 배열 또는 weights 배열 객체여야 함: {path}")
+        parts, source = data, path
+    else:
+        return None
+    try:
+        w = [float(p) for p in parts]
+    except (TypeError, ValueError):
+        raise ValueError(f"{source} 숫자 파싱 실패: {parts!r}")
+    if len(w) != n_dirs:
+        raise ValueError(f"{source} 가중치 {len(w)}개 != 인코더 {n_dirs}개 (encoder_dirs 이름순과 짝)")
+    if any(x < 0 for x in w) or sum(w) <= 0:
+        raise ValueError(f"{source} 가중치는 음수 금지·합>0 필요: {w!r}")
+    return w
+
+
 def encoder_probs(samples):
-    """인코더 블록 확률 = 성분 인코더들의 uniform 평균 (1개면 그대로) + 옵션 캘리브레이션."""
+    """인코더 블록 확률 = 성분 인코더들의 가중 평균 (기본 uniform, 1개면 그대로) + 옵션 캘리브레이션."""
     dirs = encoder_dirs()
+    bw = enc_block_weights(len(dirs))
+    if bw is not None:
+        print(f"      encoder block weights: {bw}")
     acc = None
-    for d in dirs:
+    for k, d in enumerate(dirs):
         p = _one_encoder_probs(samples, d)
-        acc = p if acc is None else acc + p
-        print(f"      encoder[{os.path.basename(os.path.normpath(d))}] 완료")
-    p = acc / len(dirs)
+        w = bw[k] if bw is not None else 1.0
+        acc = w * p if acc is None else acc + w * p
+        print(f"      encoder[{os.path.basename(os.path.normpath(d))}] 완료 (w={w:g})")
+    p = acc / (sum(bw) if bw is not None else len(dirs))
     calib = load_calib()
     if calib is not None:
         t, bias = calib
