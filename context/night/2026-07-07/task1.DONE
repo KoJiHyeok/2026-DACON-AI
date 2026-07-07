@@ -1,0 +1,1 @@
+DONE-BLOCKED: league4 rebuild/grid_block/grid_alpha completed; keep 4-way [e5=1.2,mBERT=0.8] + soft-AU alpha=0.9 because no candidate reached the +0.005 gate; final git commit is blocked by sandbox permission on external .git metadata.

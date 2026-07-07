@@ -1,0 +1,26 @@
+{
+  "feature": "TfidfVectorizer(char_wb, ngram_range=(3,5), max_features=120000)",
+  "model": "LinearSVC(C=1.0, class_weight=balanced, max_iter=5000, random_state=42)",
+  "train_protocol": "nonholdout sess_au rows only",
+  "train_rows": 4343,
+  "train_sessions": 946,
+  "holdout_au_rows": 682,
+  "classes": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "n_features": 111047,
+  "elapsed_sec": 58.382
+}
