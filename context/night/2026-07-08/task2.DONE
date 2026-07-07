@@ -1,0 +1,6 @@
+task2 DONE 2026-07-08
+
+- baseline_repro: rebuilt OOF macro-F1 0.663895 vs reference 0.663307, delta +0.000588 (< 0.002).
+- sweep: 9 fixed-fold configs completed under night_out/linear2.
+- best league result: char_2-5_mf120k_C1 = 0.738260, delta -0.000513 vs B4+soft-AU 0.738772.
+- decision: all linear replacement candidates discarded; no submit/model change, no push, no submit packaging.

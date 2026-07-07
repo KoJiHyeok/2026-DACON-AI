@@ -12,6 +12,9 @@ submit_candidates/**/*.zip
 output/
 artifacts/
 colab_out/
+night_out/linear2/**/*.npy
+night_out/linear2/**/*.npz
+night_out/linear2/*.log
 
 # 밤샘 러너 로그 (프롬프트·리포트·DONE은 추적, 실행 로그만 제외)
 context/night/**/_runner/
