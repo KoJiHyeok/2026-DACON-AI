@@ -1,0 +1,8 @@
+name,family,spec,holdout_rows,holdout_share,holdout_turn0_rows,holdout_turn0_share,train_rows_all,train_nonholdout_rows,train_nonholdout_turn0_rows,blend4_group_macro_f1,delta_vs_overall_4way,screen_pass
+cross:open_files_empty&git_dirty=false,cross,"{""kind"": ""and"", ""parts"": [{""field"": ""open_files_empty"", ""kind"": ""flag_true""}, {""field"": ""git_dirty"", ""kind"": ""field_equals"", ""value"": false}]}",1324,0.14256487563260473,0,0.0,9464,8140,0,0.5833984858302942,-0.13914733939058965,True
+open_files_empty,open_files_empty,"{""field"": ""open_files_empty"", ""kind"": ""flag_true""}",3243,0.3491978033810703,0,0.0,21847,18604,0,0.633040439412352,-0.08950538580853185,True
+turn_index>=12,turn_index,"{""field"": ""turn_index"", ""kind"": ""numeric_ge"", ""threshold"": 12.0, ""threshold_label"": ""12""}",608,0.06546785829654356,0,0.0,4265,3657,0,0.6331060314673042,-0.08943979375357969,True
+git_dirty=false,git_dirty,"{""field"": ""git_dirty"", ""kind"": ""field_equals"", ""value"": false}",1891,0.20361796059007214,0,0.0,13777,11886,0,0.6353974780153343,-0.08714834720554954,True
+turn_index>=8,turn_index,"{""field"": ""turn_index"", ""kind"": ""numeric_ge"", ""threshold"": 8.0, ""threshold_label"": ""8""}",2158,0.232367825993324,0,0.0,15706,13548,0,0.6606742888601022,-0.06187153636078169,True
+turn_index>=10,turn_index,"{""field"": ""turn_index"", ""kind"": ""numeric_ge"", ""threshold"": 10.0, ""threshold_label"": ""10""}",1174,0.12641326585549692,0,0.0,8543,7369,0,0.6702179689112231,-0.05232785630966075,True
+history_len>=10,history_len,"{""field"": ""history_len"", ""kind"": ""numeric_ge"", ""threshold"": 10.0, ""threshold_label"": ""10""}",3822,0.41154301712070634,0,0.0,27133,23311,0,0.6871296093879129,-0.03541621583297094,True
