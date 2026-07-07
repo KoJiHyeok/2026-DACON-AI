@@ -1,0 +1,114 @@
+{
+  "normalizer": "r1",
+  "paths": {
+    "data_dir": "C:\\dev\\2026-AI-DACON\\data",
+    "holdout_base": "C:\\dev\\night\\2026-07-08\\task3\\context\\night\\2026-07-05\\holdout_base.npz",
+    "out_dir": "C:\\dev\\night\\2026-07-08\\task3\\night_out\\tmpl_override"
+  },
+  "rows": {
+    "train": 70000,
+    "holdout": 9969,
+    "nonholdout": 60031
+  },
+  "all_train_repro_check": {
+    "unique_templates": 62421,
+    "duplicate_templates": 4319,
+    "rows_in_duplicate_templates": 11898,
+    "purity_ge_0_99": {
+      "threshold": 0.99,
+      "templates": 1727,
+      "rows": 5181,
+      "coverage": 0.07401428571428571,
+      "sessions": null,
+      "non_respond_only_rows": 2606,
+      "non_respond_only_coverage": 0.03722857142857143,
+      "templates_by_top_action": {
+        "apply_patch": 34,
+        "ask_user": 60,
+        "edit_file": 317,
+        "glob_pattern": 31,
+        "grep_search": 144,
+        "lint_or_typecheck": 24,
+        "list_directory": 29,
+        "plan_task": 65,
+        "read_file": 121,
+        "respond_only": 548,
+        "run_bash": 167,
+        "run_tests": 99,
+        "web_search": 17,
+        "write_file": 71
+      },
+      "rows_by_top_action": {
+        "apply_patch": 71,
+        "ask_user": 129,
+        "edit_file": 736,
+        "glob_pattern": 65,
+        "grep_search": 312,
+        "lint_or_typecheck": 54,
+        "list_directory": 61,
+        "plan_task": 135,
+        "read_file": 256,
+        "respond_only": 2575,
+        "run_bash": 365,
+        "run_tests": 211,
+        "web_search": 35,
+        "write_file": 176
+      }
+    }
+  },
+  "nonholdout_mining": {
+    "unique_templates": 54089,
+    "duplicate_templates": 3511,
+    "rows_in_duplicate_templates": 9453,
+    "purity_ge_0_99": {
+      "threshold": 0.99,
+      "templates": 1451,
+      "rows": 4292,
+      "coverage": 0.0714963935300095,
+      "sessions": null,
+      "non_respond_only_rows": 2162,
+      "non_respond_only_coverage": 0.03601472572504206,
+      "templates_by_top_action": {
+        "apply_patch": 28,
+        "ask_user": 58,
+        "edit_file": 262,
+        "glob_pattern": 26,
+        "grep_search": 115,
+        "lint_or_typecheck": 23,
+        "list_directory": 20,
+        "plan_task": 53,
+        "read_file": 107,
+        "respond_only": 455,
+        "run_bash": 137,
+        "run_tests": 87,
+        "web_search": 17,
+        "write_file": 63
+      },
+      "rows_by_top_action": {
+        "apply_patch": 59,
+        "ask_user": 122,
+        "edit_file": 596,
+        "glob_pattern": 52,
+        "grep_search": 247,
+        "lint_or_typecheck": 51,
+        "list_directory": 42,
+        "plan_task": 113,
+        "read_file": 221,
+        "respond_only": 2130,
+        "run_bash": 293,
+        "run_tests": 180,
+        "web_search": 35,
+        "write_file": 151
+      }
+    },
+    "mine_gate": {
+      "min_nonholdout_n": 20,
+      "min_purity": 0.995,
+      "exclude_respond_only": true,
+      "templates": 0,
+      "nonholdout_rows": 0,
+      "holdout_rows": 0,
+      "templates_with_holdout_rows": 0
+    }
+  }
+}

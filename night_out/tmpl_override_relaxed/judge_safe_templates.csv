@@ -1,0 +1,13 @@
+template,nonholdout_n,nonholdout_sessions,top_action,top_count,purity,holdout_n,nonholdout_action_counts,example_prompt,holdout_non_au_matches,changed_rows,fixed,broken,wrong_to_wrong,macro_f1,delta_vs_base,passes_judge_gate,passes_safe_gate
+모델 바뀌었으니 마이그레이션 만들어야 하잖아요. makemigrations 명령 돌려줄래요?,2,2,run_tests,2,1.0,1,"{""run_tests"": 2}",모델 바뀌었으니 마이그레이션 만들어야 하잖아요. makemigrations 명령 돌려줄래요?,1,1,1,0,0,0.7389057973121995,0.0001335160469791985,True,True
+make sure I didn't break types anywhere in the components folder,2,2,run_bash,2,1.0,1,"{""run_bash"": 2}",make sure I didn't break types anywhere in the components folder,1,1,1,0,0,0.7388764578007702,0.00010417653554983808,True,True
+new on this repo. what's in the terraform dir?,2,2,glob_pattern,2,1.0,1,"{""glob_pattern"": 2}",new on this repo. what's in the terraform dir?,1,1,1,0,0,0.738862290928543,9.000966332273208e-05,True,True
+_read_shards가 디스크에서 직접 읽는 것 같은데 이 함수 부르는 데가 또 어디 있나 찾아봐,2,2,grep_search,2,1.0,1,"{""grep_search"": 2}",_read_shards가 디스크에서 직접 읽는 것 같은데 이 함수 부르는 데가 또 어디 있나 찾아봐,1,1,1,0,0,0.7388435548265432,7.127356132285989e-05,True,True
+에러를 어떻게 감싸서 올려보내는지 패턴이 궁금해요. fmt.Errorf로 wrap 하는 데가 얼마나 되나 전체에서 봐줄래요?,2,2,grep_search,2,1.0,1,"{""grep_search"": 2}",에러를 어떻게 감싸서 올려보내는지 패턴이 궁금해요. fmt.Errorf로 wrap 하는 데가 얼마나 되나 전체에서 봐줄래요?,1,1,1,0,0,0.7388435548265432,7.127356132285989e-05,True,True
+테마 관련 건 아예 없네. 다른 데서 prefers-color-scheme 쓰는 데는 있나?,2,2,grep_search,2,1.0,1,"{""grep_search"": 2}",테마 관련 건 아예 없네. 다른 데서 prefers-color-scheme 쓰는 데는 있나?,1,1,1,0,0,0.7388435548265432,7.127356132285989e-05,True,True
+show me the full middleware block,2,2,read_file,2,1.0,1,"{""read_file"": 2}",show me the full middleware block,1,1,1,0,0,0.7388432082254255,7.092696020516431e-05,True,True
+left a dangling colon. patch it,2,2,edit_file,2,1.0,1,"{""edit_file"": 2}",left a dangling colon. patch it,1,1,1,0,0,0.738842208758624,6.992749340373194e-05,True,True
+"페이지 상태(page, <IDENT>) 추가하고 20개씩 끊어서 보여주게 인덱스 페이지 고쳐줘",2,2,edit_file,2,1.0,1,"{""edit_file"": 2}","페이지 상태(page, pageSize) 추가하고 20개씩 끊어서 보여주게 인덱스 페이지 고쳐줘",1,1,1,0,0,0.738842208758624,6.992749340373194e-05,True,True
+홈 화면이랑 버튼 컴포넌트에 동시에 접근성 라벨 일괄로 넣어야 돼. 두 파일 같이 패치해줘,2,2,edit_file,2,1.0,1,"{""edit_file"": 2}",홈 화면이랑 버튼 컴포넌트에 동시에 접근성 라벨 일괄로 넣어야 돼. 두 파일 같이 패치해줘,1,1,1,0,0,0.738842208758624,6.992749340373194e-05,True,True
+import 에러 나는데 <IDENT> requests 래 ㅠㅠ <<IDENT>> 에 빠진 거 아냐? 열어봐,4,4,read_file,4,1.0,1,"{""read_file"": 4}",import 에러 나는데 ModuleNotFoundError requests 래 ㅠㅠ Cargo.lock 에 빠진 거 아냐? 열어봐,1,1,1,0,0,0.7388324253751036,6.014410988330887e-05,True,True
+tidy 돌린 다음 <<IDENT>> 어떻게 바뀌었나 확인하자,2,2,read_file,2,1.0,2,"{""read_file"": 2}",tidy 돌린 다음 models/staging/stg_users.sql 어떻게 바뀌었나 확인하자,2,1,1,0,0,0.7388324253751036,6.014410988330887e-05,True,True
