@@ -1,0 +1,67 @@
+{
+  "inputs": {
+    "holdout_base": "C:\\dev\\night\\2026-07-07\\task1\\context\\night\\2026-07-05\\holdout_base.npz",
+    "mbert_holdout": "C:\\dev\\2026-AI-DACON\\colab_out\\holdout_mbert.npz",
+    "oof_dir": "C:\\dev\\2026-AI-DACON\\artifacts\\oof\\oof_rebuild_2026_07_04",
+    "data_dir": "C:\\dev\\2026-AI-DACON\\data",
+    "alpha": 0.9,
+    "e5_weight": 1.2,
+    "mbert_weight": 0.8
+  },
+  "sanity": {
+    "expected_3way": 0.71726,
+    "expected_4way": 0.72255,
+    "actual_3way": 0.7172592174830689,
+    "actual_4way": 0.7225458252208838
+  },
+  "au_model": {
+    "feature": "TfidfVectorizer(char_wb, ngram_range=(3,5), max_features=120000)",
+    "model": "LinearSVC(C=1.0, class_weight=balanced, max_iter=5000, random_state=42)",
+    "train_protocol": "nonholdout sess_au rows only",
+    "train_rows": 4343,
+    "train_sessions": 946,
+    "holdout_au_rows": 682,
+    "classes": [
+      "apply_patch",
+      "ask_user",
+      "edit_file",
+      "glob_pattern",
+      "grep_search",
+      "lint_or_typecheck",
+      "list_directory",
+      "plan_task",
+      "read_file",
+      "respond_only",
+      "run_bash",
+      "run_tests",
+      "web_search",
+      "write_file"
+    ],
+    "n_features": 111047,
+    "elapsed_sec": 58.382
+  },
+  "rows": [
+    {
+      "name": "3way_e5x2",
+      "macro_f1": 0.7172592174830689,
+      "au_macro_f1": 0.5138063966844043,
+      "non_au_macro_f1": 0.729706584336556
+    },
+    {
+      "name": "4way_e5_1.2_mbert_0.8",
+      "macro_f1": 0.7225458252208838,
+      "au_macro_f1": 0.511765002680003,
+      "non_au_macro_f1": 0.7356758606640229
+    },
+    {
+      "name": "4way_e5_1.2_mbert_0.8_soft_au_a0.9",
+      "macro_f1": 0.7387722812652203,
+      "au_macro_f1": 0.7701676075636106,
+      "non_au_macro_f1": 0.7356758606640229,
+      "half1_macro_f1": 0.7308124360760131,
+      "half2_macro_f1": 0.7464734262485979
+    }
+  ],
+  "baseline_b4_soft_au": 0.7387722812652203,
+  "elapsed_sec": 7.02
+}
