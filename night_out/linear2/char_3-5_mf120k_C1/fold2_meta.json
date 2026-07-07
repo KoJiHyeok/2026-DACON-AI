@@ -1,0 +1,53 @@
+{
+  "variant": "char_3-5_mf120k_C1",
+  "fold": 2,
+  "train_rows": 46667,
+  "valid_rows": 23333,
+  "macro_f1": 0.6188242773985978,
+  "per_class_f1": {
+    "read_file": 0.4136371542877022,
+    "grep_search": 0.44001307616868257,
+    "list_directory": 0.3768844221105528,
+    "glob_pattern": 0.4035038146369031,
+    "edit_file": 0.8827751196172249,
+    "write_file": 0.9722222222222222,
+    "apply_patch": 0.7518979653811114,
+    "run_bash": 0.7075110456553756,
+    "run_tests": 0.6879215205395462,
+    "lint_or_typecheck": 0.5015792798483891,
+    "ask_user": 0.5249734325185972,
+    "plan_task": 0.5363189513926816,
+    "web_search": 0.4651711924439197,
+    "respond_only": 0.9991306867574616
+  },
+  "n_features": 120000,
+  "nnz_train": 57077143,
+  "classes_seen": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "elapsed_sec": 530.039,
+  "spec": {
+    "variant": "char_3-5_mf120k_C1",
+    "feature_kind": "char",
+    "ngram": [
+      3,
+      5
+    ],
+    "max_features": 120000,
+    "C": 1.0
+  },
+  "serializer": "compact"
+}

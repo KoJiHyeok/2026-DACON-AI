@@ -1,0 +1,212 @@
+{
+  "created_at": "2026-07-08T01:40:30",
+  "variant": "char_3-5_mf120k_C1",
+  "spec": {
+    "variant": "char_3-5_mf120k_C1",
+    "feature_kind": "char",
+    "ngram": [
+      3,
+      5
+    ],
+    "max_features": 120000,
+    "C": 1.0
+  },
+  "serializer": "compact",
+  "n_rows": 70000,
+  "oof_macro_f1": 0.6181726012618836,
+  "oof_per_class_f1": {
+    "read_file": 0.40828713160198427,
+    "grep_search": 0.44041450777202074,
+    "list_directory": 0.37737799834574026,
+    "glob_pattern": 0.41800939140042354,
+    "edit_file": 0.8814385048053501,
+    "write_file": 0.9706367535466842,
+    "apply_patch": 0.7442844193775808,
+    "run_bash": 0.7169552881322767,
+    "run_tests": 0.6801978157840511,
+    "lint_or_typecheck": 0.49820409888020284,
+    "ask_user": 0.519103139013453,
+    "plan_task": 0.5332600329851567,
+    "web_search": 0.46692307692307694,
+    "respond_only": 0.9993242590983685
+  },
+  "folds": [
+    {
+      "variant": "char_3-5_mf120k_C1",
+      "fold": 1,
+      "train_rows": 46666,
+      "valid_rows": 23334,
+      "macro_f1": 0.620503316252813,
+      "per_class_f1": {
+        "read_file": 0.4155934563174382,
+        "grep_search": 0.43548117154811716,
+        "list_directory": 0.37496107131734663,
+        "glob_pattern": 0.4203959858963927,
+        "edit_file": 0.8834796488427773,
+        "write_file": 0.9646365422396856,
+        "apply_patch": 0.7468929978781449,
+        "run_bash": 0.7161214953271028,
+        "run_tests": 0.6718314223737217,
+        "lint_or_typecheck": 0.5012722646310432,
+        "ask_user": 0.5261455525606469,
+        "plan_task": 0.542841348811498,
+        "web_search": 0.4879725085910653,
+        "respond_only": 0.9994209612044007
+      },
+      "n_features": 120000,
+      "nnz_train": 57134109,
+      "classes_seen": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "elapsed_sec": 488.265,
+      "spec": {
+        "variant": "char_3-5_mf120k_C1",
+        "feature_kind": "char",
+        "ngram": [
+          3,
+          5
+        ],
+        "max_features": 120000,
+        "C": 1.0
+      },
+      "serializer": "compact"
+    },
+    {
+      "variant": "char_3-5_mf120k_C1",
+      "fold": 2,
+      "train_rows": 46667,
+      "valid_rows": 23333,
+      "macro_f1": 0.6188242773985978,
+      "per_class_f1": {
+        "read_file": 0.4136371542877022,
+        "grep_search": 0.44001307616868257,
+        "list_directory": 0.3768844221105528,
+        "glob_pattern": 0.4035038146369031,
+        "edit_file": 0.8827751196172249,
+        "write_file": 0.9722222222222222,
+        "apply_patch": 0.7518979653811114,
+        "run_bash": 0.7075110456553756,
+        "run_tests": 0.6879215205395462,
+        "lint_or_typecheck": 0.5015792798483891,
+        "ask_user": 0.5249734325185972,
+        "plan_task": 0.5363189513926816,
+        "web_search": 0.4651711924439197,
+        "respond_only": 0.9991306867574616
+      },
+      "n_features": 120000,
+      "nnz_train": 57077143,
+      "classes_seen": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "elapsed_sec": 530.039,
+      "spec": {
+        "variant": "char_3-5_mf120k_C1",
+        "feature_kind": "char",
+        "ngram": [
+          3,
+          5
+        ],
+        "max_features": 120000,
+        "C": 1.0
+      },
+      "serializer": "compact"
+    },
+    {
+      "variant": "char_3-5_mf120k_C1",
+      "fold": 3,
+      "train_rows": 46667,
+      "valid_rows": 23333,
+      "macro_f1": 0.6151368848131008,
+      "per_class_f1": {
+        "read_file": 0.3953900709219858,
+        "grep_search": 0.44569350305835675,
+        "list_directory": 0.38022581629539215,
+        "glob_pattern": 0.4297111416781293,
+        "edit_file": 0.8780681968953165,
+        "write_file": 0.9751243781094527,
+        "apply_patch": 0.7341923883727899,
+        "run_bash": 0.7272192827748384,
+        "run_tests": 0.6807584706248058,
+        "lint_or_typecheck": 0.4917617237008872,
+        "ask_user": 0.5059847660500544,
+        "plan_task": 0.5206384149697303,
+        "web_search": 0.44772727272727275,
+        "respond_only": 0.9994209612044007
+      },
+      "n_features": 120000,
+      "nnz_train": 57100774,
+      "classes_seen": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "elapsed_sec": 582.989,
+      "spec": {
+        "variant": "char_3-5_mf120k_C1",
+        "feature_kind": "char",
+        "ngram": [
+          3,
+          5
+        ],
+        "max_features": 120000,
+        "C": 1.0
+      },
+      "serializer": "compact"
+    }
+  ],
+  "league": {
+    "baseline_soft_au_macro_f1": 0.7387722812652203,
+    "league_macro_f1": 0.7381806670097973,
+    "delta_vs_baseline_soft_au": -0.0005916142554229786,
+    "half_scores": {
+      "half1_macro_f1": 0.7307590895218542,
+      "half2_macro_f1": 0.7453420862053458
+    },
+    "candidate_lin_solo_holdout_macro_f1": 0.6201450277451451,
+    "reference_lin_solo_holdout_macro_f1": 0.6676495541547487,
+    "lin_argmax_disagreement_vs_reference": 0.26943524927274554,
+    "holdout_rows": 9969,
+    "soft_au_cache_hit": true
+  },
+  "league_macro_f1": 0.7381806670097973,
+  "delta_vs_baseline_soft_au": -0.0005916142554229786,
+  "decision": "discard",
+  "baseline_soft_au_macro_f1": 0.7387722812652203
+}
