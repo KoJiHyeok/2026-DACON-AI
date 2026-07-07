@@ -20,11 +20,21 @@ def load_submit_script():
         torch_stub.Tensor = type("Tensor", (), {})
         torch_stub.cuda = SimpleNamespace(is_available=lambda: False, empty_cache=lambda: None)
         sys.modules["torch"] = torch_stub
-    spec = importlib.util.spec_from_file_location("submit_script_under_test", SUBMIT_SCRIPT)
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
+    # script.py의 `import features`는 submit/features.py를 기대한다. 다른 테스트가
+    # src/features.py를 같은 이름으로 캐시해 두면 잘못된 모듈이 잡히므로 격리한다.
+    saved = {k: sys.modules.pop(k) for k in ("features", "aar_infer") if k in sys.modules}
+    sys.path.insert(0, str(SUBMIT_SCRIPT.parent))
+    try:
+        spec = importlib.util.spec_from_file_location("submit_script_under_test", SUBMIT_SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(str(SUBMIT_SCRIPT.parent))
+        for k in ("features", "aar_infer"):
+            sys.modules.pop(k, None)
+        sys.modules.update(saved)
     return module
 
 
