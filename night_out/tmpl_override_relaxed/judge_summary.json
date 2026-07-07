@@ -1,0 +1,78 @@
+{
+  "normalizer": "r1",
+  "gate": {
+    "min_nonholdout_n": 2,
+    "min_purity": 0.995,
+    "exclude_respond_only": true,
+    "exclude_au_targets": true,
+    "safe_gate": "changed_rows>0, fixed>0, broken==0, individual macro delta>0"
+  },
+  "rows": {
+    "train": 70000,
+    "holdout": 9969,
+    "nonholdout": 60031,
+    "league_holdout": 9969,
+    "league_holdout_au": 682,
+    "league_holdout_non_au": 9287
+  },
+  "baseline": {
+    "macro_f1": 0.7387722812652203,
+    "au_macro_f1": 0.7701676075636106,
+    "non_au_macro_f1": 0.7356758606640229,
+    "expected_b4_soft_au_from_task": 0.73877,
+    "au_cache_hit": true,
+    "au_model": {
+      "feature": "TfidfVectorizer(char_wb, ngram_range=(3,5), max_features=120000)",
+      "model": "LinearSVC(C=1.0, class_weight=balanced, max_iter=5000, random_state=42)",
+      "train_protocol": "nonholdout sess_au rows only",
+      "train_rows": 4343,
+      "train_sessions": 946,
+      "holdout_au_rows": 682,
+      "classes": [
+        "apply_patch",
+        "ask_user",
+        "edit_file",
+        "glob_pattern",
+        "grep_search",
+        "lint_or_typecheck",
+        "list_directory",
+        "plan_task",
+        "read_file",
+        "respond_only",
+        "run_bash",
+        "run_tests",
+        "web_search",
+        "write_file"
+      ],
+      "n_features": 111047,
+      "elapsed_sec": 58.382
+    }
+  },
+  "candidate_counts": {
+    "mine_candidates": 996,
+    "judge_gate_templates": 65,
+    "safe_gate_templates": 12
+  },
+  "combined_judge_gate": {
+    "templates": 65,
+    "changed_rows": 66,
+    "fixed": 12,
+    "broken": 44,
+    "wrong_to_wrong": 10,
+    "macro_f1": 0.7349473949587263,
+    "au_macro_f1": 0.7701676075636106,
+    "non_au_macro_f1": 0.7315938629454115,
+    "delta_vs_base": -0.003824886306494024
+  },
+  "combined_safe_gate": {
+    "templates": 12,
+    "changed_rows": 12,
+    "fixed": 12,
+    "broken": 0,
+    "wrong_to_wrong": 0,
+    "macro_f1": 0.7397152609131202,
+    "au_macro_f1": 0.7701676075636106,
+    "non_au_macro_f1": 0.7366853306477369,
+    "delta_vs_base": 0.0009429796478999108
+  }
+}
