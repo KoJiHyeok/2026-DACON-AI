@@ -76,13 +76,17 @@ def gate_package():
         for extra in sorted(glob.glob(os.path.join(SUBMIT_DIR, "*.py"))):
             if os.path.basename(extra) != "script.py":
                 zf.write(extra, os.path.basename(extra))
-        for dirpath, _, filenames in os.walk(os.path.join(SUBMIT_DIR, "model")):
-            for fname in filenames:
-                if fname == ".gitkeep":
+        # model/ + (있으면) src/ — 동료 계열 후보는 src 패키지로 모듈을 관리한다
+        for sub in ("model", "src"):
+            for dirpath, _, filenames in os.walk(os.path.join(SUBMIT_DIR, sub)):
+                if "__pycache__" in dirpath:
                     continue
-                full = os.path.join(dirpath, fname)
-                arc = os.path.relpath(full, SUBMIT_DIR).replace(os.sep, "/")
-                zf.write(full, arc)
+                for fname in filenames:
+                    if fname == ".gitkeep" or fname.endswith(".pyc"):
+                        continue
+                    full = os.path.join(dirpath, fname)
+                    arc = os.path.relpath(full, SUBMIT_DIR).replace(os.sep, "/")
+                    zf.write(full, arc)
     size_mb = os.path.getsize(ZIP_PATH) / 1024 / 1024
     print(f"  통과 ({size_mb:.1f} MB)")
     return size_mb
@@ -116,7 +120,15 @@ def main():
     ap.add_argument("--note", default="", help="제출 메모 (무엇이 바뀌었나)")
     ap.add_argument("--allow-dirty", action="store_true",
                     help="개발 중 확인용: git 게이트 생략, 대장 기록 안 함")
+    ap.add_argument("--submit-dir", default="submit",
+                    help="패키징할 스테이징 디렉토리 (기본 submit/ — 병합 후보는 submit_candidates/<이름>)")
     args = ap.parse_args()
+
+    global SUBMIT_DIR, ZIP_PATH
+    SUBMIT_DIR = os.path.join(ROOT, args.submit_dir)
+    ZIP_PATH = os.path.join(SUBMIT_DIR, "submit.zip")
+    if not os.path.isdir(SUBMIT_DIR):
+        sys.exit(f"[게이트 실패] 스테이징 디렉토리 없음: {SUBMIT_DIR}")
 
     gate_tests()
     commit = "(dirty)" if args.allow_dirty else gate_git_clean()
