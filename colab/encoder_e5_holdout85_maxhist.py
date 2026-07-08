@@ -47,7 +47,7 @@ OUT = _env("ENC_OUT", f"./enc_e5_h{MAX_HIST}")
 
 # ===== 하이퍼파라미터 — encoder_v2_s42_repro.py와 동일, 변경 금지 =====
 MODEL_NAME = "intfloat/multilingual-e5-base"
-MAX_LEN = 384
+MAX_LEN = int(_env("ENC_MAXLEN", "384"))   # 기본 384 = 계약. ENC_MAXLEN=512는 명시적 프로브(Bet A) — @384와 직접 비교로 maxlen 격리
 EPOCHS = 6
 BATCH = 16
 LR = 2e-5

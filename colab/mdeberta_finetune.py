@@ -57,6 +57,7 @@ EPOCHS = 1 if SMOKE else int(_env("MDEB_EPOCHS", "2"))
 BATCH = int(_env("MDEB_BATCH", "8"))
 ACCUM = int(_env("MDEB_ACCUM", "2"))
 MAX_LEN = 64 if SMOKE else int(_env("MDEB_MAXLEN", "384"))
+MAX_HIST = int(_env("MDEB_MAXHIST", "6"))   # serialize 히스토리 창 (계약 기본 6, hist12 프로브 시 12) — 정의는 불변, 호출만 파라미터화
 LR = float(_env("MDEB_LR", "2e-5"))
 RESUME = _env("MDEB_RESUME", "0") == "1"
 CKPT_STEPS = int(_env("MDEB_CKPT_STEPS", "2000"))
@@ -177,7 +178,7 @@ def main():
         print("[cfg] gradient checkpointing on")
 
     def collate(batch):
-        texts = [serialize(s) for s, _ in batch]
+        texts = [serialize(s, MAX_HIST) for s, _ in batch]
         ys = torch.tensor([y for _, y in batch], dtype=torch.long)
         enc = tok(texts, truncation=True, max_length=MAX_LEN, padding=True, return_tensors="pt")
         return enc, ys
@@ -221,7 +222,7 @@ def main():
         probs = np.zeros((len(va), len(ACTIONS)))
         for i in range(0, len(va), BATCH * 4):
             chunk = va[i:i + BATCH * 4]
-            enc = tok([serialize(s) for s in chunk], truncation=True, max_length=MAX_LEN,
+            enc = tok([serialize(s, MAX_HIST) for s in chunk], truncation=True, max_length=MAX_LEN,
                       padding=True, return_tensors="pt").to(device)
             logits = model(**enc).logits.float().cpu().numpy()
             z = logits - logits.max(1, keepdims=True)
