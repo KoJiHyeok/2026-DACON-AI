@@ -46,7 +46,8 @@ from transformers import (AutoModelForSequenceClassification, AutoTokenizer,
 DRIVE_ROOT = "/content/drive/MyDrive/dacon2026"      # train.jsonl, train_labels.csv 위치
 DATA_DIR = DRIVE_ROOT
 SEED = int(os.environ.get("ENC_SEED", "42"))          # 시드 앙상블: 42(기본) → 7 → 2026
-OUT_DIR = os.path.join(DRIVE_ROOT, f"enc_v2_s{SEED}")  # 산출물(model/, run.json) 위치
+MAX_HIST = int(os.environ.get("ENC_MAXHIST", "6"))    # serialize 히스토리 창 (계약 기본 6, hist12 배포용=12) — 정의 불변, 호출만
+OUT_DIR = os.path.join(DRIVE_ROOT, f"enc_v2_s{SEED}_h{MAX_HIST}")  # 산출물(model/, run.json) — max_hist별 분리
 # ================================================================
 
 # ===== 하이퍼파라미터 — 원본(encoder_v2_full.py)과 동일, 변경 금지 =====
@@ -158,7 +159,7 @@ def load_data():
                 samples.append(json.loads(line))
     with open(train_labels, encoding="utf-8") as f:
         lab = {r["id"]: r["action"] for r in csv.DictReader(f)}
-    texts = [serialize(s) for s in samples]
+    texts = [serialize(s, MAX_HIST) for s in samples]
     y = np.array([LABEL2ID[lab[s["id"]]] for s in samples])
     return texts, y
 

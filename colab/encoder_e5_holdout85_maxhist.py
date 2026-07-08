@@ -40,6 +40,7 @@ def _env(k, d):
 
 # ===== 설정 =====
 MAX_HIST = int(_env("ENC_MAXHIST", "6"))          # ★ 재심 대상 (6=대조 / 12=후보)
+MODE = _env("ENC_MODE", "holdout85")              # holdout85=리그판정 npz | full=배포용 70k 전량 + fp16 모델
 SEED = int(_env("ENC_SEED", "42"))
 DATA_DIR = _env("ENC_DATA_DIR", "./data")
 HOLDOUT_NPZ = _env("ENC_HOLDOUT_NPZ", "./holdout_base.npz")
@@ -150,17 +151,20 @@ def main():
     samples, lab = load_samples()
     assert len(ACTIONS) == 14
 
-    # ----- split: holdout ids는 npz에서 직접 (재구현 금지) -----
-    assert os.path.exists(HOLDOUT_NPZ), f"holdout npz 없음: {HOLDOUT_NPZ} — 배치 셀 먼저"
-    hz = np.load(HOLDOUT_NPZ, allow_pickle=True)
-    hold = set(str(x) for x in hz["ids"])
-    ids_all = set(s["id"] for s in samples)
-    n_missing = len(hold - ids_all)
-    assert n_missing == 0, f"holdout ids {n_missing}/{len(hold)}개가 train에 없음 — 스테일 npz"
-
-    tr = [s for s in samples if s["id"] not in hold]
-    va = [s for s in samples if s["id"] in hold]
-    print(f"[split] train={len(tr)} valid={len(va)} (holdout ids={len(hold)})")
+    # ----- split -----
+    if MODE == "full":
+        tr, va = samples, []                       # 배포용: 70k 전량 학습, holdout 없음
+        print(f"[split] FULL train={len(tr)} (배포용 — holdout 없음)")
+    else:
+        # holdout85: holdout ids는 npz에서 직접 (재구현 금지)
+        assert os.path.exists(HOLDOUT_NPZ), f"holdout npz 없음: {HOLDOUT_NPZ} — 배치 셀 먼저"
+        hz = np.load(HOLDOUT_NPZ, allow_pickle=True)
+        hold = set(str(x) for x in hz["ids"])
+        n_missing = len(hold - set(s["id"] for s in samples))
+        assert n_missing == 0, f"holdout ids {n_missing}/{len(hold)}개가 train에 없음 — 스테일 npz"
+        tr = [s for s in samples if s["id"] not in hold]
+        va = [s for s in samples if s["id"] in hold]
+        print(f"[split] train={len(tr)} valid={len(va)} (holdout ids={len(hold)})")
 
     tok = AutoTokenizer.from_pretrained(MODEL_NAME)
     tr_texts = [serialize(s, MAX_HIST) for s in tr]
@@ -192,7 +196,24 @@ def main():
         d.startswith("checkpoint-") for d in os.listdir(ckpt_root)) if os.path.isdir(ckpt_root) else False
     trainer.train(resume_from_checkpoint=has_ckpt)
 
-    # ----- holdout 확률 (fp32, 잘림 max_hist 동일) -----
+    os.makedirs(OUT, exist_ok=True)
+
+    if MODE == "full":
+        # ----- 배포용: fp32 저장 후 fp16 사본 (half()는 in-place라 이후 이 모델로 평가 금지) -----
+        d32 = os.path.join(OUT, "model_fp32"); d16 = os.path.join(OUT, "model_fp16")
+        model.save_pretrained(d32); tok.save_pretrained(d32)
+        model.half().save_pretrained(d16); tok.save_pretrained(d16)
+        size16 = sum(os.path.getsize(os.path.join(r, f))
+                     for r, _, fs in os.walk(d16) for f in fs) / 1e6
+        with open(os.path.join(OUT, f"run_h{MAX_HIST}_full.json"), "w", encoding="utf-8") as f:
+            json.dump({"model": MODEL_NAME, "max_hist": MAX_HIST, "seed": SEED, "epochs": EPOCHS,
+                       "max_len": MAX_LEN, "n_train": len(tr), "mode": "full",
+                       "fp16_MB": round(size16, 1)}, f, indent=2)
+        print(f"[save] full-train fp16 사본 {size16:.0f}MB (e5-base ~573MB 예상) — 배포용 인코더")
+        print("[DONE]")
+        return
+
+    # ----- holdout85: holdout 확률 npz (fp32, 잘림 max_hist 동일) -----
     model.eval()
     probs = np.zeros((len(va), len(ACTIONS)), dtype=np.float64)
     with torch.no_grad():
@@ -209,7 +230,6 @@ def main():
     pred = np.array(ACTIONS)[probs.argmax(1)]
     f1 = f1_score([str(y) for y in y_true], pred, average="macro")
 
-    os.makedirs(OUT, exist_ok=True)
     npz_path = os.path.join(OUT, f"holdout_e5_h{MAX_HIST}.npz")
     np.savez(npz_path,
              ids=np.array([s["id"] for s in va], dtype=object),
