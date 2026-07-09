@@ -58,9 +58,12 @@
 |---|---|---|
 | seed soup (soup2/3: s42+s7 가중치 평균) | 0.697 | seed별 head 초기화가 다른 basin → 파괴적 간섭 |
 | R4 계층 분류 (explore gate+specialist) | 리그 −0.007~−0.016 | linear 단독에서만 +0.0246, 3-way 베이스에서 역전 — blend가 이미 explore를 더 잘 풂 (#14) |
-| serialize 확장 (hist12 / args 추가) | 프록시 −0.031 / −0.004 | 길이 희석 실해 + args가 explore F1을 못 올림. hist12는 384 토큰에서 83% 잘림 문제도 (#15) |
+| ~~serialize hist12 확장~~ **→ #34에서 부활(PASS)** | ~~프록시 −0.031~~ → 리그 격리 **+0.02150** | **재시도 금지 해제.** #15 폐기는 BoW 프록시 + args-부풀림 판정이라 인코더 비전이. 실측: hist12 384 잘림 8.5%뿐(#15의 83% 재현 실패), 인코더는 attention으로 최근 history 활용 → exp #34 승격·배포 중 |
+| serialize **args 추가** (hist12와 별개) | 프록시 −0.004, explore grep −0.007 | args는 explore F1을 못 올림 (TF-IDF 유리한 리터럴인데도) — hist12 부활과 무관하게 **여전히 폐기** (#15) |
 | 세션 형제 행 라벨 복원 | LB 델타 0 | test가 세션당 1스텝 샘플링 — 복원 대상 없음 (#12, 보험 코드는 잔류) |
 | e5-small 성분 추가 (모든 형태) | LB −0.006 / 리그 전 가중 마이너스 | uniform·가중 블록·4번째 독립 성분 전부 마이너스 — solo 0.594가 너무 약함 (#18·#21). 완전 폐기 |
+| **GBDT 메타 스태커 (hist12, 3-config)** | 리그 **−0.0097~−0.0174** 전부 로컬 마이너스 | 밤샘 07-09: HistGradientBoosting 강/중/확률만 규제, nested SGKF. 반반 동부호 음수(신기루 아님). Q0.9·균일 oracle갭 = 결합기 열 독립신호 부족(#17 LogProto와 동벽). recon "낮은기대"→"로컬 마이너스" 확정. 리포트: night/2026-07-09/report_overnight_hist12_levers.md |
+| **탐색 specialist (좁은 어휘 마커)** | 리그 **−0.0004** 중립 | 밤샘 07-09: 찾아→grep/열어→read/디렉토리→list/몇개→glob 마커+char_wb, 정직 프로토콜 soft/add. #32(char 전이0)·#14(R4 route 실패)와 정합. 탐색 잔차=features/label-ambiguity 벽 |
 | **enc 지분 낮추기 — 전역·버킷 불문 전면 금지** | LB 실측 −0.0061 (#20) | 리그 기울기가 enc 지분 축에서 LB와 반대 — **세 번 확인** (핸드오프 §5, #16, #20 LB 실측). 버킷별도 예외 아님 (#19의 '예외' 판단은 정황 추론을 LB 검증으로 오독한 오류). 리그는 오직 성분 추가/제거 판정용, enc 지분이 변하는 모든 스킴은 LB 게이트 필수 |
 | calib_v1 (enc T=1.34 + class bias) | 0.7169 | holdout +0.005가 LB −0.002로 비전이 — train 분포 피팅 bias는 분포 이동에 취약 |
 | flat 피처 추가 F~W | 이득 없음 | |

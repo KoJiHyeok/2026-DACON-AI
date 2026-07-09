@@ -1,0 +1,81 @@
+{
+  "name": "gbdt_probsonly",
+  "own_baseline": 0.75601,
+  "delta": -0.0174,
+  "half1_delta": -0.01467,
+  "half2_delta": -0.02004,
+  "gate": "discard",
+  "gate_note": "half1/half2 부호 일치",
+  "leak_excluded_holdout": true,
+  "meta_solo_f1": 0.72878,
+  "meta_final_f1": 0.7386,
+  "baseline_final_f1": 0.75601,
+  "model": {
+    "estimator": "HistGradientBoostingClassifier",
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 200,
+    "l2_regularization": 1.0,
+    "sample_weight": "balanced"
+  },
+  "cv": {
+    "scheme": "StratifiedGroupKFold(n_splits=5, group=session_id)",
+    "seed": 42,
+    "n_splits": 5,
+    "elapsed_sec": 113.966,
+    "folds": [
+      {
+        "fold": 0,
+        "train_rows": 7975,
+        "valid_rows": 1994,
+        "train_sessions": 1082,
+        "valid_sessions": 268,
+        "fold_classes_seen": 14
+      },
+      {
+        "fold": 1,
+        "train_rows": 7975,
+        "valid_rows": 1994,
+        "train_sessions": 1079,
+        "valid_sessions": 271,
+        "fold_classes_seen": 14
+      },
+      {
+        "fold": 2,
+        "train_rows": 7975,
+        "valid_rows": 1994,
+        "train_sessions": 1077,
+        "valid_sessions": 273,
+        "fold_classes_seen": 14
+      },
+      {
+        "fold": 3,
+        "train_rows": 7976,
+        "valid_rows": 1993,
+        "train_sessions": 1082,
+        "valid_sessions": 268,
+        "fold_classes_seen": 14
+      },
+      {
+        "fold": 4,
+        "train_rows": 7975,
+        "valid_rows": 1994,
+        "train_sessions": 1080,
+        "valid_sessions": 270,
+        "fold_classes_seen": 14
+      }
+    ]
+  },
+  "features": {
+    "description": "4성분 OOF확률 56열만 (linear/stacker/e5-h12/mbert x 14클래스) — 구조피처 없음(대조군)",
+    "n_features": 56
+  },
+  "au_routing": {
+    "method": "apply_soft_au",
+    "alpha": 0.9,
+    "note": "au_probs는 기존 캐시(char_wb TF-IDF+LinearSVC) 재사용, 메타확률에도 동일 적용"
+  },
+  "rows": 9969,
+  "n_actions": 14,
+  "e5_slot": "hist12 (colab_out/holdout_e5_h12.npz)",
+  "script": "scripts/night_hist12/gbdt_probsonly.py"
+}

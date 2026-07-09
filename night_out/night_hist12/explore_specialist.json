@@ -1,0 +1,208 @@
+{
+  "hist12_baseline": 0.75601,
+  "hist12_baseline_recompute_check": 0.75601,
+  "leak_excluded_holdout": true,
+  "specialist_meta": {
+    "feature": "FeatureUnion(char_wb(3,5) TF-IDF min_df=5 max_features=40000, marker_counts[4 explore classes])",
+    "model": "LinearSVC(C=1.0, class_weight=balanced, max_iter=1000, random_state=42)",
+    "train_protocol": "nonholdout train.jsonl rows (ALL sessions incl sess_sim/sess_au), holdout ids excluded",
+    "train_rows": 60031,
+    "train_sessions": 8079,
+    "holdout_rows": 9969,
+    "classes": [
+      "apply_patch",
+      "ask_user",
+      "edit_file",
+      "glob_pattern",
+      "grep_search",
+      "lint_or_typecheck",
+      "list_directory",
+      "plan_task",
+      "read_file",
+      "respond_only",
+      "run_bash",
+      "run_tests",
+      "web_search",
+      "write_file"
+    ],
+    "n_features": 40004,
+    "elapsed_sec": 1324.493
+  },
+  "explore_classes": [
+    "grep_search",
+    "read_file",
+    "list_directory",
+    "glob_pattern"
+  ],
+  "grid": [
+    {
+      "mode": "soft_route",
+      "threshold": 0.3,
+      "alpha": 0.3,
+      "n_routed": 4279,
+      "macro_f1": 0.75558,
+      "delta": -0.00043
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.3,
+      "alpha": 0.5,
+      "n_routed": 4279,
+      "macro_f1": 0.75319,
+      "delta": -0.00281
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.3,
+      "alpha": 0.7,
+      "n_routed": 4279,
+      "macro_f1": 0.74336,
+      "delta": -0.01265
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.3,
+      "alpha": 0.9,
+      "n_routed": 4279,
+      "macro_f1": 0.68807,
+      "delta": -0.06793
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.5,
+      "alpha": 0.3,
+      "n_routed": 3987,
+      "macro_f1": 0.75534,
+      "delta": -0.00067
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.5,
+      "alpha": 0.5,
+      "n_routed": 3987,
+      "macro_f1": 0.7541,
+      "delta": -0.0019
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.5,
+      "alpha": 0.7,
+      "n_routed": 3987,
+      "macro_f1": 0.746,
+      "delta": -0.01
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.5,
+      "alpha": 0.9,
+      "n_routed": 3987,
+      "macro_f1": 0.69299,
+      "delta": -0.06301
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.7,
+      "alpha": 0.3,
+      "n_routed": 3777,
+      "macro_f1": 0.75555,
+      "delta": -0.00046
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.7,
+      "alpha": 0.5,
+      "n_routed": 3777,
+      "macro_f1": 0.75517,
+      "delta": -0.00083
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.7,
+      "alpha": 0.7,
+      "n_routed": 3777,
+      "macro_f1": 0.74791,
+      "delta": -0.00809
+    },
+    {
+      "mode": "soft_route",
+      "threshold": 0.7,
+      "alpha": 0.9,
+      "n_routed": 3777,
+      "macro_f1": 0.69821,
+      "delta": -0.0578
+    },
+    {
+      "mode": "blend_add",
+      "weight": 0.1,
+      "macro_f1": 0.75536,
+      "delta": -0.00065
+    },
+    {
+      "mode": "blend_add",
+      "weight": 0.2,
+      "macro_f1": 0.75312,
+      "delta": -0.00289
+    },
+    {
+      "mode": "blend_add",
+      "weight": 0.3,
+      "macro_f1": 0.7515,
+      "delta": -0.0045
+    },
+    {
+      "mode": "blend_add",
+      "weight": 0.4,
+      "macro_f1": 0.74742,
+      "delta": -0.00859
+    },
+    {
+      "mode": "blend_add",
+      "weight": 0.5,
+      "macro_f1": 0.74537,
+      "delta": -0.01064
+    }
+  ],
+  "best": {
+    "mode": "soft_route",
+    "threshold": 0.3,
+    "alpha": 0.3,
+    "n_routed": 4279,
+    "macro_f1": 0.75558,
+    "delta": -0.00043
+  },
+  "best_delta": -0.00043,
+  "best_half_delta": {
+    "half1": -0.00038,
+    "half2": -0.00051
+  },
+  "per_class_f1_base": {
+    "grep_search": 0.61907,
+    "read_file": 0.57711,
+    "list_directory": 0.51824,
+    "glob_pattern": 0.66994
+  },
+  "per_class_f1_best": {
+    "grep_search": 0.61437,
+    "read_file": 0.57405,
+    "list_directory": 0.51829,
+    "glob_pattern": 0.6676
+  },
+  "per_class_f1_delta": {
+    "grep_search": -0.0047,
+    "read_file": -0.00306,
+    "list_directory": 5e-05,
+    "glob_pattern": -0.00234
+  },
+  "confusion_pairs_base": {
+    "grep_search->read_file": 379,
+    "grep_search->list_directory": 200,
+    "read_file->list_directory": 216,
+    "glob_pattern->list_directory": 126
+  },
+  "confusion_pairs_best": {
+    "grep_search->read_file": 384,
+    "grep_search->list_directory": 200,
+    "read_file->list_directory": 215,
+    "glob_pattern->list_directory": 125
+  }
+}

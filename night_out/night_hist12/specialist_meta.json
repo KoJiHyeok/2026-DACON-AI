@@ -1,0 +1,26 @@
+{
+  "feature": "FeatureUnion(char_wb(3,5) TF-IDF min_df=5 max_features=40000, marker_counts[4 explore classes])",
+  "model": "LinearSVC(C=1.0, class_weight=balanced, max_iter=1000, random_state=42)",
+  "train_protocol": "nonholdout train.jsonl rows (ALL sessions incl sess_sim/sess_au), holdout ids excluded",
+  "train_rows": 60031,
+  "train_sessions": 8079,
+  "holdout_rows": 9969,
+  "classes": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "n_features": 40004,
+  "elapsed_sec": 1324.493
+}

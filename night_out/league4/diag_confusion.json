@@ -1,0 +1,488 @@
+{
+  "actions": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "per_class": {
+    "apply_patch": {
+      "support": 666,
+      "precision": 0.8514,
+      "recall": 0.9294,
+      "f1": 0.8887
+    },
+    "ask_user": {
+      "support": 393,
+      "precision": 0.6638,
+      "recall": 0.5878,
+      "f1": 0.6235
+    },
+    "edit_file": {
+      "support": 1580,
+      "precision": 0.96,
+      "recall": 0.9259,
+      "f1": 0.9427
+    },
+    "glob_pattern": {
+      "support": 783,
+      "precision": 0.7382,
+      "recall": 0.5977,
+      "f1": 0.6606
+    },
+    "grep_search": {
+      "support": 1473,
+      "precision": 0.7119,
+      "recall": 0.5451,
+      "f1": 0.6175
+    },
+    "lint_or_typecheck": {
+      "support": 320,
+      "precision": 0.6068,
+      "recall": 0.6125,
+      "f1": 0.6096
+    },
+    "list_directory": {
+      "support": 651,
+      "precision": 0.4284,
+      "recall": 0.6482,
+      "f1": 0.5159
+    },
+    "plan_task": {
+      "support": 370,
+      "precision": 0.6852,
+      "recall": 0.7,
+      "f1": 0.6925
+    },
+    "read_file": {
+      "support": 1284,
+      "precision": 0.5442,
+      "recall": 0.6044,
+      "f1": 0.5727
+    },
+    "respond_only": {
+      "support": 734,
+      "precision": 0.9892,
+      "recall": 1.0,
+      "f1": 0.9946
+    },
+    "run_bash": {
+      "support": 689,
+      "precision": 0.8257,
+      "recall": 0.8113,
+      "f1": 0.8184
+    },
+    "run_tests": {
+      "support": 653,
+      "precision": 0.7754,
+      "recall": 0.7933,
+      "f1": 0.7843
+    },
+    "web_search": {
+      "support": 174,
+      "precision": 0.5874,
+      "recall": 0.6954,
+      "f1": 0.6368
+    },
+    "write_file": {
+      "support": 199,
+      "precision": 0.9754,
+      "recall": 0.995,
+      "f1": 0.9851
+    }
+  },
+  "top_confusion_pairs": [
+    {
+      "true": "grep_search",
+      "pred": "read_file",
+      "count": 378,
+      "row_frac": 0.2566,
+      "n_confused_rows": 378,
+      "component_recovers_true": {
+        "linear": 0.164,
+        "stacker": 0.135,
+        "e5": 0.045,
+        "mbert": 0.04
+      }
+    },
+    {
+      "true": "read_file",
+      "pred": "list_directory",
+      "count": 225,
+      "row_frac": 0.1752,
+      "n_confused_rows": 225,
+      "component_recovers_true": {
+        "linear": 0.24,
+        "stacker": 0.009,
+        "e5": 0.009,
+        "mbert": 0.227
+      }
+    },
+    {
+      "true": "grep_search",
+      "pred": "list_directory",
+      "count": 205,
+      "row_frac": 0.1392,
+      "n_confused_rows": 205,
+      "component_recovers_true": {
+        "linear": 0.049,
+        "stacker": 0.015,
+        "e5": 0.0,
+        "mbert": 0.02
+      }
+    },
+    {
+      "true": "read_file",
+      "pred": "grep_search",
+      "count": 199,
+      "row_frac": 0.155,
+      "n_confused_rows": 199,
+      "component_recovers_true": {
+        "linear": 0.276,
+        "stacker": 0.111,
+        "e5": 0.085,
+        "mbert": 0.186
+      }
+    },
+    {
+      "true": "list_directory",
+      "pred": "read_file",
+      "count": 142,
+      "row_frac": 0.2181,
+      "n_confused_rows": 142,
+      "component_recovers_true": {
+        "linear": 0.12,
+        "stacker": 0.141,
+        "e5": 0.085,
+        "mbert": 0.014
+      }
+    },
+    {
+      "true": "glob_pattern",
+      "pred": "list_directory",
+      "count": 129,
+      "row_frac": 0.1648,
+      "n_confused_rows": 129,
+      "component_recovers_true": {
+        "linear": 0.0,
+        "stacker": 0.0,
+        "e5": 0.0,
+        "mbert": 0.0
+      }
+    },
+    {
+      "true": "glob_pattern",
+      "pred": "read_file",
+      "count": 116,
+      "row_frac": 0.1481,
+      "n_confused_rows": 116,
+      "component_recovers_true": {
+        "linear": 0.078,
+        "stacker": 0.164,
+        "e5": 0.026,
+        "mbert": 0.009
+      }
+    },
+    {
+      "true": "edit_file",
+      "pred": "apply_patch",
+      "count": 103,
+      "row_frac": 0.0652,
+      "n_confused_rows": 103,
+      "component_recovers_true": {
+        "linear": 0.476,
+        "stacker": 0.359,
+        "e5": 0.029,
+        "mbert": 0.107
+      }
+    },
+    {
+      "true": "ask_user",
+      "pred": "plan_task",
+      "count": 101,
+      "row_frac": 0.257,
+      "n_confused_rows": 101,
+      "component_recovers_true": {
+        "linear": 0.188,
+        "stacker": 0.059,
+        "e5": 0.04,
+        "mbert": 0.129
+      }
+    },
+    {
+      "true": "grep_search",
+      "pred": "glob_pattern",
+      "count": 78,
+      "row_frac": 0.053,
+      "n_confused_rows": 78,
+      "component_recovers_true": {
+        "linear": 0.103,
+        "stacker": 0.064,
+        "e5": 0.064,
+        "mbert": 0.064
+      }
+    },
+    {
+      "true": "plan_task",
+      "pred": "ask_user",
+      "count": 77,
+      "row_frac": 0.2081,
+      "n_confused_rows": 77,
+      "component_recovers_true": {
+        "linear": 0.221,
+        "stacker": 0.143,
+        "e5": 0.078,
+        "mbert": 0.156
+      }
+    },
+    {
+      "true": "lint_or_typecheck",
+      "pred": "run_tests",
+      "count": 73,
+      "row_frac": 0.2281,
+      "n_confused_rows": 73,
+      "component_recovers_true": {
+        "linear": 0.151,
+        "stacker": 0.356,
+        "e5": 0.11,
+        "mbert": 0.027
+      }
+    }
+  ],
+  "confusion_matrix_counts": [
+    [
+      619,
+      0,
+      47,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      231,
+      1,
+      1,
+      1,
+      0,
+      0,
+      101,
+      2,
+      0,
+      0,
+      0,
+      55,
+      0
+    ],
+    [
+      103,
+      0,
+      1463,
+      1,
+      0,
+      3,
+      1,
+      0,
+      2,
+      2,
+      2,
+      1,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      1,
+      468,
+      66,
+      0,
+      129,
+      0,
+      116,
+      0,
+      3,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      3,
+      1,
+      78,
+      803,
+      0,
+      205,
+      1,
+      378,
+      0,
+      3,
+      0,
+      1,
+      0
+    ],
+    [
+      2,
+      0,
+      1,
+      0,
+      1,
+      196,
+      1,
+      0,
+      1,
+      0,
+      45,
+      73,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      28,
+      55,
+      0,
+      422,
+      0,
+      142,
+      0,
+      1,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      77,
+      2,
+      1,
+      0,
+      0,
+      0,
+      259,
+      1,
+      0,
+      0,
+      0,
+      29,
+      1
+    ],
+    [
+      2,
+      2,
+      4,
+      56,
+      199,
+      3,
+      225,
+      1,
+      776,
+      4,
+      10,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      734,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      2,
+      0,
+      1,
+      49,
+      1,
+      0,
+      3,
+      1,
+      559,
+      73,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      72,
+      1,
+      0,
+      5,
+      1,
+      54,
+      518,
+      0,
+      0
+    ],
+    [
+      0,
+      35,
+      0,
+      0,
+      1,
+      0,
+      0,
+      16,
+      0,
+      0,
+      0,
+      0,
+      121,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      198
+    ]
+  ]
+}

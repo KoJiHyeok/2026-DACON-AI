@@ -194,6 +194,22 @@ def stacker_probs(samples):
     return np.asarray(probas, dtype=np.float64)   # 이미 AAR.ACTIONS(=ACTIONS) 순
 
 
+def _encoder_max_hist(enc_dir, default=6):
+    """인코더별 serialize max_hist (train↔infer 계약, exp #34/D-010 per-encoder serialize).
+    각 인코더 dir의 serialize_config.json {"max_hist": N} 을 읽는다. 파일 없으면 default=6
+    = 기존 계약 그대로(무회귀). e5 hist12 배포 시 model/encoder에만 이 파일을 둔다."""
+    path = os.path.join(enc_dir, "serialize_config.json")
+    if not os.path.exists(path):
+        return default
+    try:
+        with open(path, encoding="utf-8-sig") as f:  # utf-8-sig: BOM 있어도 파싱 (enc_block_weights 로더와 대칭)
+            cfg = json.load(f)
+        mh = int(cfg.get("max_hist", default))
+        return mh if mh > 0 else default
+    except (ValueError, TypeError, OSError):
+        return default
+
+
 def _one_encoder_probs(samples, enc_dir):
     """파인튜닝 인코더 1개 확률 = softmax(logits). 오프라인 로컬 로드 + 배치추론. ACTIONS 순 반환."""
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -206,7 +222,9 @@ def _one_encoder_probs(samples, enc_dir):
     id2label = {int(k): v for k, v in model.config.id2label.items()}
     enc_labels = [id2label[i] for i in range(len(id2label))]
 
-    texts = [serialize(s) for s in samples]
+    max_hist = _encoder_max_hist(enc_dir)
+    texts = [serialize(s, max_hist=max_hist) for s in samples]
+    print(f"      serialize(max_hist={max_hist}) [{os.path.basename(os.path.normpath(enc_dir))}]")
     out = np.zeros((len(texts), len(enc_labels)), dtype=np.float64)
     with torch.no_grad():
         for i in range(0, len(texts), BATCH):

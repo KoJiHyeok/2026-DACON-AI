@@ -1,0 +1,92 @@
+{
+  "components": [
+    "linear",
+    "stacker",
+    "e5",
+    "mbert"
+  ],
+  "per_component": {
+    "linear": {
+      "acc": 0.6732871902898987,
+      "macro_f1": 0.6676495541547487
+    },
+    "stacker": {
+      "acc": 0.7038820343063497,
+      "macro_f1": 0.7056611366010784
+    },
+    "e5": {
+      "acc": 0.7041829671983147,
+      "macro_f1": 0.7050885469078851
+    },
+    "mbert": {
+      "acc": 0.6909419199518507,
+      "macro_f1": 0.6714717932286964
+    }
+  },
+  "pairs": [
+    {
+      "pair": "linear|e5",
+      "pred_disagreement": 0.2286,
+      "double_fault": 0.2254,
+      "both_right": 0.6029,
+      "only_a_right": 0.0704,
+      "only_b_right": 0.1013,
+      "yule_q_correctness": 0.9002
+    },
+    {
+      "pair": "linear|mbert",
+      "pred_disagreement": 0.2339,
+      "double_fault": 0.2305,
+      "both_right": 0.5947,
+      "only_a_right": 0.0785,
+      "only_b_right": 0.0962,
+      "yule_q_correctness": 0.8955
+    },
+    {
+      "pair": "stacker|mbert",
+      "pred_disagreement": 0.1823,
+      "double_fault": 0.2324,
+      "both_right": 0.6272,
+      "only_a_right": 0.0766,
+      "only_b_right": 0.0637,
+      "yule_q_correctness": 0.9352
+    },
+    {
+      "pair": "stacker|e5",
+      "pred_disagreement": 0.1532,
+      "double_fault": 0.2368,
+      "both_right": 0.6449,
+      "only_a_right": 0.059,
+      "only_b_right": 0.0593,
+      "yule_q_correctness": 0.9552
+    },
+    {
+      "pair": "linear|stacker",
+      "pred_disagreement": 0.1969,
+      "double_fault": 0.2403,
+      "both_right": 0.6175,
+      "only_a_right": 0.0558,
+      "only_b_right": 0.0864,
+      "yule_q_correctness": 0.9371
+    },
+    {
+      "pair": "e5|mbert",
+      "pred_disagreement": 0.1382,
+      "double_fault": 0.2493,
+      "both_right": 0.6444,
+      "only_a_right": 0.0598,
+      "only_b_right": 0.0465,
+      "yule_q_correctness": 0.9659
+    }
+  ],
+  "oracle_at_least_one_right_acc": 0.8121,
+  "n_rows": 9969,
+  "recoverable": {
+    "final_macro_f1": 0.73877,
+    "final_wrong_rate": 0.261,
+    "recoverable_rate": 0.0841,
+    "recoverable_share_of_errors": 0.3221,
+    "n_final_wrong": 2602,
+    "n_recoverable": 838
+  }
+}
