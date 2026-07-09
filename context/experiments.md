@@ -8,9 +8,9 @@
 
 | 구분 | Macro-F1 | 비고 |
 |---|---|---|
-| 리더보드 (우리 팀) | **0.7400** | 3-way + soft-AU 라우팅 char-C1 α=0.9 (2026-07-06, 대장 #6, exp #24) 🏆. 이전: 하드-AU 0.7331 / 동료 0.7242 / 재건 3-way 0.71884 |
-| 커트라인(12등) | 0.7807 | 2026.07.06 기준 (전일 0.77665 → +0.004/일로 가속 중) — 갭 **−0.048** |
-| 순위 | 81등 | 핸드오프 시점 |
+| 리더보드 (우리 팀) | **0.7623** | 4-way(e5-hist12 + mBERT 블록 [1.2,0.8]) + soft-AU α=0.9, per-encoder serialize (2026-07-10, 대장 #11, exp #34–35) 🏆 **팀 최고** (이전 우리 0.7480 / 동료 0.7511) |
+| 커트라인(12등) | 0.7807 | 2026.07.06 기준 (+0.004/일 가속 감안 시 07-10 ~0.79 추정) — 갭 **−0.03 안팎** |
+| 순위 | (0.7623 반영 후 갱신) | 07-06 시점 81등 |
 
 ## 실험 기록 (w112까지의 여정 — 전부 LB 실측, 핸드오프 §1에서 계승)
 
@@ -51,6 +51,7 @@
 | 32 | 07.08 night | linear2 replacement sweep (밤샘 task2) | `scripts/linear2/` 추가. baseline_repro: `E_+seq`+LinearSVC C=0.1+bias 재현 OOF 0.663895 vs reference 0.663307 (Δ +0.000588, tolerance pass). Sweep: compact text char/word+char TF-IDF LinearSVC, exact 3-fold OOF, 9 variants | best `char_2-5_mf120k_C1`: OOF **0.62006**, B4+soft-AU **0.73826** vs baseline 0.73877 (**−0.00051**). All variants negative; union and 200k/300k worse | 미제출 | **FAIL/폐기 — text-only linear replacement lane exhausted.** 현재 E_+seq linear가 blend 안에서 더 강하고 보완적이다. 단독 OOF가 그럴듯해도 앙상블 기여는 없었음. 리포트: `context/night/2026-07-08/report_linear2.md` |
 | 33 | 07.08 | 동료 표면 soft-AU α 0.8→0.9 프로브 (#30 잔여 카드, submit_candidates/alpha09) | merge080에서 mbert_full 제거 + attack_config.json 2값만 변경(mbert 키 삭제=믹스 비활성, au_alpha 0.9) — **동료 0.7511 원본 대비 순수 1변수**. script.py·src·모델은 merge080 검증분과 동일 파일 | 근거: 우리 표면 α그리드 정점 0.9 (exp #24 LB 전이 오차 0.0004) + 밤샘 07-07 task1 리그 α그리드도 0.9 유지. tester 6/6 PASS — sess_au 3행 주입 스텁에서 `au_route alpha=0.9 rows=3` 실측 | **0.7501 (−0.0010)** | **FAIL/폐기 — α=0.9는 우리 표면 한정** (동료 AU 모델은 자체 serialize 재학습 + 베이스가 강해 α=0.8이 최적). 병합 라인 값싼 카드 소진 — 잔여는 스태커 피처 mbert 주입(동료 협업, 재학습 필요)뿐 |
 | 34 | 07.08 | **serialize 확장 재심** — e5 `max_hist 6→12` (D-010, exp #15 폐기 인코더 재검증) | 가설: #15의 hist12 폐기(프록시 −0.031)는 BoW 프록시 + args-부풀림 변형 판정이라 인코더 비전이. 변경점: encoder_v2 레시피(e5-base 6ep/b16/lr2e-5/ls0.1/fp16/balanced) 그대로 + `max_hist`만 env화, **85% split hist6 대조군 + hist12 후보** 동시 학습(colab/encoder_e5_holdout85_maxhist.py) → 리그에서 e5 슬롯 스왑, `hist12 − hist6대조`로 serialize 효과 격리 | **실측 선판정(로컬 e5 토크나이저 12k)**: 세션 51%가 6턴 초과(12턴=30.7%), hist12 잘림 384에서 **8.5%뿐**(#15의 83% 재현 실패), >6턴 세션 hist12 평균 +4.5턴 실살림, query 트림 무효. **리그(85% split): hist6대조 e5solo 0.70066/4way+AU 0.73451 → hist12 e5solo 0.73617/4way+AU 0.75601** | **격리 델타 +0.02150 (게이트 4배 초과), 반반 +0.018/+0.025 안정** | **PASS → 승격 진행.** serialize 확장이 처음으로 앙상블 전이(e5 solo +0.0355 → blend +0.0215) — #15 폐기는 BoW 프록시 판정이라 비전이였음을 입증(인코더는 attention으로 최근 히스토리 활용, 탐색계열 혼동 해소). **다음: e5 full-train(70k 6ep) hist12 재학습 → 배포.** ⚠️ 계약 주의: 추론 serialize를 hist12로 바꾸면 hist6로 학습된 mBERT가 train↔infer 불일치 → **per-encoder serialize(e5=12, mBERT=6)로 분리** 또는 mBERT도 hist12 재학습(Bet B). 후속 프로브 승인됨(D-010): maxlen512(Bet A)·mBERT hist12(Bet B). 실측 스크립트: scratchpad/measure_serialize.py |
+| 35 | 07.10 | **e5 hist12 배포** (#34 승격 실행) + 밤샘 A/B 레버 정리 | ① Colab full-train 70k 6ep hist12 → fp16 573MB(loss 1.353) ② submit/script.py per-encoder serialize: `_encoder_max_hist`(encoder별 serialize_config.json, utf-8-sig — **BOM 폴백 버그를 밤샘 스모크가 발견, 수정 후 tester 11/11**) ③ 인코더 스왑(sha 1f2ad870, hist6판 artifacts 백업) + `serialize_config.json{"max_hist":12}` BOM-free, mBERT는 무파일=6 ④ .venv-merge sklearn 1.9→1.8.0 복귀(stacker 피클 정합) ⑤ 게이트 전통과(G1 22tests·G4 12/12·오프라인 50.2s·867.9MB), 병렬 세션 독립 검증 d720235 전항목 PASS. 밤샘 ultracode: GBDT 메타 3-config(−0.010~−0.017)·탐색 specialist(−0.0004) 전부 로컬 마이너스 → LB 예산 0으로 폐기 | 리그 0.75601 (격리 +0.0215) | **0.7623 (+0.0143)** | **승격 — 팀 최고 탈환** 🏆 (이전 우리 0.7480, 동료 0.7511). 대장 #11. **인코더 가족 축의 리그→LB 전이율 ≈ 67%** (라우팅 축 1:1과 대비되는 신규 데이터포인트 — 향후 인코더 개선 리그 델타는 ×0.67 할인해 읽기). 다음 카드: Bet B(mBERT hist12 — holdout85 리그 게이트 선행) > Bet A(maxlen512 — T4 시간예산 실측 필요, 384 대비 인코더 ~1.7배 추정) |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
