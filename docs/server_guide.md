@@ -6,48 +6,38 @@
 
 ## 절대 규칙 4개
 
-1. **홈(`~`)에 큰 파일 금지** — 홈이 걸린 루트 디스크가 98% 사용(잔여 ~25GB). venv·HF캐시·데이터·산출물은 전부 `/mnt/ssd2/$USER` 아래.
+1. **디스크 예산 엄수** — 홈이 걸린 루트가 98% 사용(잔여 ~25GB)인데 ssd1~3 전부 권한 없음(07-10 실측) → 당분간 홈 모드. **런 끝나는 즉시 ckpt 삭제**, 시작 전후 `df -h /` 확인, 동시 2job까지만. ssd 권한 확보 시 data/out을 `/mnt/ssd2/$USER`로 이전.
 2. **GPU는 2장까지만** (GPU 0, 1) — 공용 랩 서버. 잡기 전 `nvidia-smi`로 유휴 확인.
 3. **레시피 변경 금지** — A5000이 T4보다 빨라도 배치/에폭/lr/maxlen/maxhist 그대로 (실험 판정 오염 방지). 빨라지는 건 벽시계뿐.
 4. **학습은 반드시 tmux 안에서** — 노트북 꺼도 계속 돈다. 분리 `Ctrl+B, D`, 복귀 `tmux attach -t <이름>`.
 
 ---
 
-## ☐ 0. 작업 공간 확보 (1분)
+## ☑ 0. 작업 공간 — 실측 결과(07-10): 홈 모드 확정
+
+- `/mnt/ssd1`·`ssd2`·`ssd3` **전부 Permission denied** (계정이 자기 그룹 1011에만 속함, `id` 실측).
+- → **임시로 홈 모드**: `WORK=$HOME`. 홈이 걸린 루트가 98%(잔여 ~25GB)라 오늘 밤 2job(≈10GB)까지만 가능. **5-fold OOF 연쇄는 홈에서 금지** — ssd 확보 후에.
+- 병행으로 서버 담당자에게 요청 발송:
+  `sudo mkdir /mnt/ssd2/u20220876 && sudo chown u20220876:u20220876 /mnt/ssd2/u20220876`
+  (확보되면 venv 제외 data/out만 옮기고 이 문서의 `$WORK`를 `/mnt/ssd2/$USER`로 전환)
 
 ```bash
-mkdir -p /mnt/ssd2/$USER && touch /mnt/ssd2/$USER/.wtest && rm /mnt/ssd2/$USER/.wtest && echo "ssd2 쓰기 OK"
-```
-
-- `ssd2 쓰기 OK` → 계속 진행.
-- `Permission denied` → `ssd2`를 `ssd3`으로 바꿔 재시도. 둘 다 안 되면 서버 담당자에게 요청:
-  `sudo mkdir -p /mnt/ssd2/u20220876 && sudo chown u20220876:u20220876 /mnt/ssd2/u20220876`
-- ssd3을 쓰게 되면 **이 문서의 모든 `/mnt/ssd2`를 `/mnt/ssd3`으로** 읽는다.
-
-## ☐ 1. venv + torch 셋업 (1회, ~10분)
-
-```bash
-export WORK=/mnt/ssd2/$USER
+export WORK=$HOME
 mkdir -p $WORK/data $WORK/out
-echo "export WORK=/mnt/ssd2/$USER" >> ~/.bashrc
-echo 'export HF_HOME=$WORK/hf PIP_CACHE_DIR=$WORK/pip-cache' >> ~/.bashrc
-export HF_HOME=$WORK/hf PIP_CACHE_DIR=$WORK/pip-cache
-
-python3 -m venv $WORK/venv-dacon
-source $WORK/venv-dacon/bin/activate
-pip install --upgrade pip
-pip install torch --index-url https://download.pytorch.org/whl/cu128
-pip install "transformers>=4.51" accelerate sentencepiece scikit-learn numpy pandas
-python -c "import torch; print(torch.__version__, torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+echo "export WORK=$HOME" >> ~/.bashrc
 ```
 
-마지막 줄이 `... True NVIDIA RTX A5000`이어야 한다.
+## ☑ 1. venv — 이미 완료 (07-10 실측: torch 2.13.0+cu130, CUDA True)
 
-**재현 기록 스냅샷 (7/20 재현 코드 제출 산출물의 일부, D-012):**
+`~/venv-dacon` 재사용. 나머지 패키지만 보강 + 재현 스냅샷:
 
 ```bash
+source ~/venv-dacon/bin/activate
+pip install "transformers>=4.51" accelerate sentencepiece scikit-learn numpy pandas
 pip freeze > $WORK/out/server_requirements.txt
 ```
+
+(재현 기록 스냅샷은 7/20 재현 코드 제출 산출물의 일부, D-012. torch가 Colab과 버전이 다르지만 레시피 계약이 같으면 fp16 미세 수치차는 판정에 유효 — setup.md 주의 참조.)
 
 ## ☐ 2. 코드 + 데이터 배치
 
@@ -58,13 +48,13 @@ git clone <리포 주소> $WORK/dacon
 ```
 
 (리포가 private라 clone이 번거로우면 최소한만 로컬에서 전송해도 된다:
-`scp -r C:\dev\2026-AI-DACON\colab u20220876@<서버주소>:/mnt/ssd2/u20220876/dacon/colab`)
+`scp -r C:\dev\2026-AI-DACON\colab u20220876@<서버주소>:dacon/colab` — 콜론 뒤 상대경로는 홈 기준)
 
 **로컬 PC PowerShell에서** (data/는 gitignore라 항상 직접 전송):
 
 ```powershell
-scp C:\dev\2026-AI-DACON\data\train.jsonl C:\dev\2026-AI-DACON\data\train_labels.csv u20220876@<서버주소>:/mnt/ssd2/u20220876/data/
-scp C:\dev\2026-AI-DACON\context\night\2026-07-05\holdout_base.npz u20220876@<서버주소>:/mnt/ssd2/u20220876/data/
+scp C:\dev\2026-AI-DACON\data\train.jsonl C:\dev\2026-AI-DACON\data\train_labels.csv u20220876@<서버주소>:data/
+scp C:\dev\2026-AI-DACON\context\night\2026-07-05\holdout_base.npz u20220876@<서버주소>:data/
 ```
 
 ## ☐ 3. 작업 1 — args-lite candidate (GPU 0, 최우선 · D-011)
@@ -109,13 +99,13 @@ nvidia-smi                  # 두 GPU가 돌고 있는지
 ## ☐ 6. 산출물 회수 (로컬 PC PowerShell)
 
 ```powershell
-scp u20220876@<서버주소>:/mnt/ssd2/u20220876/out/e5_h12_args1/holdout_e5_h12_args1.npz C:\dev\2026-AI-DACON\colab_out\
+scp u20220876@<서버주소>:out/e5_h12_args1/holdout_e5_h12_args1.npz C:\dev\2026-AI-DACON\colab_out\
 ```
 
-mBERT는 `out/mbert_h12/` 안의 holdout npz 파일명을 먼저 확인(`ls /mnt/ssd2/$USER/out/mbert_h12/`)하고, 판정 프로브가 기대하는 이름으로 받는다:
+mBERT는 `~/out/mbert_h12/` 안의 holdout npz 파일명을 먼저 확인(`ls ~/out/mbert_h12/`)하고, 판정 프로브가 기대하는 이름으로 받는다:
 
 ```powershell
-scp u20220876@<서버주소>:/mnt/ssd2/u20220876/out/mbert_h12/<확인한 npz명> C:\dev\2026-AI-DACON\colab_out\holdout_mbert_h12.npz
+scp u20220876@<서버주소>:out/mbert_h12/<확인한 npz명> C:\dev\2026-AI-DACON\colab_out\holdout_mbert_h12.npz
 ```
 
 **→ npz 두 개가 colab_out/에 도착하면 Claude 세션에 알리기.** 판정(probe_c_args_lite / probe_b_mbert_hist12, 게이트 +0.005 & bootstrap CI & MC)과 실험 기록은 로컬에서 진행.
