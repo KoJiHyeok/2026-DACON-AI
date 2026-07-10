@@ -4,6 +4,14 @@
 > `colab/` 스크립트들은 전부 env 변수 기반이라 **수정 없이 서버에서 그대로 실행**된다 —
 > Drive 마운트 → 로컬 경로, `files.upload()` → git clone + scp로 바뀔 뿐.
 
+## 0-A. 실측 사양 (2026-07-10 수령, dclab419-ESC4000-E10)
+
+- GPU: **RTX A5000 24GB × 4** (수령 시점 전부 유휴) — 드라이버 580.159.03, CUDA 13.0. 공용 랩 서버(동시 사용자 여럿) → 점유는 2~3장까지만, 잡기 전 `nvidia-smi` 확인.
+- Python 3.10.12, 인터넷 O (HF 직접 다운로드 가능).
+- **디스크 함정: 홈(`/`)이 98% 사용(잔여 ~25GB)** — 홈에 venv/캐시/산출물 두지 말 것. `/mnt/ssd2`(3.3T 여유) 아래 `WORK=/mnt/ssd2/$USER`를 만들어 venv·HF_HOME·data·out 전부 거기에. (쓰기 불가면 ssd3 → 그것도 안 되면 관리자 문의)
+- torch는 cu128 휠 사용 (`--index-url https://download.pytorch.org/whl/cu128` — CUDA 13 드라이버는 하위 런타임 호환).
+- A5000이 T4보다 훨씬 빨라도 **레시피(배치/에폭/lr/maxlen/maxhist) 변경 금지** — 벽시계만 단축.
+
 ## 0. 서버 받으면 먼저 확인 (5분)
 
 ```bash
