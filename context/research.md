@@ -31,3 +31,8 @@ EDA Agent는 발견한 피처 후보를 아래 형식으로 추가한다.
 | P0 | ~~state→action 결정 규칙 (시뮬레이터 포렌식 산출)~~ | 결정 구간이 존재하지 않음이 실측 확인 | 포렌식 1R | **기각 (D-007)** |
 | P1 | args 키 스키마·turn_index=step 중복 피처 정리 (R5) | 중복 제거 = 노이즈 감소 (점수 이득 아님) | Feature Agent | todo |
 | P2 | budget/ci_status state-conditioned 보정 (R6) | 방향은 뚜렷하나 calib_v1 실패 모드 위험 | 보류 | R3에 흡수해 검증 |
+
+## 양자 ML 하이브리드 검토 (2026-07-10, deep-research 2차)
+
+- **판정: 채택 0건, 재검토 불필요.** 원격 QPU=오프라인 서버 금지, 시뮬레이터 VQC(4~9큐빗)=이미 폐기한 비선형 결합기 레인의 열화판(GBDT 메타 −0.010~−0.017, Q0.9 구조 벽), 보고서 자신도 "강한 고전 baseline은 추월 어려움" 명시. 본선 발표 양념으로도 기믹 리스크 > 이득.
+- 출처: Downloads/deep-research-report (1).md (양자 경량 분류 서베이 — 서베이 품질 자체는 양호)
