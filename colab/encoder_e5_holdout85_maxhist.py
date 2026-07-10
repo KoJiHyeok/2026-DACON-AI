@@ -40,6 +40,7 @@ def _env(k, d):
 
 # ===== 설정 =====
 MAX_HIST = int(_env("ENC_MAXHIST", "6"))          # ★ 재심 대상 (6=대조 / 12=후보)
+ARGS_LITE = int(_env("ENC_ARGSLITE", "0"))        # ★ D-011: 1=마지막 action args-lite 추가 (0=계약 불변)
 MODE = _env("ENC_MODE", "holdout85")              # holdout85=리그판정 npz | full=배포용 70k 전량 + fp16 모델
 SEED = int(_env("ENC_SEED", "42"))
 DATA_DIR = _env("ENC_DATA_DIR", "./data")
@@ -72,9 +73,11 @@ def _bucket(v, edges=(1000, 10000, 50000, 100000)):
     return f"b{len(edges)}"
 
 
-def serialize(s, max_hist=6):
+def serialize(s, max_hist=6, args_lite=False):
     """submit/script.py serialize()와 byte-identical (max_hist만 인자화).
-    train·추론 계약 — char-cap(query800/rsum120/user200/open5)은 절대 유지."""
+    train·추론 계약 — char-cap(query800/rsum120/user200/open5)은 절대 유지.
+    args_lite=False면 출력 바이트 동일(D-011 대조군 유효 조건). True면 마지막
+    assistant_action의 args만 `lastargs[name]: k=v ...`(값 48자 캡) 한 줄 추가."""
     sm = s.get("session_meta") or {}
     ws = sm.get("workspace") or {}
     parts = []
@@ -89,6 +92,14 @@ def serialize(s, max_hist=6):
         parts.append("open: " + " ".join(str(x) for x in open_files[:5]))
     parts.append("query: " + str(s.get("current_prompt") or "")[:800])
     hist = s.get("history") or []
+    if args_lite:
+        last = next((h for h in reversed(hist) if h.get("role") == "assistant_action"), None)
+        if last:
+            kv = " ".join(f"{k}={str(v).strip()[:48]}"
+                          for k, v in list((last.get("args") or {}).items())[:6]
+                          if str(v).strip())
+            if kv:
+                parts.append(f"lastargs[{last.get('name')}]: {kv}")
     items = []
     for h in reversed(hist[-max_hist:]):   # 최신 우선 → 잘려도 최근 맥락 보존
         if h.get("role") == "assistant_action":
@@ -145,7 +156,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device != "cuda":
         print("[경고] GPU 미감지 — 런타임 유형 T4 GPU로 설정 (CPU는 비현실적)")
-    print(f"[cfg] max_hist={MAX_HIST} seed={SEED} epochs={EPOCHS} batch={BATCH} "
+    print(f"[cfg] max_hist={MAX_HIST} args_lite={ARGS_LITE} seed={SEED} epochs={EPOCHS} batch={BATCH} "
           f"lr={LR} ls={LABEL_SMOOTH} maxlen={MAX_LEN} out={OUT}")
 
     samples, lab = load_samples()
@@ -167,7 +178,7 @@ def main():
         print(f"[split] train={len(tr)} valid={len(va)} (holdout ids={len(hold)})")
 
     tok = AutoTokenizer.from_pretrained(MODEL_NAME)
-    tr_texts = [serialize(s, MAX_HIST) for s in tr]
+    tr_texts = [serialize(s, MAX_HIST, ARGS_LITE) for s in tr]
     tr_y = np.array([LABEL2ID[lab[s["id"]]] for s in tr])
     enc = tok(tr_texts, truncation=True, max_length=MAX_LEN, padding="max_length")
 
@@ -219,7 +230,7 @@ def main():
     with torch.no_grad():
         for i in range(0, len(va), BATCH * 4):
             chunk = va[i:i + BATCH * 4]
-            e = tok([serialize(s, MAX_HIST) for s in chunk], truncation=True,
+            e = tok([serialize(s, MAX_HIST, ARGS_LITE) for s in chunk], truncation=True,
                     max_length=MAX_LEN, padding=True, return_tensors="pt").to(device)
             logits = model(**e).logits.float().cpu().numpy()
             z = logits - logits.max(1, keepdims=True)
@@ -230,15 +241,16 @@ def main():
     pred = np.array(ACTIONS)[probs.argmax(1)]
     f1 = f1_score([str(y) for y in y_true], pred, average="macro")
 
-    npz_path = os.path.join(OUT, f"holdout_e5_h{MAX_HIST}.npz")
+    suffix = "_args1" if ARGS_LITE else ""
+    npz_path = os.path.join(OUT, f"holdout_e5_h{MAX_HIST}{suffix}.npz")
     np.savez(npz_path,
              ids=np.array([s["id"] for s in va], dtype=object),
              probs=probs, y_true=y_true, actions=np.array(ACTIONS, dtype=object))
-    with open(os.path.join(OUT, f"run_h{MAX_HIST}.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(OUT, f"run_h{MAX_HIST}{suffix}.json"), "w", encoding="utf-8") as f:
         json.dump({"model": MODEL_NAME, "max_hist": MAX_HIST, "seed": SEED,
                    "epochs": EPOCHS, "max_len": MAX_LEN, "n_train": len(tr),
                    "n_holdout": len(va), "solo_macro_f1": round(float(f1), 5)}, f, indent=2)
-    print(f"[npz] holdout_e5_h{MAX_HIST}.npz rows={len(va)} macro-F1={f1:.5f}")
+    print(f"[npz] holdout_e5_h{MAX_HIST}{suffix}.npz rows={len(va)} macro-F1={f1:.5f}")
     print(f"      (참고 baseline e5 프록시 solo=0.70509 — hist6 대조군이 이 근처면 레시피 일치)")
     print("[DONE]")
 

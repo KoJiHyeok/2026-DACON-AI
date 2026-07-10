@@ -70,3 +70,10 @@
 - **버린 대안**: query_cap 축소(무효 실측), maxlen 512(8.5% 잘림이 오래된 턴뿐이라 +33% 추론비 대비 이득 미미 — hist12@384 승격 시 후속 프로브로만). serialize에 tool args 추가(#15에서 explore F1 무개선 + 길이 폭증).
 - **주의**: 단독 F1↑ ≠ 앙상블 기여(3연속 실증). 판정은 반드시 리그 4-way+soft-AU 블렌드 델타로만. 리그 승격 시 submit/script.py·모든 학습 스크립트의 serialize를 hist12로 동시 갱신(train·추론 계약 불일치 금지).
 - **근거**: experiments.md #15(폐기 원문)·#34(재심), 실측 스크립트 scratchpad/measure_serialize.py
+
+## D-011 (2026-07-10) args 재심 분리 개시 — exp #15의 args 폐기도 결합변인·BoW 프록시 판정이었다
+
+- **결정**: exp #15에서 hist 확장과 함께 폐기된 "action args 추가"를 **last-1 args-lite 한정으로 재심**한다. 후보 = 현행 hist12 + 마지막 assistant_action의 args만(키≤6, 값 48자 캡, `lastargs[name]:` 단일 라인). 대조군 = 배포 hist12(기존 holdout_e5_h12.npz — ENC_ARGSLITE=0이면 serialize 바이트 동일이라 유효). 게이트 +0.005 & paired session bootstrap CI 하한>0 & 세션당1행 MC 델타 평균>0.
+- **이유 (제3자 SOL 감사 #39 + 독립 재검증)**: ① 마지막 action args 값의 **32.4%(재검증 32.1%)가 user/result/current/open_files 어디에도 없음** — e5가 못 보는 실제 상태 손실 ② last-1만 넣으면 384 잘림 8.57%→10.95%로 비용 합리적(raw 전체는 26.6%로 기각) ③ #15는 args+lang+elapsed 결합 + BoW 프록시 판정이라 이 가설을 분리 검증한 적 없음 — hist12(D-010)와 동일한 재심 사유.
+- **버린 대안**: raw args 전체(잘림 폭증), 최근 2 action(13.9% — last-1 승리 시에만 후속), pair-order 변형(별도 단일변수로만).
+- **근거**: reports/third_party_sol_model_audit_2026-07-10.md §3.3·§5 P1-B, experiments.md #15·#39
