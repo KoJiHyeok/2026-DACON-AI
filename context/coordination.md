@@ -24,7 +24,7 @@
 | args-lite e5 A/B | Claude | **done — FAIL/폐기 (exp #43)** | `colab/encoder_e5_holdout85_maxhist.py`, GPU output, full-train decision |
 | mBERT hist12 Bet B | Claude | **done — FAIL/폐기 (exp #42)** | `colab/mdeberta_finetune.py`, GPU output, probe decision |
 | P2 세션길이 가중 (ENC_SESSW sqrt/inv) | Claude | **done — FAIL/폐기 (exp #44·#45, 07-11)** | `colab/encoder_e5_holdout85_maxhist.py`(ENC_SESSW 게이트), GPU output, probe 판정 |
-| **hist12 group-OOF 생성 (P1-C 선행)** | Claude | **active — 서버 GPU0(fold 0·1·2)·GPU1(fold 3·4) 학습 중 (07-11 00:22~)** | `colab/encoder_e5_oof_fold.py`, `artifacts/experiments/oof_h12/**` + SHA256 manifest |
+| hist12 group-OOF 생성 (P1-C 선행) | Claude | **done — 5/5 fold 완료·회수·검증, Codex 인계 (07-11 02:40, 아래 Handoff)** | `colab/encoder_e5_oof_fold.py`, `artifacts/experiments/oof_h12/**` + SHA256 manifest |
 | **mBERT group-OOF 생성 (P1-C 보완, 5성분 OOF)** | Claude | active — Colab 멀티계정 fold 분산 (같은 fold_map.csv, sha 56074c16…) | `colab/mdeberta_finetune.py`(MDEB_FOLD 게이트), Colab output |
 | 서버 실행·제출 | Claude | active | `docs/server_guide.md`, `submit/**`, `scripts/dacon_submit.py` |
 | 공식 기록 | Claude | active | `context/experiments.md`, `context/decisions.md`, `context/submissions.md`, `context/daily/**`, `context/coordination.md` |
@@ -82,6 +82,31 @@ Validation results:
 Known limitations:
 Recommended decision:
 Required reviewer/tester checks:
+```
+
+## Handoff — OOF-H12 실물 인계 (Claude → Codex, 2026-07-11 02:40)
+
+```text
+Task ID: OOF-H12 (P1-C 선행 — CX-001 stacker consumer 입력)
+Branch / commit: main d9a79fa 시점 생성. 산출물은 git 외부 artifacts/experiments/oof_h12/ (rule 4)
+Files changed: oof_fold{0..4}.npz + fold_map.csv + run_oof_fold{0..4}.json + SHA256SUMS
+Inputs and artifact hashes (SHA256):
+  fold_map.csv  56074c16c400fbccc389e15c01c05adc4db810533516340f15e9826dd44fe295
+  oof_fold0.npz 8ad89e6329b4d992cd79cb8695151ba2a48bfb092925b600db9aadae6acaff94
+  oof_fold1.npz 7c0ac6411c43709d416f1e28ac33a16867a1ee8851e0d338fe2f8dbf7856e220
+  oof_fold2.npz 97470e9d2cdce188e406413c75fd41fabd950e34909f9473636c31a35fe2c282
+  oof_fold3.npz c34bd72709ac6a81e3c63090fd82021509b27a246caf4111f911c149122df0f6
+  oof_fold4.npz 324ce7ef3de2b12f14fba975a42cf88e117dfae1ab4598b85e9b2585b5b487f8
+Validation results:
+  - 레시피 = 배포 챔피언 동일 (hist12/6ep/b16/lr2e-5/384/s42, SESSW=none, serialize import 단일소스)
+  - fold Macro-F1: 0.73484 / 0.73565 / 0.73750 / 0.73700 / 0.73325 (holdout 0.73617과 정합)
+  - 합계 70,000행, fold_map id 집합 완전 일치, 확률 정규화 OK, 세션 그룹 누수 0 (독립 awk 검증)
+  - CX-001 --validate-only PASS (validate_real/validation.json — 입력 해시 전부 위와 일치)
+Known limitations:
+  - baseline_origin은 legacy_linear_proxy만 확인(비-parity plumbing) — alpha09 sparse OOF manifest 별도 공급 전까지 teammate_parity=false 유지
+  - id↔probs 페어링은 생성기 신뢰 경계 (07-11 새벽 노트) — 위 SHA256으로 사후 변조만 커버
+Recommended decision: Codex는 이 입력으로 stacker 학습·진단 진행 가능. 점수 주장·승격은 frozen shadow/outer-fold 평가 + Claude 승인 필요 (promotion_eligible=false 유지)
+Next owner: Codex (scripts/stacker_h12), 판정·승격·제출은 Claude
 ```
 
 ## 현재 실행 순서
