@@ -1,0 +1,5 @@
+- Added AST contract tests for `_bucket()` and `serialize()` across the four required scripts.
+- Verified required serialize char caps and recent-history order source patterns in every target file.
+- Added drift self-proof by mutating reference AST constant `120` to `121` and checking comparison failure.
+- Full `.venv` pytest passed: 27 tests in 27.65s; log saved to `context/night/2026-07-09/task1_run.log`.
+- Report written to `context/night/2026-07-09/task1_report.md`; git commit is blocked by external gitdir write permission.

@@ -1,0 +1,5 @@
+DONE: 4-way [lin,stk,e5=1.2,mBERT=0.8] + soft-AU alpha0.9 reproduced on 9,969 rows at macro-F1 0.73877228.
+Weakest classes: list_directory F1=0.515892, read_file F1=0.572694, lint_or_typecheck F1=0.609642.
+Largest confusion: grep_search -> read_file, 378 rows, 14.53% of all errors and 25.66% of true grep_search.
+Slice readout: SIM macro-F1 0.735676, AU macro-F1 0.770168; true explore-class mistakes are 1,722/2,602 errors.
+Recommended lever #1: report-only last_action=list_directory explore subtype purity probe before any specialist routing.

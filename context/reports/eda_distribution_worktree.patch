@@ -1,0 +1,76 @@
+﻿diff --git a/context/daily/2026-07-04.md b/context/daily/2026-07-04.md
+index ec16f85..5766968 100644
+--- a/context/daily/2026-07-04.md
++++ b/context/daily/2026-07-04.md
+@@ -14,12 +14,15 @@
+ - **검증 하네스 구축**: `scripts/validate_submit.py` — 공식 baseline_submit.zip으로 12/12 PASS 입증, 네트워크 차단 네거티브 테스트 확인
+ - 서버 실행 규약 확인: `./data/test.jsonl` 입력 → `./output/submission.csv` 출력
+ - context/ 기록 시스템 구축 (이 문서)
++- **EDA 분포 분석 완료** → [reports/eda_distribution.md](../reports/eda_distribution.md), 재현 `notebooks/eda_distribution.py`, 피처 백로그 갱신([research.md](../research.md))
+ 
+ ## 배운 것 / 발견
+ 
+ - LB 갭 0.014p — 커트라인 통과가 곧 상위권. 소수점 셋째 자리 싸움.
+ - 베이스라인은 current_prompt만 사용 → history·session_meta가 통째로 남은 신호.
+ - socket 클래스 통째 교체는 joblib을 깨뜨림 → 연결 메서드만 차단으로 수정.
++- **EDA 핵심**: 불균형 8.8x(희소 5클래스가 Macro-F1 좌우) · 정형 단독 최빈 상한 ~28%(텍스트가 주력) · `result_summary` 성공/실패가 respond↔edit 분기 · 첫 턴 별개 분포(list/plan/write 3.3x) · `user_tier`/`language_pref`/한글비율은 라벨 무관(V≈0.02, 버릴 것).
++- **CV 규약 확정**: 로컬 test.jsonl은 5건 train 부분집합 스모크 샘플 → 세션 프리픽스 GroupKFold OOF만 신뢰.
+ 
+ ## 결정
+ 
+@@ -27,6 +30,7 @@
+ 
+ ## 내일 (07.05)
+ 
+-- [ ] train.jsonl 압축 해제 + EDA (클래스 분포, 전이 행렬, 메타 상관)
+-- [ ] EDA 리포트 → context/reports/eda.md
++- [x] train.jsonl 압축 해제 + EDA (클래스 분포, 전이 행렬, 메타 상관) — 07.04 조기 완료
++- [x] EDA 리포트 → context/reports/eda_distribution.md
+ - [ ] Tier 0 베이스라인 재현 → 첫 제출 (파이프라인 검증)
++- [ ] P0 피처 구현(`src/features.py`): 전이·result_status·is_first_turn·open/git·prompt n-gram + GroupKFold OOF
+diff --git a/context/research.md b/context/research.md
+index 73b4339..66b464c 100644
+--- a/context/research.md
++++ b/context/research.md
+@@ -10,14 +10,35 @@
+ - [ ] 경량 다국어 인코더 비교 (DeBERTa-v3-small, multilingual-e5-small 등) — T4/10분/1GB 제약 하에서
+ - [ ] 유사 대회(행동 예측·대화 분류) 상위 솔루션
+ 
++## EDA 발견 (2026-07-04) → 상세: [reports/eda_distribution.md](reports/eda_distribution.md)
++
++train 70,000건 / 9,429 세션 / 라벨 결측 0. 재현: `python notebooks/eda_distribution.py`.
++
++- **불균형 8.8x** — 희소 5클래스(`web_search` 1.8%, `write_file` 2.1%, `lint_or_typecheck` 3.3%, `plan_task` 3.8%, `ask_user` 3.9%)가 Macro-F1을 지배.
++- **정형 최강 신호(Cramér's V)**: open_files수 0.29 · prev>last 바이그램 0.27 · turn_index 0.27 · git_dirty 0.26 · last_act 0.21. 하지만 **정형 단독 최빈 예측 상한 ~28%** → 나머지는 `current_prompt` 텍스트가 좌우.
++- **`result_summary` 성공/실패가 다음 행동을 가름**: `run_tests` 통과→`respond_only` 26% vs 실패→`edit_file` 33%; `lint` 실패→`edit_file+apply_patch` 63%. → P0.
++- **첫 턴(history 없음, 9,000건) 별개 분포**: `list_directory`·`plan_task`·`write_file` 3.3~3.7x lift → `is_first_turn` 플래그.
++- **버릴 것**: `user_tier`(V 0.02)·`language_pref`(0.02)·프롬프트 한글비율(클래스 무관, 전부 ~71%). 언어/티어에 예산 쓰지 말 것.
++- **프롬프트 길이가 구분자**: 짧은 명령형(~40자)=respond/test/bash/lint, 긴 질문형(~85자)=plan/web_search/ask_user.
++- **CV 규약 확정**: 로컬 `test.jsonl`은 5건짜리 train 부분집합 스모크 샘플(점수추정 불가) → **세션 프리픽스 GroupKFold OOF만 신뢰**.
++- **혼동쌍 주의**: ask_user↔web_search(어휘 겹침), edit_file↔apply_patch, grep↔read, run_bash↔run_tests.
++
+ ## Feature Backlog
+ 
+-EDA Agent는 발견한 피처 후보를 아래 형식으로 추가한다.
++EDA Agent는 발견한 피처 후보를 아래 형식으로 추가한다. (2026-07-04 EDA로 우선순위 갱신)
+ 
+ | Priority | Feature | Rationale | Owner | Status |
+ |---|---|---|---|---|
+-| P0 | last assistant action / action n-gram | 다음 행동 전이 신호 | Feature Agent | todo |
+-| P0 | prompt + recent history serialization | 베이스라인이 버리는 history 정보 회수 | Feature Agent | todo |
+-| P0 | GroupKFold session key | CV 누수 방지 | Modeling Agent | todo |
+-| P1 | workspace/open file meta | 작업 맥락과 도구 선택 상관 | Feature Agent | todo |
+-| P1 | class-wise OOF error analysis | Macro-F1 희소 클래스 개선 | Modeling Agent | todo |
++| P0 | last_action / prev_action / prev>last 바이그램 / last==후보 | 전이 신호 (V 0.21~0.27) | Feature Agent | todo |
++| P0 | last_result_status {pass,fail,none} (result_summary 파싱) | test/lint 뒤 respond vs edit 분기 | Feature Agent | todo |
++| P0 | is_first_turn + history_len + turn_index | 첫 턴 별개 분포(3.3x lift) | Feature Agent | todo |
++| P0 | n_open_files 버킷 + git_dirty | 탐색/편집/멀티패치 구분 (V 0.29/0.26) | Feature Agent | todo |
++| P0 | current_prompt char n-gram(2~5)+word TF-IDF + 길이 | 다국어, 텍스트가 주력 신호 | Feature Agent | todo |
++| P0 | GroupKFold(세션 프리픽스) OOF | CV 누수 방지, 유일 신뢰 지표 | Modeling Agent | todo |
++| P1 | 키워드 정규식 플래그(에러타입→ask_user, best-practice→web/plan, rewrite→write) | 희소 클래스 정밀도 | Feature Agent | todo |
++| P1 | last_ci_status 원핫 + history 내 action 카운트/비율 | 세션 단계 신호 | Feature Agent | todo |
++| P1 | result_summary 수치 파싱(passed N, patched N files) | 마지막 결과의 정량 신호 | Feature Agent | todo |
++| P1 | class_weight / 클래스별 threshold OOF 튜닝 + 오류분석 | Macro-F1 희소 클래스 개선 | Modeling Agent | todo |
++| P2 | budget/elapsed/loc 버킷, 세션 누적 통계(시퀀스) | 약신호, 시간 남으면 | Feature Agent | todo |
++| P2 | ~~user_tier / language_pref~~ 제외 | V≈0.02, 노이즈 | — | drop |
++| P1 | top workspace language 원핫 | yaml→grep, 컴파일언어→test 경향 (V 0.07) | Feature Agent | todo |
