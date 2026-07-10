@@ -1,2 +1,0 @@
-# Server baseline packages only.
-# Do not repin numpy/pandas/scikit-learn/joblib for DACON runtime compatibility.
