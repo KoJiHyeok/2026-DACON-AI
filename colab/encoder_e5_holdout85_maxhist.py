@@ -41,6 +41,7 @@ def _env(k, d):
 # ===== 설정 =====
 MAX_HIST = int(_env("ENC_MAXHIST", "6"))          # ★ 재심 대상 (6=대조 / 12=후보)
 ARGS_LITE = int(_env("ENC_ARGSLITE", "0"))        # ★ D-011: 1=마지막 action args-lite 추가 (0=계약 불변)
+SESSW = _env("ENC_SESSW", "none")                 # ★ 감사 P2: none|sqrt|inv — 손실에 세션길이 가중 1/len^p (none=계약 불변)
 MODE = _env("ENC_MODE", "holdout85")              # holdout85=리그판정 npz | full=배포용 70k 전량 + fp16 모델
 SEED = int(_env("ENC_SEED", "42"))
 DATA_DIR = _env("ENC_DATA_DIR", "./data")
@@ -128,8 +129,8 @@ def load_samples():
 
 
 class DS(torch.utils.data.Dataset):
-    def __init__(self, enc, labels):
-        self.enc, self.labels = enc, labels
+    def __init__(self, enc, labels, sw=None):
+        self.enc, self.labels, self.sw = enc, labels, sw
 
     def __len__(self):
         return len(self.labels)
@@ -137,18 +138,36 @@ class DS(torch.utils.data.Dataset):
     def __getitem__(self, i):
         item = {k: torch.tensor(v[i]) for k, v in self.enc.items()}
         item["labels"] = torch.tensor(int(self.labels[i]))
+        if self.sw is not None:
+            item["sw"] = torch.tensor(float(self.sw[i]), dtype=torch.float32)
         return item
 
 
 class WeightedTrainer(Trainer):
     class_w = None
+    sessw_mode = "none"
+    _sw_checked = False
 
     def compute_loss(self, model, inputs, return_outputs=False, **kw):
         labels = inputs.pop("labels")
+        sw = inputs.pop("sw", None)
+        if not WeightedTrainer._sw_checked:
+            WeightedTrainer._sw_checked = True
+            print(f"[losscheck] batch sw present={sw is not None} (sessw={self.sessw_mode})")
+            assert (sw is not None) == (self.sessw_mode != "none"), \
+                "SESSW 게이트와 배치 sw 불일치 — remove_unused_columns 회귀 의심, 학습 중단"
         outputs = model(**inputs)
         w = self.class_w.to(outputs.logits.device)
-        loss = TF.cross_entropy(outputs.logits, labels, weight=w,
-                                label_smoothing=LABEL_SMOOTH)
+        if sw is None:
+            loss = TF.cross_entropy(outputs.logits, labels, weight=w,
+                                    label_smoothing=LABEL_SMOOTH)
+        else:
+            # 분모에 sw·w_y를 함께 반영 — sw≡1이면 내장 mean(Σw_y 정규화)과 동일해
+            # class weight의 실효 스케일이 배치 클래스 구성에 흔들리지 않는다 (리뷰 #2)
+            lv = TF.cross_entropy(outputs.logits, labels, weight=w,
+                                  label_smoothing=LABEL_SMOOTH, reduction="none")
+            sw = sw.to(lv.device)
+            loss = (sw * lv).sum() / (sw * w[labels]).sum().clamp_min(1e-8)
         return (loss, outputs) if return_outputs else loss
 
 
@@ -156,7 +175,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device != "cuda":
         print("[경고] GPU 미감지 — 런타임 유형 T4 GPU로 설정 (CPU는 비현실적)")
-    print(f"[cfg] max_hist={MAX_HIST} args_lite={ARGS_LITE} seed={SEED} epochs={EPOCHS} batch={BATCH} "
+    print(f"[cfg] max_hist={MAX_HIST} args_lite={ARGS_LITE} sessw={SESSW} seed={SEED} epochs={EPOCHS} batch={BATCH} "
           f"lr={LR} ls={LABEL_SMOOTH} maxlen={MAX_LEN} out={OUT}")
 
     samples, lab = load_samples()
@@ -190,21 +209,36 @@ def main():
     class_w = torch.tensor(len(tr_y) / (len(ACTIONS) * np.maximum(counts, 1)),
                            dtype=torch.float32)
 
+    ckpt_dir = os.path.join(OUT, "ckpt" if SESSW == "none" else f"ckpt_sw{SESSW}")
     args = TrainingArguments(
-        output_dir=os.path.join(OUT, "ckpt"),
+        output_dir=ckpt_dir,
         num_train_epochs=EPOCHS, learning_rate=LR,
         per_device_train_batch_size=BATCH,
         warmup_ratio=0.06, weight_decay=0.01, fp16=True,
         save_strategy="epoch", save_total_limit=1,
         logging_steps=200, seed=SEED, report_to="none",
+        remove_unused_columns=False,  # 리뷰 #1: 기본 True면 collator가 "sw"를 제거해 SESSW가 무음 no-op이 됨
     )
-    trainer = WeightedTrainer(model=model, args=args, train_dataset=DS(enc, tr_y))
-    trainer.class_w = class_w
+    sw = None
+    if SESSW != "none":
+        assert SESSW in ("sqrt", "inv"), f"ENC_SESSW 값 오류: {SESSW}"
+        sess_keys = [s["id"].rsplit("-step_", 1)[0] for s in tr]
+        cnt = {}
+        for k in sess_keys:
+            cnt[k] = cnt.get(k, 0) + 1
+        L = np.array([cnt[k] for k in sess_keys], dtype=np.float64)
+        sw = 1.0 / np.sqrt(L) if SESSW == "sqrt" else 1.0 / L
+        print(f"[sessw] mode={SESSW} sessions={len(cnt)} len(mean={L.mean():.2f}, max={L.max():.0f}) "
+              f"w(mean={sw.mean():.4f}, min={sw.min():.4f})")
 
-    # 세션 끊김 재개: ckpt 폴더에 checkpoint-* 있으면 이어서
-    ckpt_root = os.path.join(OUT, "ckpt")
-    has_ckpt = os.path.isdir(ckpt_root) and any(
-        d.startswith("checkpoint-") for d in os.listdir(ckpt_root)) if os.path.isdir(ckpt_root) else False
+    WeightedTrainer._sw_checked = False  # 리뷰 권고: 같은 프로세스 재실행 시 losscheck 가드 무음 스킵 방지
+    trainer = WeightedTrainer(model=model, args=args, train_dataset=DS(enc, tr_y, sw))
+    trainer.class_w = class_w
+    trainer.sessw_mode = SESSW
+
+    # 세션 끊김 재개: (SESSW별로 분리된) ckpt 폴더에 checkpoint-* 있으면 이어서 — 리뷰 #4
+    has_ckpt = os.path.isdir(ckpt_dir) and any(
+        d.startswith("checkpoint-") for d in os.listdir(ckpt_dir)) if os.path.isdir(ckpt_dir) else False
     trainer.train(resume_from_checkpoint=has_ckpt)
 
     os.makedirs(OUT, exist_ok=True)
@@ -241,7 +275,7 @@ def main():
     pred = np.array(ACTIONS)[probs.argmax(1)]
     f1 = f1_score([str(y) for y in y_true], pred, average="macro")
 
-    suffix = "_args1" if ARGS_LITE else ""
+    suffix = ("_args1" if ARGS_LITE else "") + (f"_sw{SESSW}" if SESSW != "none" else "")
     npz_path = os.path.join(OUT, f"holdout_e5_h{MAX_HIST}{suffix}.npz")
     np.savez(npz_path,
              ids=np.array([s["id"] for s in va], dtype=object),
@@ -249,6 +283,7 @@ def main():
     with open(os.path.join(OUT, f"run_h{MAX_HIST}{suffix}.json"), "w", encoding="utf-8") as f:
         json.dump({"model": MODEL_NAME, "max_hist": MAX_HIST, "seed": SEED,
                    "epochs": EPOCHS, "max_len": MAX_LEN, "n_train": len(tr),
+                   "sessw": SESSW,
                    "n_holdout": len(va), "solo_macro_f1": round(float(f1), 5)}, f, indent=2)
     print(f"[npz] holdout_e5_h{MAX_HIST}{suffix}.npz rows={len(va)} macro-F1={f1:.5f}")
     print(f"      (참고 baseline e5 프록시 solo=0.70509 — hist6 대조군이 이 근처면 레시피 일치)")
