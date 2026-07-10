@@ -1,0 +1,162 @@
+{
+  "champion": {
+    "macro_f1": 0.7560057940610984,
+    "record_value": 0.756006,
+    "delta_vs_record": -2.0593890159847916e-07,
+    "n_holdout_rows": 9969,
+    "n_holdout_sessions": 1350
+  },
+  "coverage_pct": 13.852944126793059,
+  "template_stats": {
+    "n_rows": 1381,
+    "accuracy": 0.8015930485155685,
+    "error_rate": 0.19840695148443155,
+    "macro_f1": 0.759158632925144,
+    "top_errors": [
+      {
+        "true": "grep_search",
+        "pred": "read_file",
+        "count": 35
+      },
+      {
+        "true": "read_file",
+        "pred": "list_directory",
+        "count": 21
+      },
+      {
+        "true": "ask_user",
+        "pred": "plan_task",
+        "count": 18
+      },
+      {
+        "true": "grep_search",
+        "pred": "list_directory",
+        "count": 17
+      },
+      {
+        "true": "plan_task",
+        "pred": "ask_user",
+        "count": 16
+      },
+      {
+        "true": "read_file",
+        "pred": "grep_search",
+        "count": 16
+      }
+    ]
+  },
+  "non_template_stats": {
+    "n_rows": 8588,
+    "accuracy": 0.746506753609688,
+    "error_rate": 0.253493246390312,
+    "macro_f1": 0.75646648441869,
+    "top_errors": [
+      {
+        "true": "grep_search",
+        "pred": "read_file",
+        "count": 344
+      },
+      {
+        "true": "read_file",
+        "pred": "list_directory",
+        "count": 195
+      },
+      {
+        "true": "grep_search",
+        "pred": "list_directory",
+        "count": 183
+      },
+      {
+        "true": "read_file",
+        "pred": "grep_search",
+        "count": 180
+      },
+      {
+        "true": "list_directory",
+        "pred": "read_file",
+        "count": 136
+      },
+      {
+        "true": "glob_pattern",
+        "pred": "list_directory",
+        "count": 113
+      }
+    ]
+  },
+  "grids": [
+    {
+      "grid": "A_purity0.90_n5",
+      "min_purity": 0.9,
+      "min_n": 5,
+      "n_eligible_groups": 41,
+      "n_holdout_rows_covered": 174,
+      "coverage_pct": 1.7454107733975324,
+      "majority_label_accuracy": 0.9827586206896551
+    },
+    {
+      "grid": "B_purity0.95_n10",
+      "min_purity": 0.95,
+      "min_n": 10,
+      "n_eligible_groups": 22,
+      "n_holdout_rows_covered": 157,
+      "coverage_pct": 1.5748821346173136,
+      "majority_label_accuracy": 1.0
+    },
+    {
+      "grid": "C_purity0.99_n3",
+      "min_purity": 0.99,
+      "min_n": 3,
+      "n_eligible_groups": 293,
+      "n_holdout_rows_covered": 217,
+      "coverage_pct": 2.1767479185474974,
+      "majority_label_accuracy": 0.9400921658986175
+    }
+  ],
+  "overrides": [
+    {
+      "n_override_rows": 174,
+      "row_baseline_macro_f1": 0.7560057940610984,
+      "row_override_macro_f1": 0.7558890602699614,
+      "row_delta": -0.00011673379113696924,
+      "mc_mean_delta": 9.006650852951159e-05,
+      "mc_std_delta": 0.00023185385708921621,
+      "mc_min_delta": 0.0,
+      "mc_max_delta": 0.000906860130161169,
+      "mc_n": 50,
+      "grid": "A_purity0.90_n5"
+    },
+    {
+      "n_override_rows": 157,
+      "row_baseline_macro_f1": 0.7560057940610984,
+      "row_override_macro_f1": 0.7560057940610984,
+      "row_delta": 0.0,
+      "mc_mean_delta": 0.0,
+      "mc_std_delta": 0.0,
+      "mc_min_delta": 0.0,
+      "mc_max_delta": 0.0,
+      "mc_n": 50,
+      "grid": "B_purity0.95_n10"
+    },
+    {
+      "n_override_rows": 217,
+      "row_baseline_macro_f1": 0.7560057940610984,
+      "row_override_macro_f1": 0.7552430069175812,
+      "row_delta": -0.0007627871435171851,
+      "mc_mean_delta": -0.00035333022338175814,
+      "mc_std_delta": 0.0008893040626428579,
+      "mc_min_delta": -0.00259450960629104,
+      "mc_max_delta": 0.000906860130161169,
+      "mc_n": 50,
+      "grid": "C_purity0.99_n3"
+    }
+  ],
+  "verdict": {
+    "gate": 0.005,
+    "best_row_grid": "B_purity0.95_n10",
+    "best_row_delta": 0.0,
+    "best_mc_grid": "A_purity0.90_n5",
+    "best_mc_mean_delta": 9.006650852951159e-05,
+    "decision": "폐기"
+  },
+  "elapsed_sec": 89.931
+}

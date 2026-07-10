@@ -56,6 +56,7 @@
 | 37 | 07.10 | e5 hist12 배포 후 encoder block 비율 재그리드 | block 총가중 2 고정, e5:mBERT를 0.05 간격으로 재평가. paired session bootstrap 5,000회 | 현 1.20:0.80 = 0.756006, 최고 1.25:0.75 = **0.756513(+0.000508)**. 95% CI **[-0.000729,+0.001725]**, P(Δ>0)=0.799 | 미제출 | **FAIL/유지.** hist12 강화 뒤에도 현 비율이 사실상 최적 평탄부. +0.0005는 잡음이라 LB 예산 금지 |
 | 38 | 07.10 | AU ID 하위 코드(`sess_au_<난수>_<000~014>`)가 미사용 구조 신호인가 | 비holdout AU 4,343행 학습 / holdout AU 682행 평가. 현 char_wb 모델에 code one-hot, code×step/last-action, serial bin을 각각 추가하고 soft α 비교 | 현 전체 0.756006 / AU F1 0.79232. code-only 최고 전체 **0.755274**, AU F1 **0.78123**; cross/serial은 더 하락 | 미제출 | **FAIL/폐기.** 하위 코드의 분포차는 turn/session-length 피처와 중복되거나 잡음. AU 현 모델 유지 |
 | 39 | 07.10 | e5 `hist12 + last-action args-lite` GPU A/B의 정보/토큰 예산 사전 게이트 | 마지막 assistant action 인자 값 75,584개 중 기존 user/result/current/open 어디에도 없는 비율 측정. 실제 e5 tokenizer로 14k행 길이 측정 | 미표현 값 **32.4%**. 384 초과: 현 hist12 8.57% / args-all 26.59% / last2 13.93% / **last1 10.95%** | 미제출 | **연구 게이트 PASS, 점수 미검증.** raw args 전체는 기각. last1 핵심 args 40~50자만 넣은 e5 holdout85 대조 실험 권고; 기존 #15는 args+lang+elapsed 결합 BoW라 이 가설을 분리 판정하지 못함 |
+| 40 | 07.10 | train↔test 프롬프트 **템플릿 완전일치 라우팅** (딥리서치 G4 — 유사대회 1위 결정타 가설) — train측 다수라벨 오버라이드가 챔피언을 이기는가 | 홀드아웃 1,350세션을 세션 프리픽스로 제외한 train측 60,031행에서 current_prompt 완전일치 그룹핑, purity/n 3그리드 오버라이드 시뮬레이션(row + 세션당1행 MC 50회). reviewer 독립 재실행으로 전 수치 일치·누수 0 확인 | 커버리지 **13.85%**(1,381행), 템플릿 행 챔피언 오류율 19.8% vs 비템플릿 25.4%(템플릿이 더 쉬움). 오버라이드 델타 최고 **+0.00009**(MC, 그리드 A), row 최고 0.000000(B), 넓히면 순손실(C −0.00076) | 미제출 | **FAIL/폐기.** 템플릿 신호(respond_only 종료형 위주)는 챔피언 인코더가 이미 흡수. 게이트 +0.005 대비 ~55배 미달. 상세: [reports/template_dup_probe_2026-07-10.md](reports/template_dup_probe_2026-07-10.md) |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
@@ -71,6 +72,7 @@
 | **탐색 specialist (좁은 어휘 마커)** | 리그 **−0.0004** 중립 | 밤샘 07-09: 찾아→grep/열어→read/디렉토리→list/몇개→glob 마커+char_wb, 정직 프로토콜 soft/add. #32(char 전이0)·#14(R4 route 실패)와 정합. 탐색 잔차=features/label-ambiguity 벽 |
 | **enc 지분 낮추기 — 전역·버킷 불문 전면 금지** | LB 실측 −0.0061 (#20) | 리그 기울기가 enc 지분 축에서 LB와 반대 — **세 번 확인** (핸드오프 §5, #16, #20 LB 실측). 버킷별도 예외 아님 (#19의 '예외' 판단은 정황 추론을 LB 검증으로 오독한 오류). 리그는 오직 성분 추가/제거 판정용, enc 지분이 변하는 모든 스킴은 LB 게이트 필수 |
 | calib_v1 (enc T=1.34 + class bias) | 0.7169 | holdout +0.005가 LB −0.002로 비전이 — train 분포 피팅 bias는 분포 이동에 취약 |
+| **템플릿 완전일치 다수라벨 오버라이드** | 리그 델타 ~0 (최고 +0.00009) | 커버리지 13.85%지만 대부분 respond_only 종료형 — 챔피언이 이미 맞힘, 커버리지 넓히면 순손실. reviewer 재실행 검증 (#40) |
 | flat 피처 추가 F~W | 이득 없음 | |
 | stacker 변형 4종 | 이득 없음 | |
 | cascade base | +0.0019 | 노이즈 수준 |

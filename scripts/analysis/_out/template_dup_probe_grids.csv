@@ -1,0 +1,4 @@
+grid,min_purity,min_n,n_eligible_groups,n_holdout_rows_covered,coverage_pct,majority_label_accuracy
+A_purity0.90_n5,0.9,5,41,174,1.7454107733975324,0.9827586206896551
+B_purity0.95_n10,0.95,10,22,157,1.5748821346173136,1.0
+C_purity0.99_n3,0.99,3,293,217,2.1767479185474974,0.9400921658986175
