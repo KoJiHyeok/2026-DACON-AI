@@ -57,6 +57,8 @@
 | 38 | 07.10 | AU ID 하위 코드(`sess_au_<난수>_<000~014>`)가 미사용 구조 신호인가 | 비holdout AU 4,343행 학습 / holdout AU 682행 평가. 현 char_wb 모델에 code one-hot, code×step/last-action, serial bin을 각각 추가하고 soft α 비교 | 현 전체 0.756006 / AU F1 0.79232. code-only 최고 전체 **0.755274**, AU F1 **0.78123**; cross/serial은 더 하락 | 미제출 | **FAIL/폐기.** 하위 코드의 분포차는 turn/session-length 피처와 중복되거나 잡음. AU 현 모델 유지 |
 | 39 | 07.10 | e5 `hist12 + last-action args-lite` GPU A/B의 정보/토큰 예산 사전 게이트 | 마지막 assistant action 인자 값 75,584개 중 기존 user/result/current/open 어디에도 없는 비율 측정. 실제 e5 tokenizer로 14k행 길이 측정 | 미표현 값 **32.4%**. 384 초과: 현 hist12 8.57% / args-all 26.59% / last2 13.93% / **last1 10.95%** | 미제출 | **연구 게이트 PASS, 점수 미검증.** raw args 전체는 기각. last1 핵심 args 40~50자만 넣은 e5 holdout85 대조 실험 권고; 기존 #15는 args+lang+elapsed 결합 BoW라 이 가설을 분리 판정하지 못함 |
 | 40 | 07.10 | train↔test 프롬프트 **템플릿 완전일치 라우팅** (딥리서치 G4 — 유사대회 1위 결정타 가설) — train측 다수라벨 오버라이드가 챔피언을 이기는가 | 홀드아웃 1,350세션을 세션 프리픽스로 제외한 train측 60,031행에서 current_prompt 완전일치 그룹핑, purity/n 3그리드 오버라이드 시뮬레이션(row + 세션당1행 MC 50회). reviewer 독립 재실행으로 전 수치 일치·누수 0 확인 | 커버리지 **13.85%**(1,381행), 템플릿 행 챔피언 오류율 19.8% vs 비템플릿 25.4%(템플릿이 더 쉬움). 오버라이드 델타 최고 **+0.00009**(MC, 그리드 A), row 최고 0.000000(B), 넓히면 순손실(C −0.00076) | 미제출 | **FAIL/폐기.** 템플릿 신호(respond_only 종료형 위주)는 챔피언 인코더가 이미 흡수. 게이트 +0.005 대비 ~55배 미달. 상세: [reports/template_dup_probe_2026-07-10.md](reports/template_dup_probe_2026-07-10.md) |
+| 41 | 07.10 | **Bet A: e5 hist12 학습 maxlen 384→512** (D-010 후속, #39의 384 초과 8.57% 잘림 회수 가설) | Colab 동일 레시피(6ep/b16/holdout85/hist12/s42)에서 MAXLEN만 512 → `holdout_e5_h12_len512.npz` → 리그 격리 `probe_a_maxlen512.py` | solo 0.73617→**0.73886 (+0.0027)**, 4-way+softAU 0.75601→**0.75499**, 격리 델타 **−0.00102**. reviewer 재실행 소수 5자리 완전일치, npz SHA256 상이·probs 실차이(max 0.868) 확인 | 미제출 | **FAIL/폐기.** solo 이득이 블렌드에서 역전 — 512로 회수한 정보가 다른 성분과 중복(상관만 증가). REPORT 문턱 0.002조차 미달 + T4 추론 ~1.7배 비용. GPU 카드는 args-lite(#39 권고)·Bet B로 |
+| 42 | 07.10 | **Bet B: mBERT hist12** (D-010 후속 — 남은 hist6 성분 정합) | **학교 서버(A5000) 첫 학습** — mdeberta_finetune.py, bert-base-multilingual-cased 2ep/b8×2/384/s42/holdout85, MAXHIST 6→12 → `holdout_mbert_h12.npz` → `probe_b_mbert_hist12.py` 격리 판정 | solo 0.67147→**0.69423 (+0.02276)**, 4-way+softAU 0.75601→0.75494, 격리 델타(블록 [1.2,0.8] 고정) **−0.00106**. 비율 그리드 최적(1.1:0.9)도 −0.00077 | 미제출 | **FAIL/폐기.** solo +0.023이 블렌드에서 역전 — e5 hist12와 정보 중복, #41 Bet A와 동일 메커니즘("hist12 정보는 이미 e5가 흡수"). mBERT는 hist6 유지. D-010 계열 종결: hist12 이득은 e5 한 곳에만 실재 |
 
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
@@ -77,6 +79,7 @@
 | stacker 변형 4종 | 이득 없음 | |
 | cascade base | +0.0019 | 노이즈 수준 |
 | max_len 512 추론 | ±0.000 | |
+| **e5 학습 maxlen 512 (hist12, Bet A)** | 리그 격리 **−0.00102** | solo +0.0027이 4-way 블렌드에서 역전 — 회수 정보가 기존 성분과 중복, T4 추론 ~1.7배 비용까지 고려하면 순손실. reviewer 재실행 검증 (#41) |
 | 스키마에 없는 환각 피처 | 무효 | 입력에 존재하지 않는 필드 |
 | 옛 회차(2025) 전략 | 무관 | Macro-F1 14-class 지표 불일치 |
 
