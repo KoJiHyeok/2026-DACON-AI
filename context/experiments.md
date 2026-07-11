@@ -66,6 +66,8 @@
 
 | 46 | 07.11 | **hist12 스태커 실물 진단** (P1-C 본선 전 진단 — CX-002, Codex 구현·Claude 이중검증) | 5-fold e5 OOF(실물)+legacy linear proxy 34열 메타 + 1,953 구조피처, LogisticRegression+MaxAbsScaler, 메타층 group 5-fold cross-fit. **주의: 승격자격 없는 진단 설계** (baseline=proxy 비-parity, end-to-end nested 아님) | 메타-CV **0.73275** vs 진단용 50:50 blend(linear+e5) **0.73830** → **−0.00544**. 클래스별 양극화: list_directory +367행·lint +0.009·web_search +0.003 개선 vs **read_file −644행(−0.025)·ask_user −0.034·grep_search −0.007** 붕괴. 순손실 −526행. reviewer(스케일러 누수 없음 확인)·tester(원시 npz 독립 재계산 8자리 일치) 양쪽 PASS | 미제출 | **비승격 — 단, 축 폐기 아님.** 전역 대체 스태커는 이 구성으로 열세지만 ①baseline이 alpha09 sparse OOF가 아닌 proxy ②메타층만 cross-fit이라 판정 자격 미달. 재실험 조건: **동료 alpha09 sparse OOF 확보 + frozen shadow(또는 outer-fold 베이스 재생성) 평가**. 살아있는 신호 = 탐색계열(list_directory/lint) 클래스별 보정 — 전역 승부 말고 국소 보정 설계로. 코드·진단은 main 승격(7e6552a) |
 
+| 47 | 07.11 | **OOF 국소 보정** (#46 후속 — corrector의 고신뢰 탐색계열 예측만 champion 위에 override하면 이득만 취하는가) | `probe_d_oof_correction.py`(신규): LR corrector(e5+mBERT+linear OOF 45열, 비홀드아웃 60,031행 학습, 세션 그룹 무결성 assert) → champion 표면에 (a)전체 교체 (b)explore∩conf≥τ∩비-AU override, τ∈{0.5,0.6,0.7} → 5지표 | (a) row **−0.01397** (flips 964, 고침 308/망침 420). (b) τ=0.5 −0.00169(고침6/망침14) / τ=0.6 −0.00091 / τ=0.7 −0.00015(flips 5). τ 올릴수록 flip이 소멸 — reviewer 재실행 5자리 일치, 피처 정렬·누수·표면 정합 전항목 검증 | 미제출 | **FAIL/폐기 — P1-C 축 종결 (동료 입력 배제 전제).** #46의 "보정 신호"는 약한 proxy 블렌드 기준이었고 **champion은 그 행들을 이미 맞힘** — 어떤 신뢰도 문턱에서도 "champion 틀리고 corrector 맞는" 영역이 사실상 없음(#40 템플릿 라우팅과 동일 결론 구조). 남은 트랙 = 재현성(7/20)·최종 제출 선택(D-012) |
+
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
 | 레버 | LB/결과 | 왜 |
@@ -87,6 +89,7 @@
 | max_len 512 추론 | ±0.000 | |
 | **e5 학습 maxlen 512 (hist12, Bet A)** | 리그 격리 **−0.00102** | solo +0.0027이 4-way 블렌드에서 역전 — 회수 정보가 기존 성분과 중복, T4 추론 ~1.7배 비용까지 고려하면 순손실. reviewer 재실행 검증 (#41) |
 | **세션길이 손실 가중 (ENC_SESSW sqrt/inv)** | 리그 row −0.00485 / −0.00231 | 감사 P2: sqrt는 5지표 전패(CI 상한 0), inv는 solo +0.0037이 블렌드 역전 — e5 성분 개선 4연속 동일 패턴으로 축 종결 (#44·#45) |
+| **OOF 스태커 — 전역 대체·국소 보정 모두** | 진단 −0.0054(proxy 대비) / 국소 override 전 τ 마이너스 | champion이 corrector가 고치는 행을 이미 맞힘 — "champion 틀리고 corrector 맞는" 영역 부재. 동료 alpha09 sparse OOF + frozen shadow가 오지 않는 한 재시도 금지 (#46·#47) |
 | 스키마에 없는 환각 피처 | 무효 | 입력에 존재하지 않는 필드 |
 | 옛 회차(2025) 전략 | 무관 | Macro-F1 14-class 지표 불일치 |
 
