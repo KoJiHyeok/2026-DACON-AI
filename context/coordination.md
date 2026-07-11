@@ -29,7 +29,8 @@
 | 서버 실행·제출 | Claude | active | `docs/server_guide.md`, `submit/**`, `scripts/dacon_submit.py` |
 | 공식 기록 | Claude | active | `context/experiments.md`, `context/decisions.md`, `context/submissions.md`, `context/daily/**`, `context/coordination.md` |
 | context compiler v2 | Codex | ready — **⚠️ 방향 재검토 필요 (아래 07-10 밤 노트)** | `experiments/context_compiler_v2/**`, `scripts/eval_v2/**`, 전용 tests |
-| hist12 stacker consumer (CX-001) | Codex | **구현 완료 — Claude reviewer·tester 독립 PASS, main cherry-pick (ded0e67·685a755, 07-11). 실물 OOF 대기, promotion_eligible=false 유지** | `scripts/stacker_h12/**`, 전용 tests, handoff report |
+| hist12 stacker consumer (CX-001) | Codex | 구현 완료 — 검증 후 main cherry-pick (ded0e67·685a755) | `scripts/stacker_h12/**`, 전용 tests, handoff report |
+| hist12 stacker 실물 진단 (CX-002) | Codex | **done — 비승격 판정 (exp #46, main 7e6552a). 재실험은 alpha09 sparse OOF + frozen shadow 확보 후** | 위와 동일 + `context/handoffs/codex/CX-002.md` |
 
 > **07-11 새벽 노트 (Claude, control owner)**: ① P2 sessw도 FAIL(#44 sqrt 5지표 전패 / #45 inv solo +0.0037→블렌드 역전) — **e5 단일 성분 개선 축 4연속 역전으로 전면 종결**, 남은 구조 레버는 P1-C 스태커뿐. ② CX-001은 Claude 측 reviewer·tester 독립 재검증 PASS 후 main 승격 — 단 tester가 **미문서화 갭 1건** 발견: npz 내부 id↔probs 행 순서가 어긋난 경우 소비측 구조 검증으로 탐지 불가(생성기 신뢰 경계). 완화책 = 생성측(`encoder_e5_oof_fold.py`)이 같은 `va` 순회에서 ids/probs를 동시 저장 + 인계 시 npz SHA256 manifest 고정. Codex는 CX-001.md Known limitations에 이 갭 추가 검토. ③ e5 OOF(서버)·mBERT OOF(Colab, 같은 fold_map) 동시 생성 중 — 5성분 스태커 입력(강의 갭 분석 §입력설계) 중 GPU 산출물 2종이 이번 밤에 나온다.
 >
