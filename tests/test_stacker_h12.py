@@ -271,6 +271,10 @@ def test_training_is_deterministic_and_never_promotion_eligible(tmp_path: Path) 
     }
     first = train_stacker(output_dir=tmp_path / "run1", **kwargs)
     second = train_stacker(output_dir=tmp_path / "run2", **kwargs)
+    alpha = train_stacker(
+        output_dir=tmp_path / "alpha",
+        **{**kwargs, "baseline_origin": "alpha09_sparse_oof"},
+    )
 
     assert first["promotion_eligible"] is False
     assert first["teammate_parity"] is False
@@ -284,6 +288,19 @@ def test_training_is_deterministic_and_never_promotion_eligible(tmp_path: Path) 
     payload = joblib.load(tmp_path / "run1" / "stacker_h12.joblib")
     assert set(payload) == {"dict_vectorizer", "stacker", "actions", "metadata"}
     assert payload["metadata"]["teammate_parity"] is False
+    assert payload["metadata"]["preprocessing"].startswith("MaxAbsScaler")
+    assert first["diagnostics"]["promotion_eligible"] is False
+    assert first["diagnostics"]["numeric_feature_contributions"]["feature_count"] == 34
+    assert (
+        first["diagnostics"]["corrections"]["current_blend_is_parity_surface"]
+        is False
+    )
+    assert "alpha09_sparse_oof" in alpha["diagnostics"]["component_macro_f1"]
+    assert "legacy_linear_proxy" not in alpha["diagnostics"]["component_macro_f1"]
+    assert (
+        alpha["diagnostics"]["corrections"]["current_blend_definition"]
+        == "0.5 * alpha09_sparse_oof + 0.5 * hist12_e5_oof"
+    )
 
 
 def test_training_rejects_misaligned_records_and_split_sessions(tmp_path: Path) -> None:

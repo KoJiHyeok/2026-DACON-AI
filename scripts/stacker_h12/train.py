@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,8 @@ import joblib
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MaxAbsScaler
 
 from .common import (
     ACTIONS,
@@ -68,18 +71,29 @@ def load_records(path: Path, reference_ids: np.ndarray) -> list[dict[str, Any]]:
     return [by_id[str(sample_id)] for sample_id in reference_ids]
 
 
-def _model(c_value: float, max_iter: int, seed: int) -> LogisticRegression:
-    return LogisticRegression(
-        C=float(c_value),
-        max_iter=int(max_iter),
-        class_weight="balanced",
-        solver="lbfgs",
-        random_state=int(seed),
+def _model(c_value: float, max_iter: int, seed: int) -> Pipeline:
+    # loc and count-valued structured features otherwise dominate the optimizer's
+    # scale and make lbfgs exhaust thousands of iterations. The scaler is fitted
+    # inside each meta fold, so validation statistics never enter meta training.
+    return Pipeline(
+        [
+            ("scale", MaxAbsScaler()),
+            (
+                "classifier",
+                LogisticRegression(
+                    C=float(c_value),
+                    max_iter=int(max_iter),
+                    class_weight="balanced",
+                    solver="lbfgs",
+                    random_state=int(seed),
+                ),
+            ),
+        ]
     )
 
 
 def _aligned_model_probs(
-    model: LogisticRegression,
+    model: Pipeline,
     matrix: Any,
     n_actions: int,
 ) -> np.ndarray:
@@ -167,6 +181,9 @@ def diagnostic_meta_cv(
                 "train_rows": int(train.sum()),
                 "valid_rows": int(valid.sum()),
                 "macro_f1": fold_score["macro_f1"],
+                "optimizer_iterations": int(
+                    model.named_steps["classifier"].n_iter_.max()
+                ),
             }
         )
     result = _score(y_int, oof)
@@ -179,6 +196,145 @@ def diagnostic_meta_cv(
         }
     )
     return oof, result
+
+
+_STEP_RE = re.compile(r"-step_(\d+)$")
+
+
+def _step(sample_id: str) -> int:
+    match = _STEP_RE.search(sample_id)
+    if match is None:
+        raise ValueError(f"cannot parse step from id {sample_id}")
+    return int(match.group(1))
+
+
+def _correction_rows(
+    ids: np.ndarray,
+    y_int: np.ndarray,
+    blend_probs: np.ndarray,
+    stacker_probs: np.ndarray,
+    baseline_origin: str,
+) -> dict[str, Any]:
+    blend_pred = blend_probs.argmax(axis=1)
+    stacker_pred = stacker_probs.argmax(axis=1)
+    blend_wrong_stacker_right = (blend_pred != y_int) & (stacker_pred == y_int)
+    blend_right_stacker_wrong = (blend_pred == y_int) & (stacker_pred != y_int)
+
+    def summarize(mask: np.ndarray, keys: np.ndarray) -> dict[str, int]:
+        return {
+            str(key): int(np.sum(mask & (keys == key)))
+            for key in sorted(np.unique(keys).tolist())
+        }
+
+    steps = np.asarray([_step(str(sample_id)) for sample_id in ids], dtype=np.int64)
+    classes = np.asarray([ACTIONS[index] for index in y_int], dtype=object)
+    return {
+        "current_blend_definition": f"0.5 * {baseline_origin} + 0.5 * hist12_e5_oof",
+        "current_blend_is_parity_surface": False,
+        "blend_wrong_stacker_right_total": int(blend_wrong_stacker_right.sum()),
+        "blend_right_stacker_wrong_total": int(blend_right_stacker_wrong.sum()),
+        "net_corrected_rows": int(
+            blend_wrong_stacker_right.sum() - blend_right_stacker_wrong.sum()
+        ),
+        "blend_wrong_stacker_right_by_step": summarize(
+            blend_wrong_stacker_right, steps
+        ),
+        "blend_right_stacker_wrong_by_step": summarize(
+            blend_right_stacker_wrong, steps
+        ),
+        "blend_wrong_stacker_right_by_class": summarize(
+            blend_wrong_stacker_right, classes
+        ),
+        "blend_right_stacker_wrong_by_class": summarize(
+            blend_right_stacker_wrong, classes
+        ),
+    }
+
+
+def _numeric_contributions(model: Pipeline, matrix: Any) -> dict[str, Any]:
+    names = list(numeric_feature_names())
+    scaled = model.named_steps["scale"].transform(matrix)
+    classifier = model.named_steps["classifier"]
+    mean_abs_value = np.asarray(np.abs(scaled[:, : len(names)]).mean(axis=0)).ravel()
+    coefficients = np.asarray(classifier.coef_[:, : len(names)], dtype=np.float64)
+    mean_abs_coefficient = np.abs(coefficients).mean(axis=0)
+    contributions = mean_abs_value * mean_abs_coefficient
+
+    def row(index: int) -> dict[str, Any]:
+        return {
+            "feature": names[index],
+            "mean_abs_scaled_value": float(mean_abs_value[index]),
+            "mean_abs_coefficient": float(mean_abs_coefficient[index]),
+            "mean_abs_logit_contribution": float(contributions[index]),
+        }
+
+    descending = np.argsort(-contributions, kind="stable")
+    ascending = np.argsort(contributions, kind="stable")
+    return {
+        "definition": (
+            "mean over rows and classifier classes of abs(scaled_value * coefficient); "
+            "limited to the 34 probability/confidence meta features"
+        ),
+        "feature_count": len(names),
+        "top": [row(int(index)) for index in descending[:10]],
+        "bottom": [row(int(index)) for index in ascending[:10]],
+    }
+
+
+def _diagnostics(
+    ids: np.ndarray,
+    y_int: np.ndarray,
+    baseline: np.ndarray,
+    e5: np.ndarray,
+    stacker_oof: np.ndarray,
+    diagnostic: dict[str, Any],
+    final_model: Pipeline,
+    final_matrix: Any,
+    baseline_origin: str,
+) -> dict[str, Any]:
+    blend = 0.5 * baseline + 0.5 * e5
+    fold_scores = np.asarray(
+        [row["macro_f1"] for row in diagnostic["folds"]], dtype=np.float64
+    )
+    support = Counter(int(value) for value in y_int)
+    class_rows = []
+    component_scores = {
+        baseline_origin: _score(y_int, baseline),
+        "hist12_e5_oof": _score(y_int, e5),
+        "current_equal_blend_proxy": _score(y_int, blend),
+        "diagnostic_meta_cv": _score(y_int, stacker_oof),
+    }
+    for index, action in enumerate(ACTIONS):
+        class_rows.append(
+            {
+                "action": action,
+                "support": int(support[index]),
+                **{
+                    name: float(score["per_class_f1"][action])
+                    for name, score in component_scores.items()
+                },
+            }
+        )
+    return {
+        "promotion_eligible": False,
+        "methodology_limitation": METHODOLOGY_LIMITATION,
+        "fold_macro_f1": fold_scores.tolist(),
+        "fold_macro_f1_mean": float(fold_scores.mean()),
+        "fold_macro_f1_population_variance": float(fold_scores.var(ddof=0)),
+        "fold_macro_f1_sample_variance": float(fold_scores.var(ddof=1)),
+        "fold_macro_f1_std": float(fold_scores.std(ddof=0)),
+        "component_macro_f1": {
+            name: float(score["macro_f1"])
+            for name, score in component_scores.items()
+        },
+        "class_f1_sorted_by_support": sorted(class_rows, key=lambda row: row["support"]),
+        "corrections": _correction_rows(
+            ids, y_int, blend, stacker_oof, baseline_origin
+        ),
+        "numeric_feature_contributions": _numeric_contributions(
+            final_model, final_matrix
+        ),
+    }
 
 
 def _feature_name_hash(names: list[str]) -> str:
@@ -261,7 +417,7 @@ def train_stacker(
         str(int(fold)): int(np.sum(folds == fold)) for fold in sorted(np.unique(folds))
     }
     manifest: dict[str, Any] = {
-        "task_id": "CX-001",
+        "task_id": "CX-002",
         "rows": int(len(ids)),
         "sessions": int(len({session_group(sample_id) for sample_id in ids})),
         "fold_distribution": fold_distribution,
@@ -287,7 +443,7 @@ def train_stacker(
         _atomic_json(output_dir / "validation.json", manifest)
         return manifest
 
-    _, diagnostic = diagnostic_meta_cv(
+    stacker_oof, diagnostic = diagnostic_meta_cv(
         baseline,
         e5,
         records,
@@ -307,7 +463,7 @@ def train_stacker(
     stacker.fit(final_matrix, y_int)
     vectorizer_names = list(vectorizer.get_feature_names_out())
     model_metadata = {
-        "task_id": "CX-001",
+        "task_id": "CX-002",
         "baseline_origin": baseline_origin,
         "teammate_baseline_parity_claimed": baseline_origin == "alpha09_sparse_oof",
         "teammate_baseline_parity_verified": False,
@@ -317,6 +473,10 @@ def train_stacker(
         "structured_feature_count": len(vectorizer_names),
         "structured_feature_names_sha256": _feature_name_hash(vectorizer_names),
         "classifier_classes": [int(value) for value in stacker.classes_],
+        "optimizer_iterations": int(
+            stacker.named_steps["classifier"].n_iter_.max()
+        ),
+        "preprocessing": "MaxAbsScaler fitted with the classifier",
         "promotion_eligible": False,
         "final_fit_scored_in_sample": False,
     }
@@ -331,6 +491,17 @@ def train_stacker(
     manifest.update(
         {
             "diagnostic_meta_cv": diagnostic,
+            "diagnostics": _diagnostics(
+                ids,
+                y_int,
+                baseline,
+                e5,
+                stacker_oof,
+                diagnostic,
+                stacker,
+                final_matrix,
+                baseline_origin,
+            ),
             "model": {
                 **model_metadata,
                 "path": str(model_path),
