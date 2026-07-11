@@ -25,7 +25,7 @@
 | mBERT hist12 Bet B | Claude | **done — FAIL/폐기 (exp #42)** | `colab/mdeberta_finetune.py`, GPU output, probe decision |
 | P2 세션길이 가중 (ENC_SESSW sqrt/inv) | Claude | **done — FAIL/폐기 (exp #44·#45, 07-11)** | `colab/encoder_e5_holdout85_maxhist.py`(ENC_SESSW 게이트), GPU output, probe 판정 |
 | hist12 group-OOF 생성 (P1-C 선행) | Claude | **done — 5/5 fold 완료·회수·검증, Codex 인계 (07-11 02:40, 아래 Handoff)** | `colab/encoder_e5_oof_fold.py`, `artifacts/experiments/oof_h12/**` + SHA256 manifest |
-| **mBERT group-OOF 생성 (P1-C 보완, 5성분 OOF)** | Claude | active — Colab 멀티계정 fold 분산 (같은 fold_map.csv, sha 56074c16…) | `colab/mdeberta_finetune.py`(MDEB_FOLD 게이트), Colab output |
+| mBERT group-OOF 생성 (P1-C 보완, 5성분 OOF) | Claude | **done — 서버 이관 후 5/5 완료·검증·인계 (07-11 13:30, 아래 Handoff 추록)** | `colab/mdeberta_finetune.py`(MDEB_FOLD 게이트), `artifacts/experiments/oof_mbert_h6/**` |
 | 서버 실행·제출 | Claude | active | `docs/server_guide.md`, `submit/**`, `scripts/dacon_submit.py` |
 | 공식 기록 | Claude | active | `context/experiments.md`, `context/decisions.md`, `context/submissions.md`, `context/daily/**`, `context/coordination.md` |
 | context compiler v2 | Codex | ready — **⚠️ 방향 재검토 필요 (아래 07-10 밤 노트)** | `experiments/context_compiler_v2/**`, `scripts/eval_v2/**`, 전용 tests |
@@ -106,6 +106,30 @@ Known limitations:
   - baseline_origin은 legacy_linear_proxy만 확인(비-parity plumbing) — alpha09 sparse OOF manifest 별도 공급 전까지 teammate_parity=false 유지
   - id↔probs 페어링은 생성기 신뢰 경계 (07-11 새벽 노트) — 위 SHA256으로 사후 변조만 커버
 Recommended decision: Codex는 이 입력으로 stacker 학습·진단 진행 가능. 점수 주장·승격은 frozen shadow/outer-fold 평가 + Claude 승인 필요 (promotion_eligible=false 유지)
+Next owner: Codex (scripts/stacker_h12), 판정·승격·제출은 Claude
+```
+
+## Handoff 추록 — OOF-MBERT-H6 (Claude → Codex, 2026-07-11 13:30)
+
+```text
+Task ID: OOF-MBERT-H6 (OOF-H12 인계의 5성분 확장 — CX-002 선택 항목 6의 실물 입력)
+Files: artifacts/experiments/oof_mbert_h6/oof_mbert_fold{0..4}.npz + run json + SHA256SUMS
+  (fold_map은 OOF-H12와 동일 파일 공유 — sha 56074c16…)
+Inputs and artifact hashes (SHA256):
+  oof_mbert_fold0.npz e228346dfd204fbcfe99143484ca850de4d0d60a6405ef6f5b406975451a9563
+  oof_mbert_fold1.npz fb0e068e418552ce1cd11c59f20385c827c57fd9b5d89e883798874bfb8fe13a
+  oof_mbert_fold2.npz 098f3e5002e582c521972b91e454dd83283dbb1f6ede470d7d7174b352828989
+  oof_mbert_fold3.npz 964ba24df48347d7acd6419c583f29a3c785bea50561b24e5ebf969184d3cc3b
+  oof_mbert_fold4.npz 4b064e844e2b75c27592b4082e213ba31efa29273b3715b1762a32726c52971a
+Validation results:
+  - 레시피 = 배포 mBERT 계약 (bert-base-multilingual-cased, hist6, 2ep/b8×2/384/s42, fp32)
+  - 전 fold 서버 A5000 단일 환경 생성 (Colab 혼용 금지 판정 근거: fold0 교차 실측
+    Colab↔서버 F1 동률이나 argmax 8.1% 상이 — fold 간 환경차는 스태커 입력 오염)
+  - fold Macro-F1: 0.66153 / 0.66432 / 0.66438 / 0.67062 / 0.67027 (holdout 0.67147 정합)
+  - 합계 70,000행, fold 배정·actions 순서(e5 OOF와 동일)·run json 전항목 정합
+  - Colab산 fold0은 oof_mbert_fold0_colab.npz로 보존 (교차 환경 검증용, canonical 아님)
+Recommended decision: CX-002의 mBERT 성분 플래그 개발 시 이 세트를 사용. e5와 동일
+  fold_map이므로 행 정렬 검증 로직 재사용 가능.
 Next owner: Codex (scripts/stacker_h12), 판정·승격·제출은 Claude
 ```
 
