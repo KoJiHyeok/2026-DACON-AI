@@ -24,4 +24,5 @@
 7. 결과에는 사용 모델, reasoning, 검증 결과를 handoff에 기록한다. 쓰기 작업은 branch/commit을,
    읽기 전용 작업은 `branch/commit: N/A (read-only)`를 기록한다.
 
-2026-AI-DACON\CLAUDE.md 를 확인!!
+참조 범위: `CLAUDE.md` 중 **절대 규칙(제출 제약)** 과 **기록 시스템(context/) 게이트** 절만 Codex에 적용된다.
+모델 역할 분담·서브에이전트(reviewer/tester) 규칙 등 Claude 전용 절은 Codex에 적용하지 않는다 — Codex의 모델 선택은 이 문서의 라우팅이 우선한다.

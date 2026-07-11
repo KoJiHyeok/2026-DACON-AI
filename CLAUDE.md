@@ -2,7 +2,7 @@
 
 AI 코딩 에이전트의 다음 행동을 14클래스로 분류하는 대회. 전략·일정은 `PLAN.md`, 실험 기록은 `context/experiments.md` 참고.
 
-역할별 병렬 작업은 `agents/` instruction과 `docs/agent_workflow.md`를 따른다.
+`agents/`와 `docs/agent_workflow.md`는 초기 설계 사료다 — 현행 운영은 아래 '협업 게이트'(reviewer/tester 서브에이전트·Codex CX 티켓·night-shift)와 `context/coordination.md`를 따른다.
 
 ## Claude-Codex 협업 게이트
 
