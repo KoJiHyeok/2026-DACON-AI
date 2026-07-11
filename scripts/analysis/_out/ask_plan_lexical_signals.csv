@@ -1,0 +1,11 @@
+condition,n_rows,n_sessions,top_label_14class,top_purity_14class,n_ask_or_plan,ask_user_count,plan_task_count,ask_plan_conditional_purity,ask_plan_favors
+has_question_mark,10796,6099,grep_search,0.20405705816969247,2215,1135,1080,0.5124153498871332,ask_user
+wh_question_word,5084,2554,grep_search,0.21931549960660898,600,314,286,0.5233333333333333,ask_user
+asks_clarify_verb,892,765,run_bash,0.19282511210762332,58,30,28,0.5172413793103449,ask_user
+mentions_plan_noun,1351,1128,plan_task,0.18874907475943745,510,255,255,0.5,ask_user
+mentions_plan_verb,347,323,plan_task,0.39481268011527376,255,118,137,0.5372549019607843,plan_task
+before_you_start,17,17,plan_task,0.4117647058823529,13,6,7,0.5384615384615384,plan_task
+not_sure_which,104,102,ask_user,0.375,65,39,26,0.6,ask_user
+want_to_know_approach,54,53,ask_user,0.6296296296296297,45,34,11,0.7555555555555555,ask_user
+give_options,70,68,edit_file,0.24285714285714285,17,6,11,0.6470588235294118,plan_task
+no_code_yet,2,2,plan_task,0.5,2,1,1,0.5,ask_user

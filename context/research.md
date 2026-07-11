@@ -8,6 +8,7 @@
 > w112 핸드오프(legacy/w112_handoff.md §8) 수신 후 우선순위 재편 — 미세 앙상블로는 컷(−0.055) 도달 불가, **구조적 신호**가 1순위.
 
 - [x] ~~**P0 시뮬레이터 포렌식**: (state→action) 결정성 분석~~ → **1라운드 완료, 가설 기각** (D-007). 결정 규칙 coverage 0.03%로 규칙 노선 폐기. 산출 리드 R3/R4로 전환. [reports/forensics_r1.md](reports/forensics_r1.md)
+- [x] ~~**포렌식 r2 — CX-003 H1(ask_user↔plan_task) 경계 규칙 재구성**~~ → **고순도 규칙 부재 확정, H1 규칙/override 축 종결** (reviewer 재실행 PASS). 2클래스 서브셋 purity 0.86도 14클래스 전체선 0.52 미만 — r1 착시 패턴 재확인. 남은 경로는 annotation audit뿐(미착수). [reports/forensics_r2.md](reports/forensics_r2.md)
 - [ ] **P0 R4 explore 계층 분류 프로토타입** — 1단계 대분류 + 2단계 (last2,last1) 조건부 explore 분류기, 플랫 대비 로컬 CV 비교 (밤샘 task2 진행 중)
 - [ ] **P0 R3 첫스텝(history_len==0, 12.9%) 전용 class-wise prior** — 분포 이질성 구조적 확인됨. calib_v1 전례 때문에 LB 게이트 필수 (밤샘 task2에 상한 실측 포함)
 - [ ] P1 버킷-게이트 블렌드 (`history_presence`) 프로브 — 정보 획득용 (R3의 거친 버전, 로컬 delta +0.0036 gate 통과 상태)

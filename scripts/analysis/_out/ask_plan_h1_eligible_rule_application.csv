@@ -1,0 +1,6 @@
+rule,n_applies,favors,would_be_correct_if_override,would_be_wrong_if_override
+has_question_mark&step1,30,plan_task,3,27
+wh_question_word&step1,9,plan_task,3,6
+mentions_plan_noun&step1,9,plan_task,2,7
+mentions_plan_verb&step1,3,plan_task,0,3
+not_sure_which,1,ask_user,1,0

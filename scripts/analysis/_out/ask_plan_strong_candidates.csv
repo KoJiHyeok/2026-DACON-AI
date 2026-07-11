@@ -1,0 +1,9 @@
+condition,n_rows,n_sessions,top_label_14class,top_purity_14class,n_ask_or_plan,ask_user_count,plan_task_count,ask_plan_conditional_purity,ask_plan_favors
+has_question_mark&step1,1997,1997,list_directory,0.21732598898347522,684,265,419,0.6125730994152047,plan_task
+wh_question_word&step1,807,807,list_directory,0.2738537794299876,197,74,123,0.6243654822335025,plan_task
+mentions_plan_noun&step1,245,245,plan_task,0.4857142857142857,171,52,119,0.695906432748538,plan_task
+mentions_plan_verb&step1,102,102,plan_task,0.6862745098039216,95,25,70,0.7368421052631579,plan_task
+not_sure_which,104,102,ask_user,0.375,65,39,26,0.6,ask_user
+want_to_know_approach,54,53,ask_user,0.6296296296296297,45,34,11,0.7555555555555555,ask_user
+not_sure_which&step_gt1,75,74,ask_user,0.4,45,30,15,0.6666666666666666,ask_user
+want_to_know_approach&step_gt1,43,42,ask_user,0.627906976744186,34,27,7,0.7941176470588235,ask_user
