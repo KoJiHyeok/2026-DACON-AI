@@ -1,5 +1,7 @@
 # task2 — CX-005: 5성분 frozen-shadow 스태커 판정 하네스 (독립 대조 구현)
 
+> ⚠️ **SUPERSEDED (07-12 저녁)**: 이 티켓은 무효 — CX-004는 `scripts/kd_run/`으로 당일 대체 구현·제출까지 완료(exp #51), CX-005는 exp #50 축 종결로 불필요. 러너 철수됨. 기록 보존용으로만 남김.
+
 ## 컨텍스트
 
 DACON 236694. D-014 레인 A = 챔피언 5성분(linear·AAR·e5-hist12·mBERT-h6·AU) 전체의 parity OOF 스태커 — exp #46(CX-002)이 비승격이었던 자격 미달 2건(① baseline이 proxy ② 메타층만 cross-fit)을 해소하는 재실험이다. Claude 측이 같은 스펙의 판정 파이프라인을 별도 구현 중이며, **이 작업은 그 독립 대조 구현**이다(CX-003 이중검증 패턴). 두 구현의 수치가 일치해야 판정이 성립한다. 판정 선언·승격·제출은 Claude 단독 권한 — 이 하네스는 `promotion_eligible=false` 고정.

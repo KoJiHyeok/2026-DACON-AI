@@ -1,5 +1,7 @@
 # task1 — CX-004: KD 증류 도구 세트 (teacher prob-dump + student trainer + 검증 테스트)
 
+> ⚠️ **SUPERSEDED (07-12 저녁)**: 이 티켓은 무효 — CX-004는 `scripts/kd_run/`으로 당일 대체 구현·제출까지 완료(exp #51), CX-005는 exp #50 축 종결로 불필요. 러너 철수됨. 기록 보존용으로만 남김.
+
 ## 컨텍스트
 
 DACON 236694 (AI 에이전트 다음 행동 14클래스, Macro-F1). D-014로 공세 재개 — 시드 앙상블(exp #48: avg(s42,s43) 블렌드 row +0.00045, 유일한 로컬 양수 후보)은 e5 인코더 2개가 submit.zip 1GB 제한을 초과해 **증류(KD)만이 유일한 배포 경로**다. 서버에서 s43·s44 full-70k teacher가 오늘 학습 중이고(s42 = 배포 챔피언 인코더, `submit/model/encoder`에 실존), 내일 아침 Claude가 GPU로 실행할 **증류 학습 도구**가 이 작업의 산출물이다. GPU 실행·판정·제출은 전부 Claude 담당 — 이 작업은 코드와 CPU 검증만.
