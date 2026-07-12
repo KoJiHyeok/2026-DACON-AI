@@ -198,6 +198,10 @@ def main():
         id2label={i: a for a, i in a2i.items()}, label2id=a2i,
         ignore_mismatched_sizes=True,
     ).float().to(device)                                  # 학습 fp32 고정 (T4 fp16 NaN 함정)
+    if tok.pad_token is None:                              # 디코더 LM(Qwen 등)은 pad 미정의 — eos로 폴백 (기존 인코더 모델 무영향)
+        tok.pad_token = tok.eos_token
+    if getattr(model.config, "pad_token_id", None) is None:
+        model.config.pad_token_id = tok.pad_token_id
     if GRAD_CKPT:
         model.gradient_checkpointing_enable()
         print("[cfg] gradient checkpointing on")
