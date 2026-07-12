@@ -143,3 +143,20 @@ Writes `aar_models.joblib` and `aar_config.json` to `--output` (default
 `submit/model`). Supports `--limit N` to subsample rows for a fast smoke
 run (used throughout this report), and `AAR_*` environment variable
 fallbacks for every flag (no required argparse arguments).
+
+## 검증 부기 (2026-07-12 아침, 독립 tester 70k 전량 실측 — PASS)
+
+작성자 패스에서 "not run"으로 남긴 70k 전량 학습을 독립 tester(test-n1-fix)가 실측했다 (단독 실행 재측정 포함):
+
+| 항목 | 실측값 | 비고 |
+|---|---|---|
+| 벽시계 (단독 실행) | **828초 (13.8분)** | 작성자 외삽 12~15분 범위 내. 최초 측정 1164초는 작성자 학습과의 CPU 경합 오염으로 판명 — 시간 측정은 반드시 단독 실행으로 |
+| 3-fold 세션 group OOF Macro-F1 (stacked) | **0.7034** | 목표(aar_config.json) 0.7098 대비 격차 0.0064 (0.9%) — 원본 SGD 셔플 순서 재현 불가 한계로 설명 가능한 수준. 구버전(4-SGD 창작 레시피) 기준선 0.5724 대비 +0.131 |
+| 개별 컴포넌트 OOF 평균 | 0.6261 | stacker가 +0.077 견인 (fold별 0.6285/0.6240/0.6257) |
+| 원본 aar_models.joblib vs 재학습 예측 일치율 | **95.70%** (957/1000행) | 둘 다 무수정 aar_infer.predict_aar 경로 |
+| 결정론성 | 확인 | seed=42 반복 실행에서 시간 제외 전 수치 소수점 동일 |
+| 단위 테스트 | 35 passed | |
+
+재현 커맨드: `.venv\Scripts\python.exe scripts\aar_rebuild\train_aar.py --data data\train.jsonl --labels data\train_labels.csv --output <out> --seed 42 --max-iter 25 --folds 3`
+
+리뷰(rev-n1-fix, CONDITIONAL PASS)의 승격 조건 2건 — (a) _orig_artifact/ 비커밋 정리, (b) 전량 실측의 외삽 부합 — 모두 충족되어 main 승격.
