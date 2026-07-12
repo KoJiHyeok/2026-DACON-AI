@@ -219,6 +219,10 @@ def _one_encoder_probs(samples, enc_dir):
     model = AutoModelForSequenceClassification.from_pretrained(enc_dir, torch_dtype="auto")
     model = model.half().to(device) if device == "cuda" else model.float()
     model.eval()
+    if tok.pad_token is None:  # 디코더 LM(Qwen 등) pad 미정의 폴백 — 기존 인코더(BERT류) 무영향
+        tok.pad_token = tok.eos_token
+    if getattr(model.config, "pad_token_id", None) is None:
+        model.config.pad_token_id = tok.pad_token_id
     id2label = {int(k): v for k, v in model.config.id2label.items()}
     enc_labels = [id2label[i] for i in range(len(id2label))]
 
