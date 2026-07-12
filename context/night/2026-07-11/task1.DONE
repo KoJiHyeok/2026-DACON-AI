@@ -1,0 +1,3 @@
+Implemented the AAR stacker trainer and documented the consumer-compatible artifact schema.
+Added deterministic 3-fold grouped OOF and artifact smoke tests; focused tests pass, while full pytest has 11 unrelated sparse-checkout failures.
+70k CPU attempts exceeded the local 10-minute window; original parity remains limited by missing work2 sources/artifacts.
