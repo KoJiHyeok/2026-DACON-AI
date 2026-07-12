@@ -23,13 +23,24 @@ def _pipeline(m, samples):
     ))
     lin = _timed(times, "linear", lambda: m.linear_probs(samples))
     stk = _timed(times, "aar_stacker", lambda: m.stacker_probs(samples))
-    enc_parts = []
-    for enc_dir in m.encoder_dirs():
+    # enc 는 원본 encoder_probs() 를 그대로 한 번 호출한 결과다(가중 평균 enc_block_weights() +
+    # calib load_calib() 포함) — 하네스가 uniform 평균으로 복제하던 것을 없애 원본과의 편차
+    # 원천을 제거한다. 성분별 개별 시간은 _one_encoder_probs 를 감싸서 그 한 번의 실행 안에서
+    # 잡는다(재실행 없음 → 이중 계측으로 인한 시간 왜곡 없음).
+    real_one_encoder = m._one_encoder_probs
+
+    def _timed_one_encoder(samples_, enc_dir):
         name = os.path.basename(os.path.normpath(enc_dir))
-        enc_parts.append(_timed(times, name,
-                                lambda d=enc_dir: m._one_encoder_probs(samples, d)))
-    enc = _timed(times, "encoder_block", lambda: (
-        sum(enc_parts, start=np.zeros_like(enc_parts[0])) / len(enc_parts)))
+        started = time.perf_counter()
+        value = real_one_encoder(samples_, enc_dir)
+        times[name] = time.perf_counter() - started
+        return value
+
+    m._one_encoder_probs = _timed_one_encoder
+    try:
+        enc = _timed(times, "encoder_block", lambda: m.encoder_probs(samples))
+    finally:
+        m._one_encoder_probs = real_one_encoder
 
     def make_blend():
         weights = m.parse_weights()
