@@ -31,3 +31,4 @@
 - 2026-07-10 — [daily](daily/2026-07-10.md) : LB 0.7623 팀 최고 탈환(e5 hist12), 감사 반영 D-011 args-lite 개시 — 새 세션 인계사항 포함
 - 2026-07-10 — [제3자 SOL 모델 감사](reports/third_party_sol_model_audit_2026-07-10.md) : 활성 0.7623 모델의 검증 표본단위·고정 홀드아웃·직렬화 누락을 재진단하고, args-lite·hist12-aware stacker 중심의 점수 개선 우선순위 제시
 - 2026-07-11 — 판정 집중일 (daily 없음 — experiments #44~49·decisions D-013·coordination 참조) : 도약 3축 전부 폐기(시드 앙상블 #48·H1 규칙 [forensics r2](reports/forensics_r2.md)·klue-large #49), CX-003 이중검증 승격, **D-013 챔피언 0.7623 자동 최종 확정**
+- 2026-07-12 — [daily](daily/2026-07-12.md) : 밤샘 3작업 회수(러너 자기치유 실증·커밋은 아침 구조), task3 문서 병합, task1·2 리뷰 FAIL 재작업 — 원본 AAR 아티팩트 실존 발견. 컷 갭 −0.0305로 악화
