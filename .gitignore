@@ -44,3 +44,6 @@ venv/
 # OS
 Thumbs.db
 .DS_Store
+
+# 스킬/에이전트 동기화 잔재 (도구 생성물 — 리포 콘텐츠 아님)
+.agents/

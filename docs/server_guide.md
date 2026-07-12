@@ -48,13 +48,13 @@ git clone <리포 주소> $WORK/dacon
 ```
 
 (리포가 private라 clone이 번거로우면 최소한만 로컬에서 전송해도 된다:
-`scp -r C:\dev\2026-AI-DACON\colab u20220876@<서버주소>:dacon/colab` — 콜론 뒤 상대경로는 홈 기준)
+`scp -r C:\dev\2026-AI-DACON\colab u20220876@210.119.108.236 (⚠️ SSH 포트 419 — `ssh -p 419`/`scp -P 419`, 포트 22는 방화벽 차단):dacon/colab` — 콜론 뒤 상대경로는 홈 기준)
 
 **로컬 PC PowerShell에서** (data/는 gitignore라 항상 직접 전송):
 
 ```powershell
-scp C:\dev\2026-AI-DACON\data\train.jsonl C:\dev\2026-AI-DACON\data\train_labels.csv u20220876@<서버주소>:data/
-scp C:\dev\2026-AI-DACON\context\night\2026-07-05\holdout_base.npz u20220876@<서버주소>:data/
+scp C:\dev\2026-AI-DACON\data\train.jsonl C:\dev\2026-AI-DACON\data\train_labels.csv u20220876@210.119.108.236 (⚠️ SSH 포트 419 — `ssh -p 419`/`scp -P 419`, 포트 22는 방화벽 차단):data/
+scp C:\dev\2026-AI-DACON\context\night\2026-07-05\holdout_base.npz u20220876@210.119.108.236 (⚠️ SSH 포트 419 — `ssh -p 419`/`scp -P 419`, 포트 22는 방화벽 차단):data/
 ```
 
 ## ☐ 3. 작업 1 — args-lite candidate (GPU 0, 최우선 · D-011)
@@ -99,13 +99,13 @@ nvidia-smi                  # 두 GPU가 돌고 있는지
 ## ☐ 6. 산출물 회수 (로컬 PC PowerShell)
 
 ```powershell
-scp u20220876@<서버주소>:out/e5_h12_args1/holdout_e5_h12_args1.npz C:\dev\2026-AI-DACON\colab_out\
+scp u20220876@210.119.108.236 (⚠️ SSH 포트 419 — `ssh -p 419`/`scp -P 419`, 포트 22는 방화벽 차단):out/e5_h12_args1/holdout_e5_h12_args1.npz C:\dev\2026-AI-DACON\colab_out\
 ```
 
 mBERT는 `~/out/mbert_h12/` 안의 holdout npz 파일명을 먼저 확인(`ls ~/out/mbert_h12/`)하고, 판정 프로브가 기대하는 이름으로 받는다:
 
 ```powershell
-scp u20220876@<서버주소>:out/mbert_h12/<확인한 npz명> C:\dev\2026-AI-DACON\colab_out\holdout_mbert_h12.npz
+scp u20220876@210.119.108.236 (⚠️ SSH 포트 419 — `ssh -p 419`/`scp -P 419`, 포트 22는 방화벽 차단):out/mbert_h12/<확인한 npz명> C:\dev\2026-AI-DACON\colab_out\holdout_mbert_h12.npz
 ```
 
 **→ npz 두 개가 colab_out/에 도착하면 Claude 세션에 알리기.** 판정(probe_c_args_lite / probe_b_mbert_hist12, 게이트 +0.005 & bootstrap CI & MC)과 실험 기록은 로컬에서 진행.

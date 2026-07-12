@@ -28,6 +28,10 @@
 | mBERT group-OOF 생성 (P1-C 보완, 5성분 OOF) | Claude | **done — 서버 이관 후 5/5 완료·검증·인계 (07-11 13:30, 아래 Handoff 추록)** | `colab/mdeberta_finetune.py`(MDEB_FOLD 게이트), `artifacts/experiments/oof_mbert_h6/**` |
 | 서버 실행·제출 | Claude | active | `docs/server_guide.md`, `submit/**`, `scripts/dacon_submit.py` |
 | 공식 기록 | Claude | active | `context/experiments.md`, `context/decisions.md`, `context/submissions.md`, `context/daily/**`, `context/coordination.md` |
+| 5성분 parity 스태커 재실험 (D-014 레인 A) | Claude | **active (07-12)** | `scripts/oof5/**`, `artifacts/experiments/oof_linear/**`, `artifacts/experiments/oof_au/**`, `artifacts/experiments/oof_aar/**`, 판정 스크립트 |
+| KD 증류 도구 (CX-004, D-014 레인 B) | Codex | ticket 발행 (07-12, `context/night/2026-07-12/task1.md`) | `scripts/distill/**`, `tests/test_distill.py` — GPU 실행·판정은 Claude |
+| frozen-shadow 판정 하네스 독립 구현 (CX-005) | Codex | ticket 발행 (07-12, `context/night/2026-07-12/task2.md`) | `scripts/shadow_eval/**`, `tests/test_shadow_eval.py` — Claude 구현과 수치 대조용, promotion_eligible=false 고정 |
+| e5 s43/s44 full-70k teacher 학습 | Claude | **running (07-12 14:30~, 서버 GPU0/1, venv-speed torch2.7.1+tf5.13.1)** | 서버 `~/out/e5_h12_full_s{43,44}/**` |
 | context compiler v2 | Codex | ready — **⚠️ 방향 재검토 필요 (아래 07-10 밤 노트)** | `experiments/context_compiler_v2/**`, `scripts/eval_v2/**`, 전용 tests |
 | hist12 stacker consumer (CX-001) | Codex | 구현 완료 — 검증 후 main cherry-pick (ded0e67·685a755) | `scripts/stacker_h12/**`, 전용 tests, handoff report |
 | hist12 stacker 실물 진단 (CX-002) | Codex | **done — 비승격 판정 (exp #46, main 7e6552a). 재실험은 alpha09 sparse OOF + frozen shadow 확보 후** | 위와 동일 + `context/handoffs/codex/CX-002.md` |
