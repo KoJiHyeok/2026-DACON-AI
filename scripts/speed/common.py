@@ -7,6 +7,11 @@ MODEL=Path(os.environ.get("SPEED_MODEL_DIR", r"C:\dev\2026-AI-DACON\submit\model
 PYTHON=os.environ.get("SPEED_PYTHON", r"C:\dev\2026-AI-DACON\.venv\Scripts\python.exe")
 def mod():
  p=str(ROOT/'submit');sys.path.insert(0,p) if p not in sys.path else None
+ # script.py의 bare `import features`가 다른 테스트의 src/features.py 캐시를 잡는 충돌 방지
+ # (tests/test_enc_block_weights.py의 격리 패턴과 동일 취지 — submit/ 밖 동명 모듈은 퇴출)
+ for k in ('script','features','aar_infer','au_route'):
+  m=sys.modules.get(k)
+  if m is not None and not str(getattr(m,'__file__','') or '').startswith(p): sys.modules.pop(k)
  return importlib.import_module('script')
 def setup(m,x=MODEL,device='cpu'):
  m.MODEL=str(x);m.LINEAR_PKL=str(x/'linear'/'model.pkl');m.STACKER_DIR=str(x/'stacker')
