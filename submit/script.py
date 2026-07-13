@@ -52,6 +52,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import features as F     # linear (= submit/features.py 벤더 — 챔피언과 짝)
 import aar_infer as AAR  # stacker (= work2/script.py verbatim 벤더)
+import fast_aar as FAAR  # AAR 등가 고속 경로 (night 07-13 task1 벤더 — aar_infer는 계약으로 유지)
 import au_route as AU    # AU 전용 라우팅 (exp #23 — serialize 단일 소스)
 
 DATA = os.environ.get("ENS_DATA", "./data")
@@ -163,34 +164,16 @@ def linear_probs(samples):
 
 
 def stacker_probs(samples):
-    """work2 AAR 스태커 확률. predict_aar(work2/script.py)의 **확률 경로**를 그대로 재현
-    (단 model_dir 만 STACKER_DIR 로 파라미터화). AAR.ACTIONS 순 = ACTIONS 순."""
+    """work2 AAR 스태커 확률. fast_aar.fast_predict_proba = predict_aar 확률 경로의
+    등가 고속 구현 (char_wb 단어 캐시·transition 메모이즈, 5,000행 argmax 100%·오차 0.0 게이트).
+    3vCPU 평가 서버에서 ~3x — 시간초과 FAIL(#13) 대응 레버. AAR.ACTIONS 순 = ACTIONS 순."""
     config = AAR.load_config(os.path.join(STACKER_DIR, "aar_config.json"))
     if not config.get("enabled"):
         raise ValueError("AAR config disabled")
     artifact = joblib.load(os.path.join(STACKER_DIR, str(config.get("model_file", "aar_models.joblib"))))
     texts = [AAR.record_to_text(r) for r in samples]
     prompt_texts = [AAR.record_to_prompt_text(r) for r in samples]
-    views = AAR.aar_views(samples, texts, prompt_texts)
-    comp = {}
-    for c in config.get("components", []):
-        name, kind, view = str(c.get("name")), str(c.get("kind")), str(c.get("view"))
-        if kind == "transition":
-            comp[name] = AAR.aar_transition_predict_proba(artifact["transition"], samples)
-        else:
-            model = artifact.get("components", {}).get(name)
-            if model is None:
-                raise ValueError(f"AAR component missing: {name}")
-            comp[name] = AAR.predict_proba_aligned(model, views[view])
-    if config.get("use_stacker"):
-        names = [str(x) for x in config.get("stacker_components", [])]
-        matrix = np.hstack([comp[n] for n in names]).astype(np.float32)
-        probas = AAR.predict_proba_aligned(artifact["stacker"], matrix)
-    else:
-        probas = AAR.weighted_average(
-            [(comp[str(c["name"])], float(c.get("weight", 0.0))) for c in config["components"]])
-    if config.get("use_bias"):
-        probas = AAR.aar_apply_bias(probas, config.get("class_bias", [0.0] * len(ACTIONS)))
+    probas = FAAR.fast_predict_proba(samples, texts, prompt_texts, config, artifact)
     return np.asarray(probas, dtype=np.float64)   # 이미 AAR.ACTIONS(=ACTIONS) 순
 
 
@@ -230,12 +213,16 @@ def _one_encoder_probs(samples, enc_dir):
     texts = [serialize(s, max_hist=max_hist) for s in samples]
     print(f"      serialize(max_hist={max_hist}) [{os.path.basename(os.path.normpath(enc_dir))}]")
     out = np.zeros((len(texts), len(enc_labels)), dtype=np.float64)
+    # 길이 정렬 배칭: 동일 배치 내 길이 편차를 줄여 padding=True 낭비 연산을 ~1.7x 절감
+    # (train hist12 3000행 실측: 평균 220tok, 캡 384 도달 5.3%). out[idx] 복원으로 출력 순서 불변.
+    order = sorted(range(len(texts)), key=lambda j: len(texts[j]))
     with torch.no_grad():
-        for i in range(0, len(texts), BATCH):
-            enc = tok(texts[i:i + BATCH], truncation=True, max_length=MAX_LEN,
+        for i in range(0, len(order), BATCH):
+            idx = order[i:i + BATCH]
+            enc = tok([texts[j] for j in idx], truncation=True, max_length=MAX_LEN,
                       padding=True, return_tensors="pt").to(device)
             logits = model(**enc).logits.float().cpu().numpy()
-            out[i:i + BATCH] = softmax(logits, temp=1.0)
+            out[idx] = softmax(logits, temp=1.0)
     del model
     if device == "cuda":
         torch.cuda.empty_cache()          # 다음 인코더 로드 전 VRAM 반납 (T4 16GB에 base 2개 동시 방지)
