@@ -335,10 +335,25 @@ def check_git_clean(config: Config) -> CheckResult:
     if completed.returncode != 0:
         message = completed.stderr.strip() or completed.stdout.strip()
         return _result("git 작업트리", "FAIL", f"상태 조회 실패: {message}")
-    dirty = completed.stdout.strip()
-    if dirty:
-        return _result("git 작업트리", "FAIL", "미커밋 변경:\n" + dirty)
-    return _result("git 작업트리", "PASS", f"clean: {config.git_root}")
+    # 이 도구의 자기 산출물(매니페스트·체크리스트)은 실행할 때마다 재생성되어
+    # (generated_at 타임스탬프) 추적 파일이면 스스로 dirty를 만든다 — 판정에서 제외.
+    own_outputs = set()
+    for p in (config.manifest_path, config.checklist_path):
+        try:
+            own_outputs.add(p.resolve().relative_to(config.git_root.resolve()).as_posix())
+        except ValueError:
+            pass
+    lines = [
+        line
+        for line in completed.stdout.splitlines()
+        if line.strip() and line[3:].strip().strip('"') not in own_outputs
+    ]
+    if lines:
+        return _result("git 작업트리", "FAIL", "미커밋 변경:\n" + "\n".join(lines))
+    detail = f"clean: {config.git_root}"
+    if own_outputs:
+        detail += " (자기 산출물 제외: " + ", ".join(sorted(own_outputs)) + ")"
+    return _result("git 작업트리", "PASS", detail)
 
 
 def _markdown_text(text: str) -> str:
