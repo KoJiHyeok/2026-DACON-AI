@@ -33,6 +33,10 @@
 | frozen-shadow 판정 하네스 독립 구현 (CX-005) | Codex | ticket 발행 (07-12, `context/night/2026-07-12/task2.md`) | `scripts/shadow_eval/**`, `tests/test_shadow_eval.py` — Claude 구현과 수치 대조용, promotion_eligible=false 고정 |
 | e5 s43/s44 full-70k teacher 학습 | Claude | done (07-12 — exp #51 라인, LB 0.7621 비승격) | 서버 `~/out/e5_h12_full_s{43,44}/**` |
 | **문샷: Qwen2.5-0.5B 디코더 분류기** (D-2 예선 공세 — 사용자 지시, 유일 미검증 축 = 모델 패밀리) | Claude | **running (07-13 01:4x~, 서버 GPU0/1/2 — instruct2ep/base2ep/instruct4ep, hist12·holdout85·mdeberta 러너)** | 서버 `~/out/qwen05*_h12/**`, `colab/mdeberta_finetune.py`(pad 폴백 가드 추가) |
+| **D-1 공세: Qwen 블록 캘리브레이션 (CX-A)** | Codex | ticket 발행 (07-14 낮, `context/night/2026-07-14/task4.md`) | `scripts/cx_calib/**`, `tests/test_cx_calib.py` — 채택 판정·배포는 Claude |
+| **D-1 공세: 신표면 오답 국소 분석 (CX-B)** | Codex | ticket 발행 (07-14 낮, `context/night/2026-07-14/task5.md`) | `scripts/cx_errloc/**` — 후보 제안만, 실행은 Claude |
+| **D-1 공세: au_linear 업그레이드 (CX-C)** | Codex | ticket 발행 (07-14 낮, `context/night/2026-07-14/task6.md`) | `scripts/cx_au2/**`, `tests/test_cx_au2.py` — 아티팩트 스왑 판정·배포는 Claude |
+| Qwen 표면 블렌드 재튜닝 (exp #53) | Claude | **LB 프로브 중 (07-14 — weights [1,1,3]+α0.85, holdout +0.00378 CI>0)** | `submit/model/weights.json`, `submit/script.py`(α 기본값), 판정 스크립트(스크래치패드+colab_out npz) |
 | context compiler v2 | Codex | ready — **⚠️ 방향 재검토 필요 (아래 07-10 밤 노트)** | `experiments/context_compiler_v2/**`, `scripts/eval_v2/**`, 전용 tests |
 | hist12 stacker consumer (CX-001) | Codex | 구현 완료 — 검증 후 main cherry-pick (ded0e67·685a755) | `scripts/stacker_h12/**`, 전용 tests, handoff report |
 | hist12 stacker 실물 진단 (CX-002) | Codex | **done — 비승격 판정 (exp #46, main 7e6552a). 재실험은 alpha09 sparse OOF + frozen shadow 확보 후** | 위와 동일 + `context/handoffs/codex/CX-002.md` |
