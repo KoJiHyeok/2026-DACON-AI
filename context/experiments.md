@@ -84,6 +84,8 @@
 
 | 56 | 07.14 | **au_linear 업그레이드 (CX-C, Codex task6)** — 전이율 1:1 실증된 AU 라우팅 축에서 AU 모델 자체 강화 시도 (변형 5개 사전고정: word+char 결합·C 스윕) | Codex `scripts/cx_au2/` — frozen holdout AU 682행 제외 4,343행·946세션 5-fold GroupKFold OOF로 변형 선택 (이중 누수 게이트 assert, fold-local TF-IDF fit) | **기준선(char_wb 3-5, C=1.0)이 pooled OOF 0.680667로 1위** — 최고 개선안 word+char C=1도 −0.001269 열세. 신표면 5지표 전부 0.000000 (기준=후보 동일 예측), AU solo 0.744158. 독립 reviewer(rev-cxau2) eval 전체 재실행 수치 완전 재현 + 누수 게이트·변형 고정·아티팩트 계약 정적 확인 + submit 무변경 SHA 대조 PASS | 미제출 | **FAIL/기각 (Codex 자체 판정 + reviewer 지지).** 현행 char-C1이 이미 이 데이터 규모(4.3k행)의 국소 최적 — AU 모델 강화 축 종결. D-1 CX 티켓 3장 결산: 기각 2(calib·au2)·채택 1(오답분석→#17 실전) — 정직한 네거티브가 탐색 공간을 닫아줌 |
 
+| 57 | 07.14 | **Qwen2.5-Coder-0.5B 스왑** (코딩 에이전트 도메인 ↔ 코드 사전학습 정합 가설 — 동일 아키텍처·크기라 T4 6m37s 앵커 유효, 마지막 모델 축) | 서버 3런 병렬 (instruct/base h85 + instruct full 투기) — mdeberta 러너 env 재사용, hist12/2ep/s42. 판정 = coder_judge.py (배포 #17 표면 기준선 0.77227, 12구성 스왑 스윕) | **h85 solo: instruct 0.75751 / base 0.75537 — 둘 다 원 Qwen(0.75932) 열세.** 학습 초기 loss는 크게 낮았으나(3.65 vs 5.38 — 코드 도메인 적합) 최종 solo는 역전. 하이브리드 12구성(w×α×bias) **전패 −0.0025~−0.0050**, 정보용 확률혼합조차 음수. 독립 reviewer(rev-coder): 전 수치 재현 + npz 무결성 raw 재계산 + **bias 공정성 확인 (list 과다/glob 과소 예측이 Qwen 계열 공통 편향 — coder도 동일 방향, bias는 가족 공통 보정)** | 미제출 | **FAIL/폐기 — 모델 축 최종 종결.** 코드 특화 사전학습이 이 분류엔 범용판 이하 (액션 예측은 코드 이해보다 대화 구조 이해가 지배적인 듯). 투기적 full 런은 중단·폐기, GPU 반납. 남은 카드 = 고원 노이즈 드로뿐 |
+
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
 | 레버 | LB/결과 | 왜 |
