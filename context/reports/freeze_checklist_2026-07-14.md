@@ -1,7 +1,7 @@
 # Freeze checklist — 2026-07-14
 
-- 종합 판정: **FAIL**
-- 집계: PASS 7 / WARN 1 / FAIL 1
+- 종합 판정: **PASS**
+- 집계: PASS 8 / WARN 1 / FAIL 0
 - 종료 규칙: FAIL이 하나라도 있으면 exit 1; WARN만 있으면 exit 0
 
 | 항목 | 상태 | 상세 |
@@ -14,8 +14,8 @@
 | 서버 rollback 경로 | **PASS** | 문서 기재만(접속 시도 안 함): ~/models/champ_encoder_s42, ~/out/qwen05i_2ep_full |
 | TEMP 제출 잔해 | **WARN** | 1개 발견(삭제하지 않음): C:\Users\wlgur\AppData\Local\Temp\dacon_submit_api-0.1.2-py3-none-any.whl (file, 4958 bytes) |
 | 디스크 여유 | **PASS** | C:\: 11.33 GiB free (WARN 기준 10.00 GiB 미만) |
-| git 작업트리 | **FAIL** | 미커밋 변경:<br> M context/submissions.md<br> M scripts/freeze_check/check.py |
+| git 작업트리 | **PASS** | clean: C:\dev\2026-AI-DACON (자기 산출물 제외: context/reports/freeze_checklist_2026-07-14.md, context/reports/freeze_manifest_2026-07-14.json) |
 
 ## 사람 확인 요약
 
-FAIL 항목이 있습니다. 자산을 자동 수정하지 않았습니다. 최종 선택 전 사람이 판단하세요.
+자동 동결 점검을 통과했습니다. WARN 항목은 삭제·수정하지 않았으므로 최종 선택 전에 사람이 확인하세요.
