@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "algorithm": "sha256",
-  "generated_at_utc": "2026-07-14T04:53:53.455824+00:00",
+  "generated_at_utc": "2026-07-14T18:45:29.491574+00:00",
   "submit_root": "C:\\dev\\2026-AI-DACON\\submit",
-  "file_count": 25,
-  "total_size_bytes": 2025421897,
+  "file_count": 26,
+  "total_size_bytes": 2025422185,
   "files": [
     {
       "path": "__pycache__/aar_infer.cpython-313.pyc",
@@ -62,6 +62,11 @@
       "sha256": "bc01eb659eca930bcad238d9210beb6c2c72d11b4cdbb778fc136a0bd98725e0"
     },
     {
+      "path": "model/calib.json",
+      "size_bytes": 101,
+      "sha256": "0ed42503118af0e55cf59c38b4780a9aeebc4cb98b8ab23496dc92025c356fbf"
+    },
+    {
       "path": "model/enc_block_weights.json",
       "size_bytes": 19,
       "sha256": "775f590cd73ff550f5db86cd4a2c1365b93fbe2dff85b71cc0786ecc2641f8a6"
@@ -113,8 +118,8 @@
     },
     {
       "path": "model/weights.json",
-      "size_bytes": 56,
-      "sha256": "5a651814902442e084e27dc7a18d59b91b17b567781dbdba0ae3e200f0e5bd29"
+      "size_bytes": 49,
+      "sha256": "31ab331c4d8eb5c97fd9fde8c973c8c1d7a0e9ff95d7a03a0e164e82c0251217"
     },
     {
       "path": "requirements.txt",
@@ -128,8 +133,8 @@
     },
     {
       "path": "submit.zip",
-      "size_bytes": 952207030,
-      "sha256": "bf9115e32b52f21c4abe0921c2a5c129bdcb3a8ed5fd6e0d89cbc5358eb6c4b0"
+      "size_bytes": 952207224,
+      "sha256": "f7bdbb6791e3b4ed486b8f8a6a45233e7881ddaba0f272aca11680cc6702d1e2"
     }
   ]
 }
