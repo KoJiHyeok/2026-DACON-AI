@@ -1,0 +1,62 @@
+{
+  "surface": {
+    "formula": "(linear + stacker + 3*qwen) / 5",
+    "soft_au_alpha": 0.85,
+    "baseline_au": "deployed char-C1 recipe honestly refit on nonholdout sess_au rows",
+    "candidate_au": "baseline_char_C1",
+    "candidate_source": "selected baseline; reused honest baseline refit"
+  },
+  "selection": {
+    "selected_variant": "baseline_char_C1",
+    "oof_macro_f1": 0.6806670767388157,
+    "oof_delta_vs_baseline": 0.0,
+    "selected_beats_baseline": false
+  },
+  "rows": {
+    "holdout": 9969,
+    "holdout_sessions": 1350,
+    "holdout_au": 682,
+    "holdout_au_sessions": 153,
+    "nonholdout_au_train": 4343,
+    "nonholdout_au_sessions": 946
+  },
+  "au_specialist_macro_f1": {
+    "baseline": 0.7441575323712037,
+    "candidate": 0.7441575323712037
+  },
+  "five_metrics": {
+    "1_row_macro_f1": {
+      "baseline": 0.7713812960737046,
+      "candidate": 0.7713812960737046,
+      "delta": 0.0
+    },
+    "2_session_uniform_macro_f1": {
+      "baseline": 0.7763000625965527,
+      "candidate": 0.7763000625965527,
+      "delta": 0.0
+    },
+    "3_one_row_per_session_mc200": {
+      "mean_delta": 0.0,
+      "std_delta": 0.0,
+      "min_delta": 0.0,
+      "max_delta": 0.0
+    },
+    "4_paired_session_bootstrap2000": {
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "p_delta_gt_0": 0.0
+    },
+    "5_deterministic_halves": {
+      "half1_delta": 0.0,
+      "half2_delta": 0.0
+    },
+    "all_five_positive": false
+  },
+  "recommendation": "do_not_swap",
+  "inputs": {
+    "qwen_npz": "C:\\dev\\2026-AI-DACON\\colab_out\\qwen_i2ep_h85.npz",
+    "qwen_npz_sha256": "a6547fba022e95365358b38a520ab3f6019c68b5a0c79193b389345551af5ac4",
+    "oof_dir": "C:\\dev\\2026-AI-DACON\\artifacts\\oof\\oof_rebuild_2026_07_04",
+    "candidate_model_sha256": null
+  }
+}

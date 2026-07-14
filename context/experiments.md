@@ -82,6 +82,8 @@
 
 | 55 | 07.14 | **신표면 오답 국소 분석 (CX-B, Codex task5)** — exp #53의 list_directory −0.0075·glob_pattern −0.0033 악화 원인 규명 + 수복 후보 | Codex `scripts/cx_errloc/analyze.py` (결정적, 2회 실행 바이트 동일, 입력 SHA 11개 고정) | **악화 17행 전부 non-AU, STK top-1 16/17 정답을 Qwen 쏠림(read/grep)이 덮음** — AU 커버리지 무관, w_q 2→3의 국소 비용 구조 규명. 수복 후보: Qwen에 list/glob log-bias +0.08 → holdout **+0.00089**, 정답행 +10, target F1 +0.0092/+0.0019. 독립 reviewer(rev-cxerrloc) 소수점 완전 재현 + 17행 전수 집계 일치 + calib.json(T=1.0+bias 2클래스) 코드 무변경 배포 동치성 확인 | 미제출 | **분석 채택 / 후보는 후순위 큐.** +0.0009는 같은 holdout 발견·평가라 낙관 편향 실재 (reviewer 동의) — #15/#16 LB 방향 확정 후 승자 표면에 얹을지 결정. 배포 시 calib.json {"temperature":1.0,"class_bias":{list,glob:+0.08}} |
 
+| 56 | 07.14 | **au_linear 업그레이드 (CX-C, Codex task6)** — 전이율 1:1 실증된 AU 라우팅 축에서 AU 모델 자체 강화 시도 (변형 5개 사전고정: word+char 결합·C 스윕) | Codex `scripts/cx_au2/` — frozen holdout AU 682행 제외 4,343행·946세션 5-fold GroupKFold OOF로 변형 선택 (이중 누수 게이트 assert, fold-local TF-IDF fit) | **기준선(char_wb 3-5, C=1.0)이 pooled OOF 0.680667로 1위** — 최고 개선안 word+char C=1도 −0.001269 열세. 신표면 5지표 전부 0.000000 (기준=후보 동일 예측), AU solo 0.744158. 독립 reviewer(rev-cxau2) eval 전체 재실행 수치 완전 재현 + 누수 게이트·변형 고정·아티팩트 계약 정적 확인 + submit 무변경 SHA 대조 PASS | 미제출 | **FAIL/기각 (Codex 자체 판정 + reviewer 지지).** 현행 char-C1이 이미 이 데이터 규모(4.3k행)의 국소 최적 — AU 모델 강화 축 종결. D-1 CX 티켓 3장 결산: 기각 2(calib·au2)·채택 1(오답분석→#17 실전) — 정직한 네거티브가 탐색 공간을 닫아줌 |
+
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
 | 레버 | LB/결과 | 왜 |

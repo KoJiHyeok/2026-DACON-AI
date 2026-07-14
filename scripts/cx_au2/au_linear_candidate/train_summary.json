@@ -1,0 +1,523 @@
+{
+  "protocol": {
+    "selection": "GroupKFold(n_splits=5, shuffle=True, random_state=42)",
+    "scope": "sess_au rows after frozen holdout id and session exclusion",
+    "metric": "pooled 14-class Macro-F1",
+    "holdout_labels_used_for_selection": false,
+    "variant_count": 5
+  },
+  "inputs": {
+    "data_dir": "C:\\dev\\2026-AI-DACON\\data",
+    "holdout_npz": "C:\\dev\\2026-AI-DACON\\colab_out\\qwen_i2ep_h85.npz",
+    "holdout_npz_sha256": "a6547fba022e95365358b38a520ab3f6019c68b5a0c79193b389345551af5ac4",
+    "deployed_au_model": "C:\\dev\\2026-AI-DACON\\submit\\model\\au_linear\\model.pkl",
+    "deployed_au_model_sha256": "bc01eb659eca930bcad238d9210beb6c2c72d11b4cdbb778fc136a0bd98725e0"
+  },
+  "rows": {
+    "all_train": 70000,
+    "all_au": 5025,
+    "nonholdout_au": 4343,
+    "nonholdout_au_sessions": 946,
+    "holdout": 9969,
+    "holdout_au": 682
+  },
+  "results": [
+    {
+      "variant": {
+        "name": "baseline_char_C1",
+        "feature_kind": "char",
+        "c": 1.0,
+        "class_weight": "balanced"
+      },
+      "oof_macro_f1": 0.6806670767388157,
+      "folds": [
+        {
+          "fold": 0,
+          "train_rows": 3414,
+          "valid_rows": 929,
+          "train_sessions": 756,
+          "valid_sessions": 190,
+          "n_features": 99389,
+          "macro_f1": 0.6952498418720433,
+          "vectorize_sec_shared": 42.807,
+          "fit_predict_sec": 29.146
+        },
+        {
+          "fold": 1,
+          "train_rows": 3480,
+          "valid_rows": 863,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 99590,
+          "macro_f1": 0.6561887956415376,
+          "vectorize_sec_shared": 30.386,
+          "fit_predict_sec": 14.307
+        },
+        {
+          "fold": 2,
+          "train_rows": 3489,
+          "valid_rows": 854,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 100641,
+          "macro_f1": 0.6869147599171491,
+          "vectorize_sec_shared": 23.849,
+          "fit_predict_sec": 14.818
+        },
+        {
+          "fold": 3,
+          "train_rows": 3541,
+          "valid_rows": 802,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 101108,
+          "macro_f1": 0.693473289665006,
+          "vectorize_sec_shared": 35.966,
+          "fit_predict_sec": 15.094
+        },
+        {
+          "fold": 4,
+          "train_rows": 3448,
+          "valid_rows": 895,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 100701,
+          "macro_f1": 0.6605089878046722,
+          "vectorize_sec_shared": 20.052,
+          "fit_predict_sec": 12.533
+        }
+      ],
+      "mean_fold_macro_f1": 0.6784671349800815,
+      "std_fold_macro_f1": 0.016715416535544207
+    },
+    {
+      "variant": {
+        "name": "char_C0.5",
+        "feature_kind": "char",
+        "c": 0.5,
+        "class_weight": "balanced"
+      },
+      "oof_macro_f1": 0.6690836495253266,
+      "folds": [
+        {
+          "fold": 0,
+          "train_rows": 3414,
+          "valid_rows": 929,
+          "train_sessions": 756,
+          "valid_sessions": 190,
+          "n_features": 99389,
+          "macro_f1": 0.6741905083380304,
+          "vectorize_sec_shared": 42.807,
+          "fit_predict_sec": 22.973
+        },
+        {
+          "fold": 1,
+          "train_rows": 3480,
+          "valid_rows": 863,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 99590,
+          "macro_f1": 0.6476634949504929,
+          "vectorize_sec_shared": 30.386,
+          "fit_predict_sec": 12.199
+        },
+        {
+          "fold": 2,
+          "train_rows": 3489,
+          "valid_rows": 854,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 100641,
+          "macro_f1": 0.6868316213801612,
+          "vectorize_sec_shared": 23.849,
+          "fit_predict_sec": 11.218
+        },
+        {
+          "fold": 3,
+          "train_rows": 3541,
+          "valid_rows": 802,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 101108,
+          "macro_f1": 0.6851312117722783,
+          "vectorize_sec_shared": 35.966,
+          "fit_predict_sec": 11.07
+        },
+        {
+          "fold": 4,
+          "train_rows": 3448,
+          "valid_rows": 895,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 100701,
+          "macro_f1": 0.6421632948193572,
+          "vectorize_sec_shared": 20.052,
+          "fit_predict_sec": 10.485
+        }
+      ],
+      "mean_fold_macro_f1": 0.667196026252064,
+      "std_fold_macro_f1": 0.01878460900502774
+    },
+    {
+      "variant": {
+        "name": "word_char_C0.25",
+        "feature_kind": "word_char",
+        "c": 0.25,
+        "class_weight": "balanced"
+      },
+      "oof_macro_f1": 0.6711515156393599,
+      "folds": [
+        {
+          "fold": 0,
+          "train_rows": 3414,
+          "valid_rows": 929,
+          "train_sessions": 756,
+          "valid_sessions": 190,
+          "n_features": 159347,
+          "macro_f1": 0.6886157294966557,
+          "vectorize_sec_shared": 56.536,
+          "fit_predict_sec": 21.637
+        },
+        {
+          "fold": 1,
+          "train_rows": 3480,
+          "valid_rows": 863,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 160119,
+          "macro_f1": 0.6434059379902698,
+          "vectorize_sec_shared": 33.494,
+          "fit_predict_sec": 10.876
+        },
+        {
+          "fold": 2,
+          "train_rows": 3489,
+          "valid_rows": 854,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 161853,
+          "macro_f1": 0.6759933929260301,
+          "vectorize_sec_shared": 30.178,
+          "fit_predict_sec": 11.917
+        },
+        {
+          "fold": 3,
+          "train_rows": 3541,
+          "valid_rows": 802,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 163206,
+          "macro_f1": 0.6955004350161035,
+          "vectorize_sec_shared": 27.408,
+          "fit_predict_sec": 10.313
+        },
+        {
+          "fold": 4,
+          "train_rows": 3448,
+          "valid_rows": 895,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 161801,
+          "macro_f1": 0.6435994617508218,
+          "vectorize_sec_shared": 20.416,
+          "fit_predict_sec": 7.644
+        }
+      ],
+      "mean_fold_macro_f1": 0.6694229914359762,
+      "std_fold_macro_f1": 0.022069463922251818
+    },
+    {
+      "variant": {
+        "name": "word_char_C0.5",
+        "feature_kind": "word_char",
+        "c": 0.5,
+        "class_weight": "balanced"
+      },
+      "oof_macro_f1": 0.677773445582513,
+      "folds": [
+        {
+          "fold": 0,
+          "train_rows": 3414,
+          "valid_rows": 929,
+          "train_sessions": 756,
+          "valid_sessions": 190,
+          "n_features": 159347,
+          "macro_f1": 0.696566706491424,
+          "vectorize_sec_shared": 56.536,
+          "fit_predict_sec": 18.402
+        },
+        {
+          "fold": 1,
+          "train_rows": 3480,
+          "valid_rows": 863,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 160119,
+          "macro_f1": 0.6399911040055132,
+          "vectorize_sec_shared": 33.494,
+          "fit_predict_sec": 13.595
+        },
+        {
+          "fold": 2,
+          "train_rows": 3489,
+          "valid_rows": 854,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 161853,
+          "macro_f1": 0.6783627309882245,
+          "vectorize_sec_shared": 30.178,
+          "fit_predict_sec": 14.151
+        },
+        {
+          "fold": 3,
+          "train_rows": 3541,
+          "valid_rows": 802,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 163206,
+          "macro_f1": 0.6974010057185992,
+          "vectorize_sec_shared": 27.408,
+          "fit_predict_sec": 13.1
+        },
+        {
+          "fold": 4,
+          "train_rows": 3448,
+          "valid_rows": 895,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 161801,
+          "macro_f1": 0.6672601340566088,
+          "vectorize_sec_shared": 20.416,
+          "fit_predict_sec": 9.236
+        }
+      ],
+      "mean_fold_macro_f1": 0.6759163362520739,
+      "std_fold_macro_f1": 0.021258249263433004
+    },
+    {
+      "variant": {
+        "name": "word_char_C1",
+        "feature_kind": "word_char",
+        "c": 1.0,
+        "class_weight": "balanced"
+      },
+      "oof_macro_f1": 0.6793976431324353,
+      "folds": [
+        {
+          "fold": 0,
+          "train_rows": 3414,
+          "valid_rows": 929,
+          "train_sessions": 756,
+          "valid_sessions": 190,
+          "n_features": 159347,
+          "macro_f1": 0.7030121802909008,
+          "vectorize_sec_shared": 56.536,
+          "fit_predict_sec": 22.345
+        },
+        {
+          "fold": 1,
+          "train_rows": 3480,
+          "valid_rows": 863,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 160119,
+          "macro_f1": 0.6534363788978965,
+          "vectorize_sec_shared": 33.494,
+          "fit_predict_sec": 17.422
+        },
+        {
+          "fold": 2,
+          "train_rows": 3489,
+          "valid_rows": 854,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 161853,
+          "macro_f1": 0.6716213009272164,
+          "vectorize_sec_shared": 30.178,
+          "fit_predict_sec": 19.756
+        },
+        {
+          "fold": 3,
+          "train_rows": 3541,
+          "valid_rows": 802,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 163206,
+          "macro_f1": 0.6869488909231078,
+          "vectorize_sec_shared": 27.408,
+          "fit_predict_sec": 17.456
+        },
+        {
+          "fold": 4,
+          "train_rows": 3448,
+          "valid_rows": 895,
+          "train_sessions": 757,
+          "valid_sessions": 189,
+          "n_features": 161801,
+          "macro_f1": 0.6709506827035986,
+          "vectorize_sec_shared": 20.416,
+          "fit_predict_sec": 11.978
+        }
+      ],
+      "mean_fold_macro_f1": 0.6771938867485441,
+      "std_fold_macro_f1": 0.01671044509665451
+    }
+  ],
+  "baseline": {
+    "variant": {
+      "name": "baseline_char_C1",
+      "feature_kind": "char",
+      "c": 1.0,
+      "class_weight": "balanced"
+    },
+    "oof_macro_f1": 0.6806670767388157,
+    "folds": [
+      {
+        "fold": 0,
+        "train_rows": 3414,
+        "valid_rows": 929,
+        "train_sessions": 756,
+        "valid_sessions": 190,
+        "n_features": 99389,
+        "macro_f1": 0.6952498418720433,
+        "vectorize_sec_shared": 42.807,
+        "fit_predict_sec": 29.146
+      },
+      {
+        "fold": 1,
+        "train_rows": 3480,
+        "valid_rows": 863,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 99590,
+        "macro_f1": 0.6561887956415376,
+        "vectorize_sec_shared": 30.386,
+        "fit_predict_sec": 14.307
+      },
+      {
+        "fold": 2,
+        "train_rows": 3489,
+        "valid_rows": 854,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 100641,
+        "macro_f1": 0.6869147599171491,
+        "vectorize_sec_shared": 23.849,
+        "fit_predict_sec": 14.818
+      },
+      {
+        "fold": 3,
+        "train_rows": 3541,
+        "valid_rows": 802,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 101108,
+        "macro_f1": 0.693473289665006,
+        "vectorize_sec_shared": 35.966,
+        "fit_predict_sec": 15.094
+      },
+      {
+        "fold": 4,
+        "train_rows": 3448,
+        "valid_rows": 895,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 100701,
+        "macro_f1": 0.6605089878046722,
+        "vectorize_sec_shared": 20.052,
+        "fit_predict_sec": 12.533
+      }
+    ],
+    "mean_fold_macro_f1": 0.6784671349800815,
+    "std_fold_macro_f1": 0.016715416535544207
+  },
+  "selected": {
+    "variant": {
+      "name": "baseline_char_C1",
+      "feature_kind": "char",
+      "c": 1.0,
+      "class_weight": "balanced"
+    },
+    "oof_macro_f1": 0.6806670767388157,
+    "folds": [
+      {
+        "fold": 0,
+        "train_rows": 3414,
+        "valid_rows": 929,
+        "train_sessions": 756,
+        "valid_sessions": 190,
+        "n_features": 99389,
+        "macro_f1": 0.6952498418720433,
+        "vectorize_sec_shared": 42.807,
+        "fit_predict_sec": 29.146
+      },
+      {
+        "fold": 1,
+        "train_rows": 3480,
+        "valid_rows": 863,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 99590,
+        "macro_f1": 0.6561887956415376,
+        "vectorize_sec_shared": 30.386,
+        "fit_predict_sec": 14.307
+      },
+      {
+        "fold": 2,
+        "train_rows": 3489,
+        "valid_rows": 854,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 100641,
+        "macro_f1": 0.6869147599171491,
+        "vectorize_sec_shared": 23.849,
+        "fit_predict_sec": 14.818
+      },
+      {
+        "fold": 3,
+        "train_rows": 3541,
+        "valid_rows": 802,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 101108,
+        "macro_f1": 0.693473289665006,
+        "vectorize_sec_shared": 35.966,
+        "fit_predict_sec": 15.094
+      },
+      {
+        "fold": 4,
+        "train_rows": 3448,
+        "valid_rows": 895,
+        "train_sessions": 757,
+        "valid_sessions": 189,
+        "n_features": 100701,
+        "macro_f1": 0.6605089878046722,
+        "vectorize_sec_shared": 20.052,
+        "fit_predict_sec": 12.533
+      }
+    ],
+    "mean_fold_macro_f1": 0.6784671349800815,
+    "std_fold_macro_f1": 0.016715416535544207
+  },
+  "selected_oof_delta_vs_baseline": 0.0,
+  "selected_beats_baseline": false,
+  "candidate": {
+    "path": "C:\\dev\\night\\2026-07-14\\task6\\scripts\\cx_au2\\au_linear_candidate\\model.pkl",
+    "status": "not_written_baseline_won",
+    "sha256": null,
+    "train_scope": "nonholdout sess_au only",
+    "artifact_contract": {
+      "keys": [
+        "union",
+        "clf"
+      ],
+      "consumer": "submit/au_route.py::predict_proba"
+    }
+  },
+  "environment": {
+    "python": "3.13.13",
+    "scikit_learn": "1.8.0",
+    "numpy": "2.5.0"
+  },
+  "elapsed_sec": 707.07
+}
