@@ -23,8 +23,8 @@ from typing import Sequence
 
 DEFAULT_PROJECT_ROOT = Path(r"C:\dev\2026-AI-DACON")
 DEFAULT_FREEZE_DATE = "2026-07-14"
-DEFAULT_EXPECTED_SUBMISSION = 14
-DEFAULT_EXPECTED_LB = Decimal("0.77089")
+DEFAULT_EXPECTED_SUBMISSION = 18  # 17·18 동점(0.77301) — 파서는 마지막 최대 행. 개별 실점수는 제출 페이지만 앎
+DEFAULT_EXPECTED_LB = Decimal("0.77301")
 SERVER_ROLLBACK_PATHS = (
     "~/models/champ_encoder_s42",
     "~/out/qwen05i_2ep_full",
