@@ -1,0 +1,24 @@
+# task2 진행 기록 — 발표 사료 최신화
+
+- 상태: 완료 (Git 커밋만 샌드박스 권한 제약으로 미생성)
+- 기준 커밋: `0554a88`
+- 확인 완료:
+  - `AGENTS.md`, `CLAUDE.md`의 제출·기록 게이트, `context/coordination.md`, task2 티켓 확인
+  - 현재 브랜치 `night/2026-07-14/task2`, 작업트리 clean 확인
+  - 07-13 원본 `docs/presentation/` 파일 3개 확인
+  - 원본 3개 파일을 현재 작업트리의 `docs/presentation/`에 복원
+  - `experiments.md` #52, `submissions.md` #13/#14, `daily/2026-07-13.md`, `docs/t4_rehearsal.md` 근거 문자열을 `rg -n`으로 확인
+  - `key_numbers.md`, `sources.md`에 Qwen 현 챔피언 및 시간초과 대역전 챕터 반영
+  - `verify_citations.py`를 24개 기존 + 9개 신규 = 33개 전수 검사로 강화
+  - 지정 Python으로 검증: `checks=33/33 mode=exhaustive`, 전건 PASS, `mismatches=0 PASS`
+  - stale 표기 0건, Markdown 표 shape PASS, 산술 교차검증 및 2회 결정론성 PASS
+  - `report_presentation_v2.md`에 변경 요약·입력 SHA256·검증 출력 전문·handoff 기록
+  - `task2.DONE` 생성
+- 환경 제약:
+  - Luna(`gpt-5.6-luna`, medium) 읽기 전용 routed 사실 추출은 네트워크 차단으로 API 연결 실패; 로컬 `rg`와 전수 검증으로 대체
+  - Git 공유 worktree 메타데이터가 읽기 전용이라 `git add/commit`은 `index.lock: Permission denied`로 실패
+- 작업 범위:
+  - 07-13 발표 원본을 `docs/presentation/`으로 복사해 exp #52 및 제출 #13/#14 반영
+  - 원본 문서의 정확한 문자열만 인용하고 `verify_citations.py`로 전건 검증
+  - `report_presentation_v2.md` 및 `task2.DONE` 작성
+- 다음 재개 지점: 쓰기 가능한 Git 메타데이터 환경에서 변경을 리뷰한 뒤 `docs: refresh presentation through Qwen submission 14`로 커밋한다.

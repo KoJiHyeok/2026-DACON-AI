@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "algorithm": "sha256",
+  "generated_at_utc": "2026-07-14T01:29:53.202954+00:00",
+  "submit_root": "C:\\dev\\2026-AI-DACON\\submit",
+  "file_count": 25,
+  "total_size_bytes": 2025421347,
+  "files": [
+    {
+      "path": "__pycache__/aar_infer.cpython-313.pyc",
+      "size_bytes": 41959,
+      "sha256": "7d7bca9a407964b3d4dd8cd80deb70a4ff53fa81ed2117a320d7e6b08877e8e2"
+    },
+    {
+      "path": "__pycache__/au_route.cpython-313.pyc",
+      "size_bytes": 5685,
+      "sha256": "cbe4118fb1569eed93d432a31cfd776562ef32f9110903dc4f6f48f0a23c3f52"
+    },
+    {
+      "path": "__pycache__/fast_aar.cpython-313.pyc",
+      "size_bytes": 26586,
+      "sha256": "8b3f74036dc7a7fced619cb0aa8992eae1806f255e3b9c55cc2b7b405984ca57"
+    },
+    {
+      "path": "__pycache__/features.cpython-313.pyc",
+      "size_bytes": 12216,
+      "sha256": "23c62265bdb8f209e90562564a60c1bbb874e333c0e1219bba6d2d81e205c76c"
+    },
+    {
+      "path": "__pycache__/script.cpython-313.pyc",
+      "size_bytes": 42878,
+      "sha256": "c76fa4c5b9485d8708e0380c49f8c6334cfd40ae6fceea53a8f15285da5063f2"
+    },
+    {
+      "path": "aar_infer.py",
+      "size_bytes": 27313,
+      "sha256": "01723f6ff4c0f4c6b82c0cae78a08ce37acf6f4a35e8c76e4cc9a43b4133a7bf"
+    },
+    {
+      "path": "au_route.py",
+      "size_bytes": 3208,
+      "sha256": "758d68452bdf8ffeb044ff822cf6703957afbf73cb8b117453100f3baa17ff10"
+    },
+    {
+      "path": "fast_aar.py",
+      "size_bytes": 17401,
+      "sha256": "7ccbb898a9e9103ff889c603be94378db04bef264c11dea0a18fa0b6132b2042"
+    },
+    {
+      "path": "features.py",
+      "size_bytes": 9260,
+      "sha256": "04c8b5ed6bb3c0fb393cee54d177ef39c691803eb1b045093d81f0804ebd86c5"
+    },
+    {
+      "path": "model/.gitkeep",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "model/au_linear/model.pkl",
+      "size_bytes": 17673981,
+      "sha256": "bc01eb659eca930bcad238d9210beb6c2c72d11b4cdbb778fc136a0bd98725e0"
+    },
+    {
+      "path": "model/enc_block_weights.json",
+      "size_bytes": 19,
+      "sha256": "775f590cd73ff550f5db86cd4a2c1365b93fbe2dff85b71cc0786ecc2641f8a6"
+    },
+    {
+      "path": "model/encoder/chat_template.jinja",
+      "size_bytes": 2507,
+      "sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f"
+    },
+    {
+      "path": "model/encoder/config.json",
+      "size_bytes": 2030,
+      "sha256": "1bc52dbf0098dcf24b293245d286307c7446a2e20859f5a6759d61bd74b9ebb5"
+    },
+    {
+      "path": "model/encoder/model.safetensors",
+      "size_bytes": 988122712,
+      "sha256": "0e9f798c58b4334861376a2f8372ee0d41d38a88e3fc38854427488e54e5a056"
+    },
+    {
+      "path": "model/encoder/serialize_config.json",
+      "size_bytes": 17,
+      "sha256": "153066e2a8350ea30611b155edda8edabafa0651d64ff66ac5ddea46ec6bf374"
+    },
+    {
+      "path": "model/encoder/tokenizer.json",
+      "size_bytes": 11421892,
+      "sha256": "3fd169731d2cbde95e10bf356d66d5997fd885dd8dbb6fb4684da3f23b2585d8"
+    },
+    {
+      "path": "model/encoder/tokenizer_config.json",
+      "size_bytes": 694,
+      "sha256": "04b1682c59acbd057f4c9072297faa73d56fc9de053094c659cdb4c464f58f86"
+    },
+    {
+      "path": "model/linear/model.pkl",
+      "size_bytes": 8354283,
+      "sha256": "ebc07c26455c3e2e93d4d662abb3ba14876636904f8c69288fd58179c72a8877"
+    },
+    {
+      "path": "model/stacker/aar_config.json",
+      "size_bytes": 1402,
+      "sha256": "f7eb7d95003bf003cf6cdd68c593547b486bb7a67ae201c644589a70fb362e27"
+    },
+    {
+      "path": "model/stacker/aar_models.joblib",
+      "size_bytes": 47420632,
+      "sha256": "31b10456d072ce0e7e4a868c1f02fe7451cf90fe786de53104fed3dec1e0ed6d"
+    },
+    {
+      "path": "model/weights.json",
+      "size_bytes": 56,
+      "sha256": "40cc8a31476e4331545e2501d9ab6cf5cb28918de4472cd7d242247229d7e89a"
+    },
+    {
+      "path": "requirements.txt",
+      "size_bytes": 898,
+      "sha256": "5900ab43d3e91ef343c01e27097347f7bdff2de503f93f60763c4c68a94b148c"
+    },
+    {
+      "path": "script.py",
+      "size_bytes": 26824,
+      "sha256": "624278421d1e9d2ffe5e3481d4b3565dfaeae56c49af764dbc7200a96c429379"
+    },
+    {
+      "path": "submit.zip",
+      "size_bytes": 952206894,
+      "sha256": "a55d6e49442200df61388fac1c6a635aa3dc7916c9379a482914750db4023ccd"
+    }
+  ]
+}
