@@ -1,0 +1,23 @@
+# task4 progress
+
+- 상태: 완료 — fold-honest 실데이터 평가 결과 REJECT
+- 확인: `AGENTS.md`, 적용 대상 `CLAUDE.md`, `context/coordination.md`, task4 티켓 확인
+- 소유 범위: `scripts/cx_calib/**`, `tests/test_cx_calib.py`, task4 전용 night 기록만 수정
+- 금지 준수: `submit/**`, `scripts/league4/**`, canonical context, 외부 원본은 읽기 전용
+- 입력 확인: Qwen holdout 9,969행 / 1,350세션 / 14클래스, 배포 calib 수식·JSON 키 확인
+- 설계: fold별 4/5 학습 파라미터로 OOF 확률을 만들고, 전체 재적합은 배포 후보 JSON에만 사용
+- Git: 첫 중간 커밋 시도 실패 — 공용 worktree 메타데이터 `index.lock` 쓰기 권한 없음
+- 구현: 교대 최적화(스칼라 T + centered class-bias ridge), fold 세션 해시, 전체 재적합 JSON 분리
+- 구현: OOF fold 파라미터 재구성 + 5지표 평가 + 입력 SHA256 게이트
+- 테스트: 최종 `tests/test_cx_calib.py` 3 passed (7.30s), py_compile PASS
+- 실데이터 fit: 성공, fold T 1.098402~1.106334, OOF Qwen 단독 F1 +0.000348 / NLL -0.002574
+- Git: 두 번째 중간 커밋도 동일 `index.lock` 권한으로 실패
+- 평가 1차: bootstrap의 반복 전체행 재조립이 60초 제한 초과
+- 최적화: 세션 confusion 사전집계로 수식 동치 확인(sklearn 오차 ≤2.8e-17)
+- 최종 5지표: row -0.000606 / session -0.000277 / MC200 -0.000377±0.002315 / CI [-0.002460,+0.001060] / halves -0.000123,-0.000961
+- 판정: REJECT — 전체 재적합 후보 JSON은 보존하되 배포 금지 권고
+- 산출물: fit/eval 스크립트, candidate/summary/results JSON, 보고서
+- 결정론성: 연속 실데이터 fit/eval 재실행 후 candidate/summary/results SHA256 3개 모두 byte-identical
+- DONE: `context/night/2026-07-14/task4.DONE` 생성
+- Git: DONE 이후 최종 커밋도 `C:/dev/2026-AI-DACON/.git/worktrees/task4/index.lock` 쓰기 권한으로 실패
+- 다음 재개 지점: 샌드박스 밖 reviewer가 uncommitted 산출물을 검증한 뒤 commit/cherry-pick

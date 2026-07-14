@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "protocol": "GroupKFold(n_splits=5, group=id prefix before -step_); fold parameters fit on the other 4 folds",
+  "n_splits": 5,
+  "ridge": 0.001,
+  "actions": [
+    "apply_patch",
+    "ask_user",
+    "edit_file",
+    "glob_pattern",
+    "grep_search",
+    "lint_or_typecheck",
+    "list_directory",
+    "plan_task",
+    "read_file",
+    "respond_only",
+    "run_bash",
+    "run_tests",
+    "web_search",
+    "write_file"
+  ],
+  "n_rows": 9969,
+  "n_sessions": 1350,
+  "inputs": {
+    "qwen_npz": "C:\\dev\\2026-AI-DACON\\colab_out\\qwen_i2ep_h85.npz",
+    "qwen_sha256": "a6547fba022e95365358b38a520ab3f6019c68b5a0c79193b389345551af5ac4",
+    "holdout_base": "C:\\dev\\2026-AI-DACON\\context\\night\\2026-07-05\\holdout_base.npz",
+    "holdout_base_sha256": "414c8bb112cb1815587efc0e1aa0e93845d0e1330938b46dd8830a70b7aefc0c"
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "n_train_rows": 7975,
+      "n_valid_rows": 1994,
+      "n_train_sessions": 1080,
+      "n_valid_sessions": 270,
+      "validation_sessions_sha256": "1fe55540a6f657ac3a903dd17b27d3772c7b27a04cb1ebd3fb8d0bd9504974d8",
+      "temperature": 1.0984018482404003,
+      "class_bias": {
+        "apply_patch": -0.03891894784814755,
+        "ask_user": -0.038013252346848325,
+        "edit_file": -0.1845990691688062,
+        "glob_pattern": 0.11577253184759846,
+        "grep_search": 0.19806160945914753,
+        "lint_or_typecheck": 0.038042838774409074,
+        "list_directory": 0.19381146808609104,
+        "plan_task": 0.10764772351497193,
+        "read_file": 0.18960572138071455,
+        "respond_only": -0.050120454449931295,
+        "run_bash": -0.2304147638327298,
+        "run_tests": -0.1903020526469757,
+        "web_search": -0.19189390515375554,
+        "write_file": 0.08132055238426189
+      },
+      "train_before": {
+        "nll": 0.6097457843787022,
+        "macro_f1": 0.7586367548531978
+      },
+      "train_after": {
+        "nll": 0.6061870487996746,
+        "macro_f1": 0.7578570735122899
+      },
+      "valid_before": {
+        "nll": 0.6207206557040487,
+        "macro_f1": 0.7616254762007667
+      },
+      "valid_after": {
+        "nll": 0.6184757570816373,
+        "macro_f1": 0.7633764011166585
+      }
+    },
+    {
+      "fold": 1,
+      "n_train_rows": 7975,
+      "n_valid_rows": 1994,
+      "n_train_sessions": 1080,
+      "n_valid_sessions": 270,
+      "validation_sessions_sha256": "51fd60d350e1f3aa0f530321bddadbddf1774b525ce7fd35721d898c71d3825d",
+      "temperature": 1.1034257270745766,
+      "class_bias": {
+        "apply_patch": -0.10385474458169427,
+        "ask_user": 0.10046394428264735,
+        "edit_file": -0.3155252387461655,
+        "glob_pattern": 0.08881369778544655,
+        "grep_search": 0.18352829559345227,
+        "lint_or_typecheck": -0.031056933556682594,
+        "list_directory": 0.14190426265067632,
+        "plan_task": 0.15539372795938175,
+        "read_file": 0.1657175528999144,
+        "respond_only": -0.04647133890773891,
+        "run_bash": -0.2526432785420757,
+        "run_tests": -0.14087284093642577,
+        "web_search": -0.01697970079443754,
+        "write_file": 0.07158259489370165
+      },
+      "train_before": {
+        "nll": 0.6101608115025965,
+        "macro_f1": 0.7591187514319561
+      },
+      "train_after": {
+        "nll": 0.6067938522191634,
+        "macro_f1": 0.7598615540359649
+      },
+      "valid_before": {
+        "nll": 0.6190607553464478,
+        "macro_f1": 0.7601232605964443
+      },
+      "valid_after": {
+        "nll": 0.615648564185361,
+        "macro_f1": 0.7627071486858993
+      }
+    },
+    {
+      "fold": 2,
+      "n_train_rows": 7975,
+      "n_valid_rows": 1994,
+      "n_train_sessions": 1080,
+      "n_valid_sessions": 270,
+      "validation_sessions_sha256": "a70e3889ecd1d87793a366cd875a11c8a2d4a144c9e5a8bea2d1d6158c97f496",
+      "temperature": 1.101213752702822,
+      "class_bias": {
+        "apply_patch": -0.030501160595772372,
+        "ask_user": 0.09569544409169244,
+        "edit_file": -0.40095625928312745,
+        "glob_pattern": 0.01924905932648448,
+        "grep_search": 0.08156719823595594,
+        "lint_or_typecheck": 0.12461473293156503,
+        "list_directory": 0.07314836540795523,
+        "plan_task": 0.18111898829901307,
+        "read_file": 0.07844187591686178,
+        "respond_only": -0.04076843473650271,
+        "run_bash": -0.12848316811933017,
+        "run_tests": -0.08134876662627896,
+        "web_search": -0.028510992087139326,
+        "write_file": 0.05673311723862305
+      },
+      "train_before": {
+        "nll": 0.6165655174941895,
+        "macro_f1": 0.7586121087451732
+      },
+      "train_after": {
+        "nll": 0.6130190313805661,
+        "macro_f1": 0.7611813849787967
+      },
+      "valid_before": {
+        "nll": 0.5934451433690383,
+        "macro_f1": 0.7625078454127273
+      },
+      "valid_after": {
+        "nll": 0.591038361013752,
+        "macro_f1": 0.7553969802902811
+      }
+    },
+    {
+      "fold": 3,
+      "n_train_rows": 7975,
+      "n_valid_rows": 1994,
+      "n_train_sessions": 1080,
+      "n_valid_sessions": 270,
+      "validation_sessions_sha256": "f7fd219997651ef65bd32b2063dc10de863d4228249804d0c110abd17f95ef3c",
+      "temperature": 1.099872196847392,
+      "class_bias": {
+        "apply_patch": -0.09078751583660531,
+        "ask_user": 0.08021816992137125,
+        "edit_file": -0.34787720200077055,
+        "glob_pattern": 0.059779098226997694,
+        "grep_search": 0.15798902338550838,
+        "lint_or_typecheck": 0.1452995370559242,
+        "list_directory": 0.08656547032955826,
+        "plan_task": 0.13888021856280403,
+        "read_file": 0.1466408450725256,
+        "respond_only": -0.04640373254674423,
+        "run_bash": -0.16070823296957043,
+        "run_tests": -0.04865140981741137,
+        "web_search": -0.07125294376146851,
+        "write_file": -0.049691325622119004
+      },
+      "train_before": {
+        "nll": 0.609382554270005,
+        "macro_f1": 0.7620639062936855
+      },
+      "train_after": {
+        "nll": 0.605813850471364,
+        "macro_f1": 0.7631721900966886
+      },
+      "valid_before": {
+        "nll": 0.6221733939772988,
+        "macro_f1": 0.7468645771150145
+      },
+      "valid_after": {
+        "nll": 0.6198268602675121,
+        "macro_f1": 0.7495264488995422
+      }
+    },
+    {
+      "fold": 4,
+      "n_train_rows": 7976,
+      "n_valid_rows": 1993,
+      "n_train_sessions": 1080,
+      "n_valid_sessions": 270,
+      "validation_sessions_sha256": "64d757ed8450e534c563256d764cc5889f7e65f0ae63e4615787831b0190c8dc",
+      "temperature": 1.106334124282721,
+      "class_bias": {
+        "apply_patch": -0.027529117193112438,
+        "ask_user": 0.07216984696987683,
+        "edit_file": -0.20347831380251657,
+        "glob_pattern": 0.0476399165095939,
+        "grep_search": 0.14531841167626044,
+        "lint_or_typecheck": 0.030567879496744176,
+        "list_directory": 0.15341170304767698,
+        "plan_task": 0.05794411419262651,
+        "read_file": 0.14538841054257232,
+        "respond_only": -0.050978924074712544,
+        "run_bash": -0.20515477262270057,
+        "run_tests": -0.12560542575472,
+        "web_search": -0.11734253750244067,
+        "write_file": 0.0776488085148517
+      },
+      "train_before": {
+        "nll": 0.6138499870992083,
+        "macro_f1": 0.758040182725989
+      },
+      "train_after": {
+        "nll": 0.6103691518653791,
+        "macro_f1": 0.7582341503605187
+      },
+      "valid_before": {
+        "nll": 0.6043011142954027,
+        "macro_f1": 0.7633971107188963
+      },
+      "valid_after": {
+        "nll": 0.6018422215102017,
+        "macro_f1": 0.7639909861354278
+      }
+    }
+  ],
+  "oof_before": {
+    "nll": 0.6119409788237561,
+    "macro_f1": 0.7593236208776777
+  },
+  "oof_after": {
+    "nll": 0.6093671075645568,
+    "macro_f1": 0.7596719394462197
+  },
+  "full_refit": {
+    "temperature": 1.1020982801232808,
+    "class_bias": {
+      "apply_patch": -0.059378363076705326,
+      "ask_user": 0.062329055916547284,
+      "edit_file": -0.2915249047720702,
+      "glob_pattern": 0.06572562481983904,
+      "grep_search": 0.1527745044286697,
+      "lint_or_typecheck": 0.062041863672532546,
+      "list_directory": 0.1293566408063644,
+      "plan_task": 0.1283754361174251,
+      "read_file": 0.14463448901580384,
+      "respond_only": -0.04695253042381397,
+      "run_bash": -0.19429952613694926,
+      "run_tests": -0.11591876427202341,
+      "web_search": -0.08479446481147246,
+      "write_file": 0.047630938715852694
+    },
+    "before": {
+      "nll": 0.6119409788237561,
+      "macro_f1": 0.7593236208776777
+    },
+    "after": {
+      "nll": 0.6085469065058711,
+      "macro_f1": 0.7609439792801654
+    },
+    "usage": "deployment candidate only; excluded from recommendation metrics"
+  },
+  "candidate_json": "C:\\dev\\night\\2026-07-14\\task4\\scripts\\cx_calib\\calib_candidate.json"
+}

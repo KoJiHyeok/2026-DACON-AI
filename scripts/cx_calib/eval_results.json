@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "evaluation_contract": "fold-honest OOF Qwen calibration; full refit excluded from all recommendation metrics",
+  "baseline_recipe": "(linear + stacker + 3*qwen)/5 then soft-AU alpha=0.85",
+  "candidate_recipe": "same surface with each row's Qwen probabilities calibrated by its held-out fold parameters",
+  "seed": 42,
+  "inputs": {
+    "qwen_npz": "C:\\dev\\2026-AI-DACON\\colab_out\\qwen_i2ep_h85.npz",
+    "qwen_sha256": "a6547fba022e95365358b38a520ab3f6019c68b5a0c79193b389345551af5ac4",
+    "fit_summary": "C:\\dev\\night\\2026-07-14\\task4\\scripts\\cx_calib\\fit_summary.json",
+    "fit_summary_sha256": "e9386be353ce49d8f0ace035c35a50b36c65bc0edaccc024fb2b375cfa999c3c",
+    "candidate_json": "C:\\dev\\night\\2026-07-14\\task4\\scripts\\cx_calib\\calib_candidate.json",
+    "candidate_json_sha256": "f852cc423a05fb442f6e598fe3edf6ad04143077bae24ae77e9ac9c920c88358",
+    "au_probs": "C:\\dev\\2026-AI-DACON\\night_out\\league4\\au_charwb_C1_holdout_probs.npz",
+    "au_probs_sha256": "831f9953e57bc660913c0eb80226b1f4f42c3909ff2c2ac08fdc375525dd7c5d"
+  },
+  "fold_audit": [
+    {
+      "fold": 0,
+      "n_valid_rows": 1994,
+      "validation_sessions_sha256": "1fe55540a6f657ac3a903dd17b27d3772c7b27a04cb1ebd3fb8d0bd9504974d8"
+    },
+    {
+      "fold": 1,
+      "n_valid_rows": 1994,
+      "validation_sessions_sha256": "51fd60d350e1f3aa0f530321bddadbddf1774b525ce7fd35721d898c71d3825d"
+    },
+    {
+      "fold": 2,
+      "n_valid_rows": 1994,
+      "validation_sessions_sha256": "a70e3889ecd1d87793a366cd875a11c8a2d4a144c9e5a8bea2d1d6158c97f496"
+    },
+    {
+      "fold": 3,
+      "n_valid_rows": 1994,
+      "validation_sessions_sha256": "f7fd219997651ef65bd32b2063dc10de863d4228249804d0c110abd17f95ef3c"
+    },
+    {
+      "fold": 4,
+      "n_valid_rows": 1993,
+      "validation_sessions_sha256": "64d757ed8450e534c563256d764cc5889f7e65f0ae63e4615787831b0190c8dc"
+    }
+  ],
+  "fold_surface_scores": [
+    {
+      "fold": 0,
+      "baseline": 0.7726119181644925,
+      "candidate": 0.7707694791693285,
+      "delta": -0.0018424389951640086
+    },
+    {
+      "fold": 1,
+      "baseline": 0.7677528575708716,
+      "candidate": 0.7703818588945245,
+      "delta": 0.0026290013236528464
+    },
+    {
+      "fold": 2,
+      "baseline": 0.7747163276386538,
+      "candidate": 0.7748943079073322,
+      "delta": 0.00017798026867832384
+    },
+    {
+      "fold": 3,
+      "baseline": 0.7631930519184565,
+      "candidate": 0.7614559196148848,
+      "delta": -0.0017371323035717534
+    },
+    {
+      "fold": 4,
+      "baseline": 0.7773496955269454,
+      "candidate": 0.7750402836075405,
+      "delta": -0.0023094119194049245
+    }
+  ],
+  "metrics": {
+    "1_row_macro_f1": {
+      "baseline": 0.7713812960737046,
+      "candidate": 0.7707748287172588,
+      "delta": -0.0006064673564458722
+    },
+    "2_session_uniform_macro_f1": {
+      "baseline": 0.7763000625965528,
+      "candidate": 0.7760230482162841,
+      "delta": -0.00027701438026872527
+    },
+    "3_mc200_delta": {
+      "mean": -0.0003769081376411526,
+      "std": 0.0023153070392345227,
+      "min": -0.006899225550612953,
+      "max": 0.007696141965636949,
+      "repeats": 200
+    },
+    "4_paired_session_bootstrap": {
+      "ci_lo": -0.0024597404441299513,
+      "ci_hi": 0.0010599571068475799,
+      "p_delta_gt_0": 0.267,
+      "repeats": 1000
+    },
+    "5_half_split": {
+      "half1_delta": -0.0001226922377783879,
+      "half2_delta": -0.0009606650256568372
+    }
+  },
+  "recommendation": {
+    "decision": "REJECT",
+    "reason": "fold-honest row delta is below +0.002"
+  }
+}
