@@ -23,7 +23,7 @@
   · model/encoder_2...: encoder block 성분 추가 (기본 uniform 평균).
   · model/enc_block_weights.json 또는 ENS_ENC_BLOCK_WEIGHTS: 블록 내부 가중(encoder_dirs 이름순 짝).
   · model/au_linear/model.pkl: sess_au 행 확률을 α·P_au+(1-α)·P_blend 로 soft 라우팅
-    (exp #23 하드 LB 0.7331 → #24 soft. α=ENS_AU_ALPHA 기본 0.9, ENS_AU_ROUTE=0 끔).
+    (exp #23 하드 LB 0.7331 → #24 soft. α=ENS_AU_ALPHA 기본 0.85, ENS_AU_ROUTE=0 끔).
 
 경로(패키징 기본 = ./model/{linear,stacker,encoder[,encoder_2…]}). 인코더가 2개 이상이면
 확률을 가중 평균(기본 uniform — seed·이종 인코더 앙상블). 스모크는 아래 env로 실아티팩트 지정(복사 회피):
@@ -450,9 +450,11 @@ def bucket_weighted_blend(samples, lin, stk, enc, cfg):
 def au_route_blend(samples, blend):
     """AU 전용 linear soft 라우팅 (exp #23 하드 = LB 0.7331 → #24 soft 개선).
 
-    sess_au 행의 확률을 α·P_au + (1-α)·P_blend 로 교체 (α 기본 0.9, ENS_AU_ALPHA).
+    sess_au 행의 확률을 α·P_au + (1-α)·P_blend 로 교체 (α 기본 0.85, ENS_AU_ALPHA).
     α=1.0이면 #23 하드 라우팅과 동일. 근거: AU 서브셋 전 성분 공통 약세, AU 전용 학습이
     LB +0.0142 실증, soft α=0.9가 리그에서 하드 대비 +0.0065 (밤샘 task4).
+    α 0.9→0.85 하향은 Qwen 블록 전환(#14) 후 재튜닝 — 블렌드가 강해져 AU 덮어쓰기 완화가
+    최적 (07-14 스윕: w_q=3.0/α0.85, holdout row +0.00378, CI [+0.00108,+0.00654]).
     model/au_linear 없거나 ENS_AU_ROUTE=0이면 no-op, sess_au 0건이어도 no-op — 폴백 안전.
     """
     if os.environ.get("ENS_AU_ROUTE", "1").strip().lower() in ("0", "false", "no"):
@@ -466,7 +468,7 @@ def au_route_blend(samples, blend):
     if not au_idx:
         print("[AU-ROUTE] sess_au 행 0건 — no-op")
         return blend
-    alpha = float(os.environ.get("ENS_AU_ALPHA", "0.9"))
+    alpha = float(os.environ.get("ENS_AU_ALPHA", "0.85"))
     if not (0.0 <= alpha <= 1.0):
         raise ValueError(f"ENS_AU_ALPHA는 0~1 이어야 함: {alpha}")
     artifact = joblib.load(pkl)
