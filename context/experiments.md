@@ -80,6 +80,8 @@
 
 | 54 | 07.14 | **Qwen 블록 캘리브레이션 (CX-A, Codex task4)** — e5 시절 calib_v1 +0.005 축을 Qwen 블록에 적용 (T/bias, 세션 GroupKFold 5-fold 정직 OOF) | Codex 구현 `scripts/cx_calib/` (fit: T=minimize_scalar NLL + mean-zero ridge bias / eval: OOF 파라미터만 판정, full-refit은 후보 JSON에만) | fold T 1.098~1.106 (안정), 전 fold NLL 개선, Qwen solo OOF NLL 0.6119→0.6094. **그러나 신표면(w3/α0.85) 5지표: row −0.000606, 세션균등 −0.000277, MC −0.000377±0.002315, CI [−0.002460,+0.001060] P=0.267, 반반 음/음** — NLL 개선이 argmax 블렌드 순위 개선으로 비전이. 독립 reviewer(rev-cxcalib) 6자리 완전 재현 + fold 누수 0 + full-refit 유출 없음 확인 | 미제출 | **FAIL/기각 (Codex 자체 판정 + reviewer 지지).** 확률 캘리브레이션 축은 Qwen 블록에서 종결 — 강한 블렌드가 이미 순위 정보를 소진. calib_candidate.json은 사료 보존 |
 
+| 55 | 07.14 | **신표면 오답 국소 분석 (CX-B, Codex task5)** — exp #53의 list_directory −0.0075·glob_pattern −0.0033 악화 원인 규명 + 수복 후보 | Codex `scripts/cx_errloc/analyze.py` (결정적, 2회 실행 바이트 동일, 입력 SHA 11개 고정) | **악화 17행 전부 non-AU, STK top-1 16/17 정답을 Qwen 쏠림(read/grep)이 덮음** — AU 커버리지 무관, w_q 2→3의 국소 비용 구조 규명. 수복 후보: Qwen에 list/glob log-bias +0.08 → holdout **+0.00089**, 정답행 +10, target F1 +0.0092/+0.0019. 독립 reviewer(rev-cxerrloc) 소수점 완전 재현 + 17행 전수 집계 일치 + calib.json(T=1.0+bias 2클래스) 코드 무변경 배포 동치성 확인 | 미제출 | **분석 채택 / 후보는 후순위 큐.** +0.0009는 같은 holdout 발견·평가라 낙관 편향 실재 (reviewer 동의) — #15/#16 LB 방향 확정 후 승자 표면에 얹을지 결정. 배포 시 calib.json {"temperature":1.0,"class_bias":{list,glob:+0.08}} |
+
 ## ❌ 폐기 확정 — 재시도 금지 (검증 후 버린 것, 핸드오프 §6)
 
 | 레버 | LB/결과 | 왜 |

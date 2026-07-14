@@ -1,0 +1,1 @@
+CX-B 완료 — target 손실은 전부 non-AU·Qwen-over-STK이며, Qwen list/glob log-bias +0.08 후보가 holdout Macro-F1 +0.00089349(정답 +10)를 기록했다.
